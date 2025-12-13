@@ -1,0 +1,426 @@
+<div class="space-y-6 p-6">
+  <!-- Header -->
+  <div class="border-b border-sidebar-border pb-5">
+    <h3 class="text-2xl font-semibold leading-6 text-white">Dashboard</h3>
+    <p class="mt-2 max-w-4xl text-sm text-slate-400">Financial overview for {{ stats.period }}</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-background-card border border-sidebar-border rounded-lg p-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Period -->
+      <div>
+        <app-select
+          [options]="periodOptions"
+          [label]="'Period'"
+          [placeholder]="'Select period...'"
+          [(ngModel)]="selectedPeriod"
+          (selectionChange)="onPeriodChange($event)"
+          bgColor="bg-dark-blue"
+        ></app-select>
+      </div>
+
+      <!-- Accounts -->
+      <div>
+        <app-multiselect
+          [options]="paymentTypes"
+          [label]="'Accounts'"
+          [placeholder]="'Select accounts...'"
+          [(ngModel)]="selectedPaymentTypes"
+          (selectionChange)="onPaymentTypesChange($event)"
+        ></app-multiselect>
+      </div>
+
+      <!-- Expense Categories -->
+      <div>
+        <app-multiselect
+          [options]="expenseCategories"
+          [label]="'Expense categories'"
+          [placeholder]="'Select categories...'"
+          [(ngModel)]="selectedExpenseCategories"
+          (selectionChange)="onExpenseCategoriesChange($event)"
+        ></app-multiselect>
+      </div>
+
+      <!-- Income Categories -->
+      <div>
+        <app-multiselect
+          [options]="incomeCategories"
+          [label]="'Income categories'"
+          [placeholder]="'Select income categories...'"
+          [(ngModel)]="selectedIncomeCategories"
+          (selectionChange)="onIncomeCategoriesChange($event)"
+        ></app-multiselect>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+    <div class="text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+      <p class="mt-2 text-sm text-slate-400">Loading dashboard...</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading">
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+      <!-- Total Incomes Card -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 11l5-5m0 0l5 5m-5-5v12"
+                />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Total Incomes</dt>
+                <dd>
+                  <div class="text-lg font-semibold text-brand">
+                    {{ formatCurrency(stats.totalIncomes) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-sidebar-border">
+            <div class="flex items-center justify-between text-sm text-slate-400 mb-2">
+              <span>Accounts</span>
+              <span>{{ incomesPaymentTypes.length }} accounts</span>
+            </div>
+            <div class="flex items-center space-x-1 relative">
+              <div
+                *ngFor="let paymentType of incomesPaymentTypes"
+                class="flex-1 h-2 rounded-full relative group"
+                [style.background]="paymentType.color || '#71717a'"
+                [style.width.%]="stats.totalIncomes > 0 ? (paymentType.value / stats.totalIncomes) * 100 : 0"
+              >
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                  {{ paymentType.name }}: {{ formatCurrency(paymentType.value) }}
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Expenses Card -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 13l-5 5m0 0l-5-5m5 5V6"
+                />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Total Expenses</dt>
+                <dd>
+                  <div class="text-lg font-semibold text-red-500">
+                    {{ formatCurrency(stats.totalExpenses) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-sidebar-border">
+            <div class="flex items-center justify-between text-sm text-slate-400 mb-2">
+              <span>Accounts</span>
+              <span>{{ expensesPaymentTypes.length }} accounts</span>
+            </div>
+            <div class="flex items-center space-x-1 relative">
+              <div
+                *ngFor="let paymentType of expensesPaymentTypes"
+                class="flex-1 h-2 rounded-full relative group"
+                [style.background]="paymentType.color || '#71717a'"
+                [style.width.%]="stats.totalExpenses > 0 ? (paymentType.value / stats.totalExpenses) * 100 : 0"
+              >
+                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                  {{ paymentType.name }}: {{ formatCurrency(paymentType.value) }}
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-800"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balance Card -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6"
+                [class.text-brand]="stats.balance >= 0"
+                [class.text-red-500]="stats.balance < 0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Balance</dt>
+                <dd>
+                  <div
+                    class="text-lg font-semibold"
+                    [class.text-brand]="stats.balance >= 0"
+                    [class.text-red-500]="stats.balance < 0"
+                  >
+                    {{ formatCurrency(stats.balance) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-sidebar-border">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-slate-400">Savings Rate</div>
+              <div
+                class="text-sm font-semibold"
+                [class.text-brand]="stats.savingsPercentage >= 0"
+                [class.text-red-500]="stats.savingsPercentage < 0"
+              >
+                {{ stats.savingsPercentage >= 0 ? '+' : '' }}{{ stats.savingsPercentage.toFixed(1) }}%
+              </div>
+            </div>
+            <div class="mt-2 w-full bg-slate-700 rounded-full h-2">
+              <div
+                class="h-2 rounded-full"
+                [class.bg-brand]="stats.savingsPercentage >= 0"
+                [class.bg-red-500]="stats.savingsPercentage < 0"
+                [style.width.%]="Math.max(0, Math.min(100, stats.savingsPercentage))"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top 5 Highest Expenses -->
+    <div
+      *ngIf="topExpenses.length > 0"
+      class="mb-6 overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+    >
+      <div class="px-5 py-4 border-b border-sidebar-border">
+        <h4 class="text-base font-semibold text-white">Top 5 Highest Expenses</h4>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-sidebar-border">
+          <thead class="">
+            <tr>
+              <th
+                scope="col"
+                class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              >
+                Description
+              </th>
+              <th
+                scope="col"
+                class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              >
+                Category
+              </th>
+              <th
+                scope="col"
+                class="px-5 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider"
+              >
+                Date
+              </th>
+              <th
+                scope="col"
+                class="px-5 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider"
+              >
+                Amount
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-sidebar-border">
+            <tr *ngFor="let expense of topExpenses" class="hover:bg-slate-900/30">
+              <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-white">
+                {{ expense.name }}
+              </td>
+              <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-400">
+                <span
+                  *ngIf="expense.color"
+                  class="inline-block h-3 w-3 rounded-full mr-2"
+                  [style.background]="expense.color"
+                ></span>
+                {{ expense.category || '-' }}
+              </td>
+              <td class="px-5 py-4 whitespace-nowrap text-sm text-slate-400">
+                {{ formatDate(expense.date) }}
+              </td>
+              <td class="px-5 py-4 whitespace-nowrap text-sm text-right font-semibold text-red-500">
+                -{{ formatCurrency(expense.amount) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Incomes vs Expenses Chart -->
+    <div
+      class="mb-6 overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+    >
+      <div class="px-5 py-4 border-b border-sidebar-border">
+        <h4 class="text-base font-semibold text-white">Incomes vs Expenses</h4>
+      </div>
+      <div class="p-5">
+        <apx-chart
+          [series]="lineChartOptions.series"
+          [chart]="lineChartOptions.chart"
+          [dataLabels]="lineChartOptions.dataLabels"
+          [stroke]="lineChartOptions.stroke"
+          [fill]="lineChartOptions.fill"
+          [xaxis]="lineChartOptions.xaxis"
+          [yaxis]="lineChartOptions.yaxis"
+          [grid]="lineChartOptions.grid"
+          [legend]="lineChartOptions.legend"
+          [tooltip]="lineChartOptions.tooltip"
+          [theme]="lineChartOptions.theme"
+        >
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Expenses by category -->
+    <div
+      class="mb-6 overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+    >
+      <div class="px-5 py-4 border-b border-sidebar-border">
+        <h4 class="text-base font-semibold text-white">Expenses by category</h4>
+      </div>
+      <div class="p-5 stacked-bar-chart-container">
+        <apx-chart
+          [series]="stackedBarChartOptions.series"
+          [chart]="stackedBarChartOptions.chart"
+          [plotOptions]="stackedBarChartOptions.plotOptions"
+          [dataLabels]="stackedBarChartOptions.dataLabels"
+          [xaxis]="stackedBarChartOptions.xaxis"
+          [yaxis]="stackedBarChartOptions.yaxis"
+          [grid]="stackedBarChartOptions.grid"
+          [legend]="stackedBarChartOptions.legend"
+          [fill]="stackedBarChartOptions.fill"
+          [tooltip]="stackedBarChartOptions.tooltip"
+          [theme]="stackedBarChartOptions.theme"
+        >
+        </apx-chart>
+      </div>
+    </div>
+
+    <!-- Three Pie Charts Row -->
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+      <!-- Expenses by Category -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="px-5 py-4 border-b border-sidebar-border">
+          <h4 class="text-sm font-semibold text-white">Expenses by category</h4>
+        </div>
+        <div class="p-5">
+          <apx-chart
+            [series]="expensesCategoryChartOptions.series"
+            [chart]="expensesCategoryChartOptions.chart"
+            [labels]="expensesCategoryChartOptions.labels"
+            [colors]="expensesCategoryChartOptions.colors"
+            [dataLabels]="expensesCategoryChartOptions.dataLabels"
+            [plotOptions]="expensesCategoryChartOptions.plotOptions"
+            [legend]="expensesCategoryChartOptions.legend"
+            [tooltip]="expensesCategoryChartOptions.tooltip"
+            [theme]="expensesCategoryChartOptions.theme"
+            [states]="expensesCategoryChartOptions.states"
+            [stroke]="expensesCategoryChartOptions.stroke"
+          >
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Expenses by Account -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="px-5 py-4 border-b border-sidebar-border">
+          <h4 class="text-sm font-semibold text-white">Expenses by account</h4>
+        </div>
+        <div class="p-5">
+          <apx-chart
+            [series]="expensesAccountChartOptions.series"
+            [chart]="expensesAccountChartOptions.chart"
+            [labels]="expensesAccountChartOptions.labels"
+            [colors]="expensesAccountChartOptions.colors"
+            [dataLabels]="expensesAccountChartOptions.dataLabels"
+            [plotOptions]="expensesAccountChartOptions.plotOptions"
+            [legend]="expensesAccountChartOptions.legend"
+            [tooltip]="expensesAccountChartOptions.tooltip"
+            [theme]="expensesAccountChartOptions.theme"
+            [states]="expensesAccountChartOptions.states"
+            [stroke]="expensesCategoryChartOptions.stroke"
+          >
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Incomes by Account -->
+      <div
+        class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      >
+        <div class="px-5 py-4 border-b border-sidebar-border">
+          <h4 class="text-sm font-semibold text-white">Incomes by account</h4>
+        </div>
+        <div class="p-5">
+          <apx-chart
+            [series]="incomesAccountChartOptions.series"
+            [chart]="incomesAccountChartOptions.chart"
+            [labels]="incomesAccountChartOptions.labels"
+            [colors]="incomesAccountChartOptions.colors"
+            [dataLabels]="incomesAccountChartOptions.dataLabels"
+            [plotOptions]="incomesAccountChartOptions.plotOptions"
+            [legend]="incomesAccountChartOptions.legend"
+            [tooltip]="incomesAccountChartOptions.tooltip"
+            [theme]="incomesAccountChartOptions.theme"
+            [states]="incomesAccountChartOptions.states"
+            [stroke]="expensesCategoryChartOptions.stroke"
+          >
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

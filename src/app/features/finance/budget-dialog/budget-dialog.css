@@ -1,0 +1,27 @@
+.budget-dialog-form {
+  @apply space-y-4;
+}
+
+.form-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.form-field {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+}
+
+.form-actions {
+  @apply flex justify-end space-x-3 pt-4;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2;
+}

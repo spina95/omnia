@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+/* Custom scrollbar for dropdown */
+div::-webkit-scrollbar {
+  width: 6px;
+}
+
+div::-webkit-scrollbar-track {
+  background: #1a3254;
+  border-radius: 3px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+

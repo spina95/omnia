@@ -1,0 +1,129 @@
+<!-- Dialog Backdrop -->
+<div *ngIf="isOpen"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+    (click)="close()">
+
+    <!-- Dialog Container -->
+    <div class="bg-zinc-900 rounded-lg border border-zinc-800 shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in"
+        (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50">
+            <h2 class="text-xl font-semibold text-white">{{ expense ? 'Edit Expense' : 'Create Expense' }}</h2>
+            <button (click)="close()"
+                class="text-zinc-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage"
+                class="mb-4 p-3 bg-red-900/20 border border-red-900 rounded-md text-red-400 text-sm">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+                <div class="animate-spin h-8 w-8 border-2 border-brand border-t-transparent rounded-full"></div>
+            </div>
+
+            <!-- Form -->
+            <form *ngIf="!isLoading" class="space-y-5">
+
+                <!-- Name -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                        Description <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" [(ngModel)]="formData.name" name="name" placeholder="e.g., Grocery shopping"
+                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+                </div>
+
+                <!-- Amount -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                        Amount (€) <span class="text-red-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">€</span>
+                        <input type="number" [(ngModel)]="formData.amount" name="amount" step="0.01" min="0"
+                            placeholder="0.00"
+                            class="w-full pl-10 pr-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+                    </div>
+                </div>
+
+                <!-- Date -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                        Date <span class="text-red-400">*</span>
+                    </label>
+                    <input type="date" [(ngModel)]="formData.date" name="date"
+                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                        Category
+                    </label>
+                    <select [(ngModel)]="formData.category_id" name="category_id"
+                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors cursor-pointer hover:bg-zinc-900">
+                        <option [ngValue]="null">Select a category</option>
+                        <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
+                    </select>
+                    <!-- Category Preview -->
+                    <div *ngIf="formData.category_id" class="mt-2">
+                        <span [style.background-color]="getCategoryColor(formData.category_id) + '33'"
+                            [style.color]="getCategoryColor(formData.category_id)"
+                            [style.border-color]="getCategoryColor(formData.category_id) + '4d'"
+                            class="px-2.5 py-1 rounded-full border text-xs font-medium inline-flex items-center">
+                            {{ getCategoryName(formData.category_id) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Payment Type / Account -->
+                <div>
+                    <label class="block text-sm font-medium text-zinc-300 mb-2">
+                        Account
+                    </label>
+                    <select [(ngModel)]="formData.payment_type_id" name="payment_type_id"
+                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors cursor-pointer hover:bg-zinc-900">
+                        <option [ngValue]="null">Select an account</option>
+                        <option *ngFor="let pt of paymentTypes" [ngValue]="pt.id">{{ pt.name }}</option>
+                    </select>
+                    <!-- Payment Type Preview -->
+                    <div *ngIf="formData.payment_type_id" class="mt-2">
+                        <span [style.background-color]="getPaymentTypeColor(formData.payment_type_id) + '33'"
+                            [style.color]="getPaymentTypeColor(formData.payment_type_id)"
+                            [style.border-color]="getPaymentTypeColor(formData.payment_type_id) + '4d'"
+                            class="px-2.5 py-1 rounded-full border text-xs font-medium inline-flex items-center">
+                            {{ getPaymentTypeName(formData.payment_type_id) }}
+                        </span>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-4 border-t border-zinc-800 bg-zinc-900/50 flex items-center justify-end gap-3">
+            <button (click)="close()" [disabled]="isSaving"
+                class="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-transparent border border-zinc-700 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Cancel
+            </button>
+            <button (click)="save()" [disabled]="isSaving"
+                class="px-4 py-2 text-sm font-medium text-black bg-brand rounded-md hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                <span *ngIf="isSaving"
+                    class="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></span>
+                {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+        </div>
+
+    </div>
+</div>

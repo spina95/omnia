@@ -1,0 +1,217 @@
+<div class="p-6 h-full flex flex-col">
+  <!-- Header -->
+  <div *ngIf="showHeader" class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-semibold text-white tracking-tight">{{ title }}</h1>
+    <button
+      *ngIf="showAddButton"
+      (click)="onAddButtonClick()"
+      class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors text-sm"
+    >
+      {{ addButtonText }}
+    </button>
+  </div>
+
+  <!-- Filters Toolbar -->
+  <div
+    *ngIf="showFilters"
+    class="flex flex-wrap items-center gap-3 mb-6 bg-zinc-900/50 p-4 rounded-lg border border-zinc-800"
+  >
+    <!-- Search -->
+    <div class="relative w-full md:w-64">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        [(ngModel)]="searchValue"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search..."
+        class="block w-full pl-10 pr-3 py-2 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand sm:text-sm transition-colors"
+      />
+    </div>
+
+    <div class="h-6 w-px bg-zinc-700 mx-2 hidden md:block"></div>
+
+    <!-- Month Filter -->
+    <app-select
+      *ngIf="months.length > 0"
+      [options]="monthOptions"
+      [placeholder]="'All Months'"
+      [(ngModel)]="selectedMonth"
+      (selectionChange)="onMonthChange($event)"
+      bgColor="bg-dark-blue"
+      class="w-auto"
+    ></app-select>
+
+    <!-- Year Filter -->
+    <app-select
+      *ngIf="years.length > 0"
+      [options]="yearOptions"
+      [placeholder]="'All Years'"
+      [(ngModel)]="selectedYear"
+      (selectionChange)="onYearChange($event)"
+      bgColor="bg-dark-blue"
+      class="w-auto"
+    ></app-select>
+
+    <!-- Category Filter -->
+    <app-select
+      *ngIf="categories.length > 0"
+      [options]="categoryOptions"
+      [placeholder]="'All Categories'"
+      [(ngModel)]="selectedCategory"
+      (selectionChange)="onCategoryChange($event)"
+      bgColor="bg-dark-blue"
+      class="w-32 md:w-40"
+    ></app-select>
+
+    <!-- Payment Type Filter -->
+    <app-select
+      *ngIf="paymentTypes.length > 0"
+      [options]="paymentTypeOptions"
+      [placeholder]="'All Accounts'"
+      [(ngModel)]="selectedPaymentType"
+      (selectionChange)="onPaymentTypeChange($event)"
+      bgColor="bg-dark-blue"
+      class="w-32 md:w-40"
+    ></app-select>
+
+    <div class="flex-grow"></div>
+
+    <!-- Clear Filters -->
+    <button
+      *ngIf="hasActiveFilters"
+      (click)="clearFilters()"
+      class="text-xs text-zinc-400 hover:text-white underline decoration-zinc-600 hover:decoration-white underline-offset-4 transition-colors"
+    >
+      Clear Filters
+    </button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="mb-4">
+    <div class="text-xs text-red-400 font-mono p-2 bg-red-900/20 border border-red-900 rounded">
+      ERROR: {{ error }}
+    </div>
+  </div>
+
+  <!-- Table Container -->
+  <div
+    class="flex-1 bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden relative min-h-[600px] flex flex-col shadow-xl"
+  >
+    <!-- Empty State -->
+    <div
+      *ngIf="rowData.length === 0 && !loading && !error"
+      class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 z-0 h-full w-full bg-zinc-900/50"
+    >
+      <svg class="h-10 w-10 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
+      <p>{{ emptyStateMessage }}</p>
+    </div>
+
+    <!-- AG Grid -->
+    <ag-grid-angular
+      style="width: 100%; height: 100%; min-height: 550px"
+      class="flex-1"
+      [theme]="theme"
+      [headerHeight]="headerHeight"
+      [rowHeight]="rowHeight"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [rowData]="rowData"
+      [suppressPaginationPanel]="true"
+      (gridReady)="onGridReady($event)"
+      (sortChanged)="onSortChanged($event)"
+      (rowClicked)="onRowClicked($event)"
+    ></ag-grid-angular>
+
+    <!-- Custom Pagination Controls -->
+    <div
+      *ngIf="showPagination"
+      class="px-4 py-3 border-t border-zinc-800 bg-zinc-900 flex items-center justify-between"
+    >
+      <div class="text-xs text-zinc-500">
+        Showing
+        <span class="text-zinc-300 font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span> to
+        <span class="text-zinc-300 font-medium">{{
+          Math.min(currentPage * pageSize, totalRecords)
+        }}</span>
+        of <span class="text-zinc-300 font-medium">{{ totalRecords }}</span> results
+      </div>
+      <div class="flex items-center space-x-1">
+        <button
+          (click)="changePage(currentPage - 1)"
+          [disabled]="currentPage === 1 || loading"
+          class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Previous Page"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
+        </button>
+
+        <ng-container *ngFor="let page of visiblePages">
+          <button
+            (click)="changePage(page)"
+            [class.bg-brand]="currentPage === page"
+            [class.text-black]="currentPage === page"
+            [class.border-brand]="currentPage === page"
+            [class.font-semibold]="currentPage === page"
+            [class.bg-transparent]="currentPage !== page"
+            [class.text-zinc-400]="currentPage !== page"
+            [class.border-transparent]="currentPage !== page"
+            [class.hover:bg-zinc-800]="currentPage !== page"
+            class="px-3 py-1 text-xs rounded-md border transition-all"
+            [disabled]="loading"
+          >
+            {{ page }}
+          </button>
+        </ng-container>
+
+        <button
+          (click)="changePage(currentPage + 1)"
+          [disabled]="currentPage >= totalPages || loading"
+          class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="Next Page"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div
+      *ngIf="loading"
+      class="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center z-10 transition-opacity duration-300"
+    >
+      <div
+        class="animate-spin h-8 w-8 border-2 border-brand border-t-transparent rounded-full"
+      ></div>
+    </div>
+  </div>
+</div>

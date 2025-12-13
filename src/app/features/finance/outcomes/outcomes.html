@@ -1,0 +1,13 @@
+<app-data-table title="Outcomes" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowData]="rowData"
+    [loading]="isLoading" [error]="errorMessage" [currentPage]="currentPage" [pageSize]="pageSize"
+    [totalRecords]="totalRecords" [(searchValue)]="searchQuery" [(selectedMonth)]="selectedMonth"
+    [(selectedYear)]="selectedYear" [(selectedCategory)]="selectedCategory"
+    [(selectedPaymentType)]="selectedPaymentType" [categories]="categories" [paymentTypes]="paymentTypes"
+    [months]="months" [years]="years" [showAddButton]="true" [showFilters]="true" addButtonText="+ New Outcome"
+    emptyStateMessage="No outcomes found matching your criteria." (gridReady)="onGridReady()"
+    (sortChanged)="onSortChanged($event)" (pageChanged)="onPageChanged($event)" (filterChanged)="onFilterChanged()"
+    (cellClicked)="onCellClicked($event)" (addClicked)="onAddOutcome()"></app-data-table>
+
+<!-- Expense Edit Dialog -->
+<app-expense-dialog [expense]="selectedExpense" [isOpen]="isDialogOpen" (closeDialog)="onDialogClose()"
+    (expenseSaved)="onExpenseSaved($event)"></app-expense-dialog>

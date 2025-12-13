@@ -1,0 +1,13 @@
+<app-data-table title="Incomes" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowData]="rowData"
+    [loading]="isLoading" [error]="errorMessage" [currentPage]="currentPage" [pageSize]="pageSize"
+    [totalRecords]="totalRecords" [(searchValue)]="searchQuery" [(selectedMonth)]="selectedMonth"
+    [(selectedYear)]="selectedYear" [(selectedCategory)]="selectedCategory"
+    [(selectedPaymentType)]="selectedPaymentType" [categories]="categories" [paymentTypes]="paymentTypes"
+    [months]="months" [years]="years" [showAddButton]="true" [showFilters]="true" addButtonText="+ New Income"
+    emptyStateMessage="No incomes found matching your criteria." (gridReady)="onGridReady()"
+    (sortChanged)="onSortChanged($event)" (pageChanged)="onPageChanged($event)" (filterChanged)="onFilterChanged()"
+    (cellClicked)="onCellClicked($event)" (addClicked)="onAddIncome()"></app-data-table>
+
+<!-- Income Dialog -->
+<app-income-dialog [income]="selectedIncome" [isOpen]="isDialogOpen" (closeDialog)="onDialogClose()"
+    (incomeSaved)="onIncomeSaved($event)"></app-income-dialog>
