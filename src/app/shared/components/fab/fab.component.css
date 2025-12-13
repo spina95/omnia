@@ -1,0 +1,7 @@
+/* FAB Component Styles */
+
+/* No additional CSS needed as all styles are handled by Tailwind classes */
+/* The component uses Tailwind's responsive classes and utility classes for styling */
+/* The md:hidden class ensures the FAB only appears on mobile screens */
+/* The fixed positioning places it at the bottom-right corner */
+/* Transition classes provide smooth hover animations */

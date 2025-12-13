@@ -68,14 +68,15 @@
 
                 <!-- Category -->
                 <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
-                        Category
-                    </label>
-                    <select [(ngModel)]="formData.category_id" name="category_id"
-                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors cursor-pointer hover:bg-zinc-900">
-                        <option [ngValue]="null">Select a category</option>
-                        <option *ngFor="let cat of categories" [ngValue]="cat.id">{{ cat.name }}</option>
-                    </select>
+                    <app-select
+                        [options]="categoriesOptions"
+                        [label]="'Category'"
+                        [placeholder]="'Select a category...'"
+                        [(ngModel)]="formData.category_id"
+                        name="category_id"
+                        (selectionChange)="onCategoryChange()"
+                        bgColor="bg-zinc-950"
+                    ></app-select>
                     <!-- Category Preview -->
                     <div *ngIf="formData.category_id" class="mt-2">
                         <span [style.background-color]="getCategoryColor(formData.category_id) + '33'"
@@ -89,14 +90,15 @@
 
                 <!-- Payment Type / Account -->
                 <div>
-                    <label class="block text-sm font-medium text-zinc-300 mb-2">
-                        Account
-                    </label>
-                    <select [(ngModel)]="formData.payment_type_id" name="payment_type_id"
-                        class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors cursor-pointer hover:bg-zinc-900">
-                        <option [ngValue]="null">Select an account</option>
-                        <option *ngFor="let pt of paymentTypes" [ngValue]="pt.id">{{ pt.name }}</option>
-                    </select>
+                    <app-select
+                        [options]="paymentTypesOptions"
+                        [label]="'Account'"
+                        [placeholder]="'Select an account...'"
+                        [(ngModel)]="formData.payment_type_id"
+                        name="payment_type_id"
+                        (selectionChange)="onPaymentTypeChange()"
+                        bgColor="bg-zinc-950"
+                    ></app-select>
                     <!-- Payment Type Preview -->
                     <div *ngIf="formData.payment_type_id" class="mt-2">
                         <span [style.background-color]="getPaymentTypeColor(formData.payment_type_id) + '33'"
