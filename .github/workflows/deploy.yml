@@ -1,0 +1,37 @@
+name: Deploy Angular app to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master   # or 'main' if your branch is called main
+
+permissions:
+  contents: write   # needed to push to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app
+        run: npm run github-build
+
+      # If your outputPath is dist/omnia/browser, set folder: dist/omnia/browser
+      # If it's just dist/omnia, change accordingly.
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist/omnia/browser
