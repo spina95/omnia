@@ -6,8 +6,13 @@
     [months]="months" [years]="years" [showAddButton]="true" [showFilters]="true" addButtonText="+ New Outcome"
     emptyStateMessage="No outcomes found matching your criteria." (gridReady)="onGridReady()"
     (sortChanged)="onSortChanged($event)" (pageChanged)="onPageChanged($event)" (filterChanged)="onFilterChanged()"
-    (cellClicked)="onCellClicked($event)" (addClicked)="onAddOutcome()"></app-data-table>
+    (cellClicked)="onCellClicked($event)" (addClicked)="onAddOutcome()"
+    (scheduledExpensesClicked)="onManageScheduledExpenses()"></app-data-table>
 
 <!-- Expense Edit Dialog -->
 <app-expense-dialog [expense]="selectedExpense" [isOpen]="isDialogOpen" (closeDialog)="onDialogClose()"
     (expenseSaved)="onExpenseSaved($event)"></app-expense-dialog>
+
+<!-- Scheduled Expense Dialog -->
+<app-scheduled-expense-dialog [isOpen]="isScheduledDialogOpen" (closeDialog)="onScheduledDialogClose()"
+    (scheduledExpenseSaved)="onScheduledExpenseSaved($event)"></app-scheduled-expense-dialog>

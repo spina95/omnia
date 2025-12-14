@@ -17,3 +17,4 @@ trigger: always_on
 - Follow accessibility best practices (semantic HTML, sensible aria attributes, keyboard navigation where relevant).
 - Handle errors gracefully (e.g. show user-friendly error messages on login failure).
 - Keep dependencies minimal and avoid unnecessary libraries beyond Angular, Spartan NG, Tailwind, and Supabase.
+- use components in shared folder when possible

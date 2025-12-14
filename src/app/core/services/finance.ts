@@ -395,6 +395,135 @@ export class FinanceService {
     return data;
   }
 
+  // ==================== SCHEDULED EXPENSES ====================
+
+  async getScheduledExpenses() {
+    const { data, error } = await this.supabase.client
+      .from('scheduled_expenses')
+      .select(
+        `
+        id,
+        name,
+        amount,
+        date,
+        repeat_interval,
+        next_run,
+        category_id,
+        expense_categories ( id, name, color ),
+        paymenttype_id,
+        payment_types ( id, name, color )
+      `
+      )
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Transform the data to ensure proper object structure
+    return data?.map((expense: any) => ({
+      ...expense,
+      expense_categories: Array.isArray(expense.expense_categories)
+        ? expense.expense_categories[0] || null
+        : expense.expense_categories,
+      payment_types: Array.isArray(expense.payment_types)
+        ? expense.payment_types[0] || null
+        : expense.payment_types,
+    }));
+  }
+
+  async createScheduledExpense(expense: {
+    name: string;
+    amount: number;
+    date: string;
+    category_id?: number;
+    paymenttype_id?: number;
+    repeat_interval?: string;
+    next_run?: string;
+  }) {
+    const { data, error } = await this.supabase.client
+      .from('scheduled_expenses')
+      .insert(expense)
+      .select(
+        `
+        id,
+        name,
+        amount,
+        date,
+        repeat_interval,
+        next_run,
+        category_id,
+        expense_categories ( id, name, color ),
+        paymenttype_id,
+        payment_types ( id, name, color )
+      `
+      )
+      .single();
+
+    if (error) throw error;
+
+    // Transform the data to ensure proper object structure
+    const transformedData = data
+      ? {
+          ...data,
+          expense_categories: data.expense_categories?.[0] || null,
+          payment_types: data.payment_types?.[0] || null,
+        }
+      : null;
+
+    return transformedData;
+  }
+
+  async updateScheduledExpense(
+    id: number,
+    updates: {
+      name?: string;
+      amount?: number;
+      date?: string;
+      category_id?: number;
+      paymenttype_id?: number;
+      repeat_interval?: string;
+      next_run?: string;
+    }
+  ) {
+    const { data, error } = await this.supabase.client
+      .from('scheduled_expenses')
+      .update(updates)
+      .eq('id', id)
+      .select(
+        `
+        id,
+        name,
+        amount,
+        date,
+        repeat_interval,
+        next_run,
+        category_id,
+        expense_categories ( id, name, color ),
+        paymenttype_id,
+        payment_types ( id, name, color )
+      `
+      )
+      .single();
+
+    if (error) throw error;
+
+    // Transform the data to ensure proper object structure
+    const transformedData = data
+      ? {
+          ...data,
+          expense_categories: data.expense_categories?.[0] || null,
+          payment_types: data.payment_types?.[0] || null,
+        }
+      : null;
+
+    return transformedData;
+  }
+
+  async deleteScheduledExpense(id: number) {
+    const { error } = await this.supabase.client.from('scheduled_expenses').delete().eq('id', id);
+
+    if (error) throw error;
+  }
+
   // ==================== BUDGETS ====================
 
   async getBudgets() {

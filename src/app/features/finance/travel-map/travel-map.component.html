@@ -1,0 +1,247 @@
+<div class="space-y-6 p-6">
+  <!-- Header -->
+  <div class="border-b border-sidebar-border pb-5">
+    <h3 class="text-2xl font-semibold leading-6 text-white">Travel Map</h3>
+    <p class="mt-2 max-w-4xl text-sm text-slate-400">Track the places you've visited around the world</p>
+  </div>
+
+  <!-- Map Section -->
+  <div class="bg-background-card border border-sidebar-border rounded-lg p-4">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-base font-semibold text-white">World Map</h4>
+      <div class="text-sm text-slate-400">
+        Click on the map to add a new visited place
+      </div>
+    </div>
+    <div 
+      id="map" 
+      class="h-[600px] rounded-lg overflow-hidden border border-sidebar-border relative z-10"
+      [class.border-brand]="selectedPosition()"
+    >
+      <div *ngIf="isLoading()" class="absolute inset-0 bg-background-card bg-opacity-50 flex items-center justify-center z-10">
+        <div class="text-center">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+          <p class="mt-2 text-sm text-slate-400">Loading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Stats Cards -->
+    <div class="lg:col-span-1 space-y-6">
+      <!-- Countries Card -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 002.83 0l1.42-1.42A1.99 1.99 0 0118 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 010 2.83l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42a1.99 1.99 0 01-2.83 0l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42A1.99 1.99 0 013.055 3.9z"/>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Countries Visited</dt>
+                <dd>
+                  <div class="text-lg font-semibold text-brand">
+                    {{ stats()?.total_countries || 0 }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Places Card -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Total Places</dt>
+                <dd>
+                  <div class="text-lg font-semibold text-green-500">
+                    {{ stats()?.total_places || 0 }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Countries List -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="px-5 py-4 border-b border-sidebar-border">
+          <h4 class="text-base font-semibold text-white">Countries Visited</h4>
+        </div>
+        <div class="p-5">
+          <div *ngIf="countryStats().length === 0" class="text-sm text-slate-400">
+            No countries yet. Click on the map to add your first visited place!
+          </div>
+          <div *ngFor="let country of countryStats()" class="flex items-center justify-between py-3 border-b border-sidebar-border last:border-b-0">
+            <div>
+              <div class="font-medium text-white">{{ country.country_name }}</div>
+              <div class="text-sm text-slate-400">{{ country.country_code }}</div>
+            </div>
+            <div class="bg-brand text-white px-3 py-1 rounded-full text-sm font-semibold">
+              {{ country.places_count }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="lg:col-span-2">
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="px-5 py-4 border-b border-sidebar-border">
+          <h4 class="text-base font-semibold text-white">Places per Country</h4>
+        </div>
+        <div class="p-5">
+          <div *ngIf="countryStats().length === 0" class="text-sm text-slate-400 text-center py-8">
+            Add some places to see the chart!
+          </div>
+          <apx-chart 
+            *ngIf="countryStats().length > 0"
+            [series]="chartConfig.series"
+            [chart]="chartConfig.chart"
+            [plotOptions]="chartConfig.plotOptions"
+            [dataLabels]="chartConfig.dataLabels"
+            [stroke]="chartConfig.stroke"
+            [xaxis]="chartConfig.xaxis"
+            [yaxis]="chartConfig.yaxis"
+            [fill]="chartConfig.fill"
+            [tooltip]="chartConfig.tooltip"
+            [title]="chartConfig.title"
+            class="w-full"
+          >
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Place Dialog -->
+  <div *ngIf="selectedPosition()" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
+    <div class="bg-background-card rounded-lg border border-sidebar-border max-w-2xl w-full max-h-[85vh] overflow-hidden animate-scale-in">
+      <div class="px-5 py-4 border-b border-sidebar-border flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-white">
+          {{ isEditMode() ? 'Edit Visited Place' : 'Add Visited Place' }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <button (click)="selectedPosition.set(null)" class="text-slate-400 hover:text-white transition-colors p-1 hover:bg-sidebar-hover rounded">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <span *ngIf="isEditMode()" class="text-sm text-slate-400">(Edit Mode)</span>
+        </div>
+      </div>
+      
+      <div *ngIf="error()" class="mx-5 mt-4 p-3 bg-red-900/20 border border-red-900 rounded-md text-red-400 text-sm">
+        {{ error() }}
+      </div>
+
+      <div class="px-5 py-4 overflow-y-auto max-h-[calc(85vh-140px)]">
+        <form [formGroup]="addPlaceForm" (ngSubmit)="onSubmitAddPlace()">
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Coordinates (Auto-computed) -->
+            <div>
+              <label class="block text-sm font-medium text-slate-400 mb-1">Latitude</label>
+              <input 
+                type="number" 
+                formControlName="lat"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+                readonly
+                placeholder="Auto-computed from country/city"
+              >
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-400 mb-1">Longitude</label>
+              <input 
+                type="number" 
+                formControlName="lng"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+                readonly
+                placeholder="Auto-computed from country/city"
+              >
+            </div>
+          </div>
+
+          <!-- Country -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-400 mb-1">Country</label>
+            <select 
+              formControlName="country_code"
+              class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+            >
+              <option value="">Select a country</option>
+              <option *ngFor="let country of countries" [value]="country.code">
+                {{ country.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- City -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-400 mb-1">City (Optional)</label>
+            <input 
+              type="text" 
+              formControlName="city"
+              placeholder="e.g., Rome"
+              class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+            >
+          </div>
+
+          <!-- Visit Date -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-400 mb-1">Visit Date (Optional)</label>
+            <input 
+              type="date" 
+              formControlName="visit_date"
+              class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+            >
+          </div>
+
+          <!-- Notes -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-slate-400 mb-1">Notes (Optional)</label>
+            <textarea 
+              formControlName="notes"
+              rows="3"
+              placeholder="Add some notes about your visit..."
+              class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors resize-none"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="px-5 py-4 border-t border-sidebar-border flex items-center justify-end gap-3">
+        <button (click)="selectedPosition.set(null)" [disabled]="isSaving"
+          class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white bg-transparent border border-slate-700 rounded-md hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          Cancel
+        </button>
+        
+        <button *ngIf="isEditMode()" (click)="onDeletePlace()" [disabled]="isSaving"
+          class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          Delete
+        </button>
+        
+        <button (click)="isEditMode() ? onSubmitEditPlace() : onSubmitAddPlace()" [disabled]="addPlaceForm.invalid || isSaving"
+          class="px-4 py-2 text-sm font-medium text-black bg-brand rounded-md hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+          <span *ngIf="isSaving" class="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></span>
+          <span>{{ isEditMode() ? 'Update Place' : 'Save Place' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

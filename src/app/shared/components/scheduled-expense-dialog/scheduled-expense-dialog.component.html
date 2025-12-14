@@ -1,0 +1,230 @@
+<!-- Dialog Backdrop -->
+<div *ngIf="isOpen"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+    (click)="close()">
+
+    <!-- Dialog Container -->
+    <div class="bg-zinc-900 rounded-lg border border-zinc-800 shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden animate-scale-in"
+        (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50">
+            <h2 class="text-xl font-semibold text-white">Manage Scheduled Expenses</h2>
+            <div class="flex items-center gap-3">
+                <button (click)="refreshScheduledExpenses()"
+                    [disabled]="isLoading"
+                    class="px-3 py-1.5 text-sm font-medium text-zinc-300 hover:text-white bg-zinc-800 rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Refresh
+                </button>
+                <button (click)="close()"
+                    class="text-zinc-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage"
+                class="mb-4 p-3 bg-red-900/20 border border-red-900 rounded-md text-red-400 text-sm">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+                <div class="animate-spin h-8 w-8 border-2 border-brand border-t-transparent rounded-full"></div>
+            </div>
+
+            <!-- Scheduled Expenses Table -->
+            <div *ngIf="!isLoading" class="space-y-6">
+
+                <!-- Add New Expense Form -->
+                <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-white mb-4">
+                        {{ isEditing ? 'Edit Scheduled Expense' : 'Add New Scheduled Expense' }}
+                    </h3>
+
+                    <!-- Error Message -->
+                    <div *ngIf="formErrorMessage"
+                        class="mb-4 p-3 bg-red-900/20 border border-red-900 rounded-md text-red-400 text-sm">
+                        {{ formErrorMessage }}
+                    </div>
+
+                    <form class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        <!-- Name -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-zinc-300 mb-2">
+                                Name <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text" [(ngModel)]="formData.name" name="name" placeholder="e.g., Monthly Rent"
+                                class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+                        </div>
+
+                        <!-- Amount -->
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-2">
+                                Amount (€) <span class="text-red-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">€</span>
+                                <input type="number" [(ngModel)]="formData.amount" name="amount" step="0.01" min="0"
+                                    placeholder="0.00"
+                                    class="w-full pl-10 pr-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+                            </div>
+                        </div>
+
+                        <!-- Start Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-2">
+                                Start Date <span class="text-red-400">*</span>
+                            </label>
+                            <input type="date" [(ngModel)]="formData.date" name="date"
+                                class="w-full px-2 py-1.5 md:px-3 md:py-2 bg-zinc-900 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors text-xs md:text-sm" />
+                        </div>
+
+                        <!-- Frequency -->
+                        <div>
+                            <label class="block text-sm font-medium text-zinc-300 mb-2">
+                                Frequency <span class="text-red-400">*</span>
+                            </label>
+                            <app-select
+                                [(ngModel)]="formData.repeat_interval"
+                                name="repeat_interval"
+                                [options]="frequencyOptions"
+                                [placeholder]="'Select frequency...'"
+                                [bgColor]="'bg-zinc-900'"
+                            >
+                            </app-select>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <app-select
+                                [options]="categoriesOptions"
+                                [label]="'Category'"
+                                [placeholder]="'Select a category...'"
+                                [(ngModel)]="formData.category_id"
+                                name="category_id"
+                                (selectionChange)="onCategoryChange()"
+                                bgColor="bg-zinc-900"
+                            >
+                            </app-select>
+                        </div>
+
+                        <!-- Account -->
+                        <div>
+                            <app-select
+                                [options]="paymentTypesOptions"
+                                [label]="'Account'"
+                                [placeholder]="'Select an account...'"
+                                [(ngModel)]="formData.paymenttype_id"
+                                name="paymenttype_id"
+                                (selectionChange)="onPaymentTypeChange()"
+                                bgColor="bg-zinc-900"
+                            >
+                            </app-select>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="md:col-span-3 flex items-center justify-end gap-3 pt-2">
+                            <button *ngIf="isEditing" type="button" (click)="cancelEdit()"
+                                class="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-transparent border border-zinc-700 rounded-md hover:bg-zinc-800 transition-colors">
+                                Cancel Edit
+                            </button>
+                            <button type="button" (click)="save()"
+                                [disabled]="isSaving"
+                                class="px-4 py-2 text-sm font-medium text-black bg-brand rounded-md hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                                <span *ngIf="isSaving"
+                                    class="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"></span>
+                                {{ isSaving ? 'Saving...' : (isEditing ? 'Update Scheduled Expense' : 'Create Scheduled Expense') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Scheduled Expenses Table -->
+                <div class="bg-zinc-950 border border-zinc-800 rounded-lg overflow-hidden">
+                    <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-white">Existing Scheduled Expenses</h3>
+                        <span class="text-sm text-zinc-400">{{ scheduledExpenses.length }} total</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-zinc-900">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Amount</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Start Date</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Frequency</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Category</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Account</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-800">
+                                <tr *ngFor="let expense of scheduledExpenses" class="hover:bg-zinc-900/50 transition-colors">
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-white">{{ expense.name }}</td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-300">
+                                        {{ expense.amount | currency:'EUR':'symbol':'1.2-2' }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-300">
+                                        {{ expense.date | date:'dd/MM/yyyy' }}
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-zinc-300">
+                                        <span class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-full text-xs font-medium">
+                                            {{ expense.repeat_interval | titlecase }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span *ngIf="expense.expense_categories" 
+                                            [style.background-color]="getCategoryColor(expense.expense_categories.id) + '33'"
+                                            [style.color]="getCategoryColor(expense.expense_categories.id)"
+                                            [style.border-color]="getCategoryColor(expense.expense_categories.id) + '4d'"
+                                            class="px-2.5 py-1 rounded-full border text-xs font-medium inline-flex items-center">
+                                            {{ expense.expense_categories.name }}
+                                        </span>
+                                        <span *ngIf="!expense.expense_categories" class="text-zinc-500 text-xs">No category</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                        <span *ngIf="expense.payment_types"
+                                            [style.background-color]="getPaymentTypeColor(expense.payment_types.id) + '33'"
+                                            [style.color]="getPaymentTypeColor(expense.payment_types.id)"
+                                            [style.border-color]="getPaymentTypeColor(expense.payment_types.id) + '4d'"
+                                            class="px-2.5 py-1 rounded-full border text-xs font-medium inline-flex items-center">
+                                            {{ expense.payment_types.name }}
+                                        </span>
+                                        <span *ngIf="!expense.payment_types" class="text-zinc-500 text-xs">No account</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium space-x-2">
+                                        <button (click)="editScheduledExpense(expense)"
+                                            class="text-blue-400 hover:text-blue-300 transition-colors">
+                                            Edit
+                                        </button>
+                                        <button (click)="deleteScheduledExpense(expense)"
+                                            class="text-red-400 hover:text-red-300 transition-colors">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="scheduledExpenses.length === 0">
+                                    <td colspan="7" class="px-4 py-8 text-center text-zinc-400">
+                                        <div class="text-sm">No scheduled expenses found.</div>
+                                        <div class="text-xs text-zinc-500 mt-1">Create your first scheduled expense above.</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

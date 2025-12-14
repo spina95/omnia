@@ -2,13 +2,22 @@
   <!-- Header -->
   <div *ngIf="showHeader" class="flex items-center justify-between mb-8">
     <h1 class="text-2xl font-semibold text-white tracking-tight">{{ title }}</h1>
-    <button
-      *ngIf="showAddButton"
-      (click)="onAddButtonClick()"
-      class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors text-sm"
-    >
-      {{ addButtonText }}
-    </button>
+    <div class="flex items-center gap-3">
+      <button
+        *ngIf="showAddButton"
+        (click)="onAddButtonClick()"
+        class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors text-sm"
+      >
+        {{ addButtonText }}
+      </button>
+      <button
+        *ngIf="title === 'Outcomes'"
+        (click)="onScheduledExpensesClick()"
+        class="bg-zinc-800 text-white px-4 py-2 rounded font-medium hover:bg-zinc-700 transition-colors text-sm"
+      >
+        Manage Scheduled Expenses
+      </button>
+    </div>
   </div>
 
   <!-- Filters Toolbar -->

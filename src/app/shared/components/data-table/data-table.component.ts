@@ -105,6 +105,7 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Output() rowClicked = new EventEmitter<any>();
   @Output() cellClicked = new EventEmitter<any>(); // For handling cell-specific actions like delete
   @Output() addClicked = new EventEmitter<void>();
+  @Output() scheduledExpensesClicked = new EventEmitter<void>();
   @Output() filterChanged = new EventEmitter<void>();
 
   // Internal search model (two-way binding support)
@@ -276,5 +277,9 @@ export class DataTableComponent implements OnInit, OnChanges {
 
   onAddButtonClick() {
     this.addClicked.emit();
+  }
+
+  onScheduledExpensesClick() {
+    this.scheduledExpensesClicked.emit();
   }
 }

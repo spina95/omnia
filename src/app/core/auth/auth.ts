@@ -2,9 +2,10 @@ import { Injectable, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthSession, User, AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { SupabaseService } from '../services/supabase';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   // Signals for reactive state
@@ -15,10 +16,7 @@ export class AuthService {
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => !!this._session());
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private router: Router
-  ) {
+  constructor(private supabaseService: SupabaseService, private router: Router) {
     // Initialize session from Supabase
     this.supabaseService.client.auth.getSession().then(({ data }) => {
       this._session.set(data.session);
@@ -26,20 +24,22 @@ export class AuthService {
     });
 
     // Listen for auth changes
-    this.supabaseService.client.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
-      this._session.set(session);
-      this._user.set(session?.user ?? null);
+    this.supabaseService.client.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        this._session.set(session);
+        this._user.set(session?.user ?? null);
 
-      if (event === 'SIGNED_IN') {
-        const currentUrl = this.router.url;
-        // Only redirect to home if we are on the login page
-        if (currentUrl.includes('/login')) {
-          this.router.navigate(['/home']);
+        if (event === 'SIGNED_IN') {
+          const currentUrl = this.router.url;
+          // Only redirect to home if we are on the login page
+          if (currentUrl.includes('/login')) {
+            this.router.navigate(['/home']);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          this.router.navigate(['/login']);
         }
-      } else if (event === 'SIGNED_OUT') {
-        this.router.navigate(['/login']);
       }
-    });
+    );
   }
 
   async signInWithEmail(email: string): Promise<{ error: any }> {
@@ -61,5 +61,9 @@ export class AuthService {
 
   async signOut(): Promise<{ error: any }> {
     return this.supabaseService.client.auth.signOut();
+  }
+
+  getUserAsObservable(): Observable<User | null> {
+    return from(this.supabaseService.client.auth.getUser().then(({ data }) => data.user));
   }
 }

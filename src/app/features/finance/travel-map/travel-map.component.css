@@ -1,0 +1,293 @@
+/* Leaflet CSS - needs to be imported globally */
+/* This will be handled by importing leaflet.css in styles.css */
+
+/* Map container styles */
+#map {
+  position: relative;
+}
+
+#map .leaflet-control-attribution {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #e5e7eb;
+}
+
+#map .leaflet-popup-content-wrapper {
+  background-color: #111827;
+  color: #e5e7eb;
+  border-radius: 8px;
+}
+
+#map .leaflet-popup-tip {
+  background-color: #111827;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(17, 24, 39, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Chart container */
+.apexcharts-canvas {
+  width: 100% !important;
+  height: 350px !important;
+}
+
+/* Dialog styles - following shared component pattern */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999; /* Very high z-index to appear above Leaflet map */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.dialog-content {
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: calc(90vh - 32px);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.dialog-close-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.dialog-close-btn:hover {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+.dialog-content-scroll {
+  max-height: calc(90vh - 140px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #374151;
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.dialog-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background-color: #374151;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dialog-btn:hover {
+  background-color: #4b5563;
+}
+
+.dialog-btn-primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.dialog-btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.dialog-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #e5e7eb;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #374151;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+/* Stats cards */
+.stats-card {
+  background-color: #1f2937;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.stats-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stats-label {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Country list */
+.country-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #374151;
+}
+
+.country-item:last-child {
+  border-bottom: none;
+}
+
+.country-name {
+  font-weight: 500;
+}
+
+.country-code {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.country-count {
+  background-color: #3b82f6;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  #map {
+    height: 500px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #map {
+    height: 400px !important;
+  }
+
+  .stats-card {
+    padding: 12px;
+  }
+
+  .dialog-content {
+    padding: 16px;
+  }
+}

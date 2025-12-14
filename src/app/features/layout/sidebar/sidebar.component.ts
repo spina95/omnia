@@ -205,6 +205,40 @@ import { AuthService } from '../../../core/auth/auth';
                 >Budgets</span
               >
             </a>
+
+            <a
+              routerLink="/travel-map"
+              routerLinkActive="bg-brand/10 text-brand"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              [class.px-2]="!collapsed"
+              [class.justify-center]="collapsed"
+              [title]="collapsed ? 'Travel Map' : ''"
+            >
+              <svg
+                class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
+                [class.mr-3]="!collapsed"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 002.83 0l1.42-1.42A1.99 1.99 0 0118 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 010 2.83l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42a1.99 1.99 0 01-2.83 0l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42A1.99 1.99 0 013.055 3.9z"
+                />
+              </svg>
+              <span
+                class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                [class.w-0]="collapsed"
+                [class.opacity-0]="collapsed"
+                [class.ml-0]="collapsed"
+                [class.w-auto]="!collapsed"
+                [class.opacity-100]="!collapsed"
+                [class.ml-3]="!collapsed"
+                >Travel Map</span
+              >
+            </a>
           </div>
         </div>
 

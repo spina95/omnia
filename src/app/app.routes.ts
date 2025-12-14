@@ -39,6 +39,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/finance/budgets/budgets').then((m) => m.BudgetsComponent),
       },
+      {
+        path: 'travel-map',
+        loadComponent: () =>
+          import('./features/finance/travel-map/travel-map.component').then(
+            (m) => m.TravelMapComponent
+          ),
+      },
     ],
   },
   {
