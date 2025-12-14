@@ -12,9 +12,6 @@ import {
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
 import * as L from 'leaflet';
 
-// Import Leaflet CSS
-import 'leaflet/dist/leaflet.css';
-
 import { VisitedPlacesService } from './visited-places.service';
 import { GeocodingService, GeocodingResult } from './geocoding.service';
 import {
