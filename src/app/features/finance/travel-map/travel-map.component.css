@@ -1,6 +1,27 @@
 /* Leaflet CSS - needs to be imported globally */
 /* This will be handled by importing leaflet.css in styles.css */
 
+/* Fix for tile positioning issues */
+#map .leaflet-tile-container img {
+  width: 256px;
+  height: 256px;
+}
+
+#map .leaflet-tile {
+  width: 256px;
+  height: 256px;
+}
+
+/* Fix for marker icon issues */
+.leaflet-marker-icon {
+  background-color: transparent;
+}
+
+/* Ensure proper z-index for map controls */
+.leaflet-control {
+  z-index: 1000;
+}
+
 /* Map container styles */
 #map {
   position: relative;

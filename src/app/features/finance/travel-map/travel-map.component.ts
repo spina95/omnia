@@ -12,6 +12,9 @@ import {
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
 import * as L from 'leaflet';
 
+// Import Leaflet CSS
+import 'leaflet/dist/leaflet.css';
+
 import { VisitedPlacesService } from './visited-places.service';
 import { GeocodingService, GeocodingResult } from './geocoding.service';
 import {
@@ -56,13 +59,13 @@ export class TravelMapComponent implements OnInit, OnDestroy {
   isSaving = false;
   isEditMode = signal(false);
 
-  // Chart configuration
+  // Chart configuration - matching app styling
   chartConfig: any = {
     series: [],
     chart: {
       type: 'bar',
       height: 350,
-      background: '#0b1220',
+      background: 'transparent', // Transparent background
       foreColor: '#e5e7eb',
       toolbar: {
         show: false,
@@ -106,7 +109,7 @@ export class TravelMapComponent implements OnInit, OnDestroy {
     },
     fill: {
       opacity: 1,
-      colors: ['#60a5fa'],
+      colors: ['#22c55e'], // App's main green color
     },
     tooltip: {
       y: {
@@ -114,14 +117,7 @@ export class TravelMapComponent implements OnInit, OnDestroy {
       },
       theme: 'dark',
     },
-    title: {
-      text: 'Places per Country',
-      align: 'left',
-      style: {
-        color: '#e5e7eb',
-        fontSize: '16px',
-      },
-    },
+    // Removed title for cleaner look
   };
 
   private subscriptions: Subscription[] = [];
@@ -226,11 +222,17 @@ export class TravelMapComponent implements OnInit, OnDestroy {
       doubleClickZoom: false, // Disable double click zoom
       boxZoom: false, // Disable box zoom
       dragging: true, // Keep dragging enabled
+      worldCopyJump: true, // Allow panning across world copies
+      preferCanvas: false, // Use SVG instead of Canvas for better compatibility
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
       maxZoom: 19,
+      tileSize: 256,
+      zoomOffset: 0,
+      updateWhenZooming: true,
+      updateWhenIdle: true,
     }).addTo(this.map);
 
     // Add click handler to add new places
@@ -249,6 +251,24 @@ export class TravelMapComponent implements OnInit, OnDestroy {
         this.map.scrollWheelZoom.disable();
       }, 3000);
     });
+
+    // Fix for tile positioning issues - ensure map size is correct
+    setTimeout(() => {
+      this.map.invalidateSize(true);
+    }, 100);
+
+    // Add resize observer to handle container size changes
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      const mapElement = document.getElementById('map');
+      if (mapElement) {
+        const resizeObserver = new ResizeObserver(() => {
+          setTimeout(() => {
+            this.map.invalidateSize(true);
+          }, 100);
+        });
+        resizeObserver.observe(mapElement);
+      }
+    }
   }
 
   private addMarkersToMap(places: VisitedPlace[]): void {

@@ -69,7 +69,8 @@ export class HomeComponent implements OnInit {
   incomesAccountChartOptions: any;
 
   // Filters state
-  selectedPeriod: 'this-month' | 'last-6-months' | 'last-12-months' | 'all' = 'last-12-months';
+  selectedPeriod: 'current-month' | 'this-month' | 'last-6-months' | 'last-12-months' | 'all' =
+    'current-month';
   selectedPaymentTypes: number[] = [];
   selectedExpenseCategories: number[] = [];
   selectedIncomeCategories: number[] = [];
@@ -81,6 +82,7 @@ export class HomeComponent implements OnInit {
 
   // Period options for select
   periodOptions = [
+    { value: 'current-month', label: 'Current month' },
     { value: 'this-month', label: 'This month' },
     { value: 'last-6-months', label: 'Last 6 months' },
     { value: 'last-12-months', label: 'Last 12 months' },
@@ -128,6 +130,7 @@ export class HomeComponent implements OnInit {
     const endDate = startOfNextMonth.toISOString().slice(0, 10);
 
     switch (this.selectedPeriod) {
+      case 'current-month':
       case 'this-month': {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         return {
@@ -177,7 +180,12 @@ export class HomeComponent implements OnInit {
   }
 
   async onPeriodChange(value: string | number | null) {
-    this.selectedPeriod = value as 'this-month' | 'last-6-months' | 'last-12-months' | 'all';
+    this.selectedPeriod = value as
+      | 'current-month'
+      | 'this-month'
+      | 'last-6-months'
+      | 'last-12-months'
+      | 'all';
     await this.loadDashboardData();
   }
 
