@@ -1,9 +1,13 @@
 /* @import 'ag-grid-community/styles/ag-grid.css'; */
 /* @import 'ag-grid-community/styles/ag-theme-quartz.css'; */
+@import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Leaflet CSS - needed for map tiles and markers */
+@import 'leaflet/dist/leaflet.css';
 
 html,
 body,
