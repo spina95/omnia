@@ -10,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
-import * as L from 'leaflet';
 
 // Import Leaflet CSS
 // import 'leaflet/dist/leaflet.css';
