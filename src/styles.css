@@ -6,9 +6,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Leaflet CSS - needed for map tiles and markers */
-@import 'leaflet/dist/leaflet.css';
-
 html,
 body,
 app-root {

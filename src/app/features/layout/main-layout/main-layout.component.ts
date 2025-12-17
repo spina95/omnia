@@ -4,11 +4,19 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FabComponent } from '../../../shared/components/fab/fab.component';
 import { ExpenseDialogComponent } from '../../../shared/components/expense-dialog/expense-dialog.component';
+import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, FabComponent, ExpenseDialogComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    SidebarComponent,
+    FabComponent,
+    ExpenseDialogComponent,
+    ToastComponent,
+  ],
   template: `
     <div class="flex h-screen bg-background overflow-hidden">
       <!-- Mobile Overlay -->
@@ -68,6 +76,8 @@ import { ExpenseDialogComponent } from '../../../shared/components/expense-dialo
             [isOpen]="isExpenseDialogOpen()"
             (closeDialog)="onCloseExpenseDialog()"
           ></app-expense-dialog>
+          <!-- Toasts -->
+          <app-toast></app-toast>
         </main>
       </div>
     </div>

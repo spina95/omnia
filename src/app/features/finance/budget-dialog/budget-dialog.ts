@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Budget } from '../budgets/budget.interface';
 import { SelectComponent } from '../../../shared/components/select/select.component';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-budget-dialog',
@@ -18,6 +19,7 @@ export class BudgetDialogComponent {
   @Output() save = new EventEmitter<void>();
 
   private financeService = inject(FinanceService);
+  private notificationService = inject(NotificationService);
 
   formData = {
     max_amount: 0,
@@ -89,10 +91,22 @@ export class BudgetDialogComponent {
       } else {
         await this.financeService.createBudget(budgetData);
       }
+      this.notificationService.success(
+        'Budget saved',
+        3000,
+        'Budget saved',
+        `Budget for ${this.getPaymentTypeName(this.formData.payment_type_id)} saved`
+      );
       this.save.emit();
       this.onClose();
     } catch (error) {
       console.error('Error saving budget:', error);
+      this.notificationService.error(
+        'Failed to save budget',
+        3000,
+        'Error',
+        'Failed to save budget'
+      );
     } finally {
       this.loading = false;
     }

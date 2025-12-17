@@ -130,7 +130,15 @@ export class HomeComponent implements OnInit {
     const endDate = startOfNextMonth.toISOString().slice(0, 10);
 
     switch (this.selectedPeriod) {
-      case 'current-month':
+      case 'current-month': {
+        // For "Current month", filter from first day to last day of current month
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        return {
+          startDate: start.toISOString().slice(0, 10),
+          endDate: lastDayOfMonth.toISOString().slice(0, 10),
+        };
+      }
       case 'this-month': {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         return {

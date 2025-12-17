@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
 import { FinanceService } from '../../../core/services/finance';
+import { NotificationService } from '../../../core/services/notification.service';
 import {
   DataTableComponent,
   SortChangeEvent,
@@ -174,7 +175,11 @@ export class OutcomesComponent implements OnInit {
     cellStyle: { display: 'flex', alignItems: 'center' },
   };
 
-  constructor(private financeService: FinanceService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private financeService: FinanceService,
+    private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService
+  ) {
     // Generate last 5 years
     const currentYear = new Date().getFullYear();
     for (let i = 0; i < 5; i++) {
@@ -260,6 +265,12 @@ export class OutcomesComponent implements OnInit {
       // Remove from table
       this.rowData = this.rowData.filter((e) => e.id !== id);
       this.totalRecords--;
+      this.notificationService.success(
+        'Expense deleted',
+        3000,
+        'Expense deleted',
+        `Deleted "${expenseName}"`
+      );
       this.cdr.detectChanges();
     } catch (e: any) {
       console.error('Failed to delete expense', e);
@@ -300,10 +311,22 @@ export class OutcomesComponent implements OnInit {
         this.rowData[index] = expense;
         // Trigger change detection
         this.rowData = [...this.rowData];
+        this.notificationService.success(
+          'Expense updated',
+          3000,
+          'Expense updated',
+          `Updated "${expense.name}" (${expense.amount} €)`
+        );
       }
     } else {
       // Create mode - reload data to show the new expense
       this.loadData();
+      this.notificationService.success(
+        'Expense created',
+        3000,
+        'Expense created',
+        `Created "${expense.name}" (${expense.amount} €)`
+      );
     }
   }
 

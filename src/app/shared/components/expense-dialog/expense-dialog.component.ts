@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinanceService } from '../../../core/services/finance';
+import { NotificationService } from '../../../core/services/notification.service';
 import { SelectComponent, SelectOption } from '../select/select.component';
 
 @Component({
@@ -38,7 +39,10 @@ export class ExpenseDialogComponent implements OnInit {
   isSaving = false;
   errorMessage: string | null = null;
 
-  constructor(private financeService: FinanceService) {}
+  constructor(
+    private financeService: FinanceService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.loadMetadata();
@@ -145,6 +149,12 @@ export class ExpenseDialogComponent implements OnInit {
           payment_type_id: this.formData.payment_type_id,
         });
         this.expenseSaved.emit(updatedExpense);
+        this.notificationService.success(
+          'Expense updated',
+          3000,
+          'Expense updated',
+          `Updated "${updatedExpense.name}" (${updatedExpense.amount} €)`
+        );
       } else {
         // Create new expense
         const newExpense = await this.financeService.createExpense({
@@ -155,12 +165,19 @@ export class ExpenseDialogComponent implements OnInit {
           payment_type_id: this.formData.payment_type_id,
         });
         this.expenseSaved.emit(newExpense);
+        this.notificationService.success(
+          'Expense created',
+          3000,
+          'Expense created',
+          `Created "${newExpense.name}" (${newExpense.amount} €)`
+        );
       }
 
       this.close();
     } catch (e: any) {
       console.error('Failed to save expense', e);
       this.errorMessage = e.message || 'Failed to save expense';
+      this.notificationService.error(this.errorMessage ?? 'Failed to save expense');
     } finally {
       this.isSaving = false;
     }

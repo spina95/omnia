@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Budget } from './budget.interface';
 import { BudgetDialogComponent } from '../budget-dialog/budget-dialog';
 import { SelectComponent } from '../../../shared/components/select/select.component';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-budgets',
@@ -16,6 +17,7 @@ import { SelectComponent } from '../../../shared/components/select/select.compon
 export class BudgetsComponent implements OnInit {
   private financeService = inject(FinanceService);
   private cdr = inject(ChangeDetectorRef);
+  private notificationService = inject(NotificationService);
 
   budgets: Budget[] = [];
   loading = false;
@@ -77,6 +79,7 @@ export class BudgetsComponent implements OnInit {
       try {
         await this.financeService.deleteBudget(budget.id);
         await this.loadBudgets();
+        this.notificationService.success('Budget deleted');
       } catch (error) {
         console.error('Error deleting budget:', error);
       }

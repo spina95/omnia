@@ -61,7 +61,7 @@ export class DashboardService {
         .from('incomes')
         .select('amount')
         .gte('date', startDate)
-        .lt('date', endDate);
+        .lte('date', endDate);
 
       if (filters?.paymentTypeIds?.length) {
         incomesQuery = incomesQuery.in('paymentType_id', filters.paymentTypeIds);
@@ -78,7 +78,7 @@ export class DashboardService {
         .from('expenses')
         .select('amount')
         .gte('date', startDate)
-        .lt('date', endDate);
+        .lte('date', endDate);
 
       if (filters?.paymentTypeIds?.length) {
         expensesQuery = expensesQuery.in('paymentType_id', filters.paymentTypeIds);
@@ -106,7 +106,8 @@ export class DashboardService {
       }
 
       // Calculate savings percentage
-      const savingsPercentage = totalIncomes > 0 ? ((totalIncomes - totalExpenses) / totalIncomes) * 100 : 0;
+      const savingsPercentage =
+        totalIncomes > 0 ? ((totalIncomes - totalExpenses) / totalIncomes) * 100 : 0;
 
       return {
         totalIncomes,
