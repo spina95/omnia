@@ -177,7 +177,7 @@ export class ExpenseDialogComponent implements OnInit {
     } catch (e: any) {
       console.error('Failed to save expense', e);
       this.errorMessage = e.message || 'Failed to save expense';
-      this.notificationService.error(this.errorMessage ?? 'Failed to save expense');
+      this.notificationService.error((this.errorMessage ?? 'Failed to save expense') as string);
     } finally {
       this.isSaving = false;
     }

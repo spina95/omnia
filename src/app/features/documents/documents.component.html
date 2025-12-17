@@ -1,0 +1,96 @@
+<div class="p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-white">Documents</h2>
+    <div class="flex items-center space-x-3">
+      <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Search..." class="bg-background-card border-sidebar-border text-zinc-200 p-2 rounded mr-2" />
+      <app-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()" [options]="categoriesOptions" placeholder="All categories" bgColor="bg-background-card" class="w-48"></app-select>
+      <button (click)="openUpload()" class="bg-brand text-black px-3 py-2 rounded font-medium flex items-center">
+        <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4" />
+        </svg>
+        Upload
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="uploading" class="flex items-center justify-center py-6">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+  </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let d of documents" class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="h-10 w-10 rounded-full flex items-center justify-center text-white" [style.background]="'#111827'">
+              <span class="text-sm font-semibold">{{ d.name?.charAt(0) || 'D' }}</span>
+            </div>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="truncate text-sm font-medium text-slate-400">Document</dt>
+              <dd>
+                <div class="text-lg font-semibold text-white">{{ d.name }}</div>
+              </dd>
+            </dl>
+          </div>
+          <div class="ml-4 flex space-x-2">
+            <button (click)="preview(d)" class="text-slate-400 hover:text-white transition-colors" title="Preview">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0122 9.618V14a2 2 0 01-1.447 1.894L15 18v-8zM3 7v10a2 2 0 002 2h6v-8H5a2 2 0 00-2-2z" />
+              </svg>
+            </button>
+            <button (click)="download(d)" class="text-slate-400 hover:text-brand transition-colors" title="Download">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10l5-5 5 5M12 5v12" />
+              </svg>
+            </button>
+            <button (click)="delete(d)" class="text-slate-400 hover:text-red-400 transition-colors" title="Delete">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-sidebar-border">
+          <div class="flex items-center justify-between text-sm text-slate-400 mb-2">
+            <span>Category</span>
+            <span>{{ d.document_categories?.name || 'Uncategorized' }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm text-slate-400 mt-2">
+            <span>Type</span>
+            <span>{{ d.content_type }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm text-slate-400 mt-2">
+            <span>Uploaded</span>
+            <span>{{ d.created_at | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- Preview Modal -->
+    <div *ngIf="previewUrl" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+      <div class="bg-background-card border border-sidebar-border rounded p-4 max-w-4xl w-full">
+        <div class="flex justify-end mb-2">
+          <button (click)="previewUrl = null" class="text-slate-400 hover:text-white">Close</button>
+        </div>
+        <div class="h-[80vh]">
+          <iframe [src]="previewUrl" class="w-full h-full" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between mt-4">
+      <div class="text-sm text-slate-400">Showing {{ documents.length }} of {{ total }}</div>
+      <div class="flex items-center space-x-2">
+        <button (click)="onPageChange(page - 1)" [disabled]="page <= 1" class="px-3 py-1 rounded bg-background-card">Prev</button>
+        <div class="text-sm text-slate-200">Page {{ page }}</div>
+        <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= total" class="px-3 py-1 rounded bg-background-card">Next</button>
+      </div>
+    </div>
+</div>

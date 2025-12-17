@@ -1,0 +1,6 @@
+.bg-background-card {
+  background-color: var(--bg-card, #0b1220);
+}
+.border-sidebar-border {
+  border-color: rgba(255,255,255,0.04);
+}

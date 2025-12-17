@@ -46,6 +46,11 @@ export const routes: Routes = [
             (m) => m.TravelMapComponent
           ),
       },
+      {
+        path: 'documents',
+        loadComponent: () =>
+          import('./features/documents/documents.component').then((m) => m.DocumentsComponent),
+      },
     ],
   },
   {
