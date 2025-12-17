@@ -125,9 +125,8 @@ export class HomeComponent implements OnInit {
 
   private async calculateDateRange(): Promise<{ startDate?: string; endDate?: string }> {
     const now = new Date();
-    const today = now.toISOString().slice(0, 10);
     const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const endDate = startOfNextMonth.toISOString().slice(0, 10);
+    const endDate = this.formatLocalDate(startOfNextMonth);
 
     switch (this.selectedPeriod) {
       case 'current-month': {
@@ -135,28 +134,28 @@ export class HomeComponent implements OnInit {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         return {
-          startDate: start.toISOString().slice(0, 10),
-          endDate: lastDayOfMonth.toISOString().slice(0, 10),
+          startDate: this.formatLocalDate(start),
+          endDate: this.formatLocalDate(lastDayOfMonth),
         };
       }
       case 'this-month': {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         return {
-          startDate: start.toISOString().slice(0, 10),
+          startDate: this.formatLocalDate(start),
           endDate: endDate,
         };
       }
       case 'last-6-months': {
         const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
         return {
-          startDate: start.toISOString().slice(0, 10),
+          startDate: this.formatLocalDate(start),
           endDate: endDate,
         };
       }
       case 'last-12-months': {
         const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
         return {
-          startDate: start.toISOString().slice(0, 10),
+          startDate: this.formatLocalDate(start),
           endDate: endDate,
         };
       }
@@ -170,6 +169,14 @@ export class HomeComponent implements OnInit {
         };
       }
     }
+  }
+
+  // Format a Date using local timezone to YYYY-MM-DD
+  private formatLocalDate(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private async getFirstTransactionDate(): Promise<string | null> {
