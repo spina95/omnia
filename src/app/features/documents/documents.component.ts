@@ -40,6 +40,13 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   pendingDeleteDoc: any = null;
   showManageCategoriesDialog = false;
   showUploadDialog = false;
+  
+  // Edit document dialog state
+  showEditDialog = false;
+  editingDocument: any = null;
+  editName = '';
+  editDescription = '';
+  editCategoryId: number | null = null;
 
   constructor(
     private documentsService: DocumentsService,
@@ -186,5 +193,37 @@ export class DocumentsComponent implements OnInit, OnDestroy {
 
   async onDocumentUploaded() {
     await this.loadDocuments();
+  }
+
+  editDocument(doc: any) {
+    this.editingDocument = doc;
+    this.editName = doc.name;
+    this.editDescription = doc.description || '';
+    this.editCategoryId = doc.category_id;
+    this.showEditDialog = true;
+  }
+
+  closeEditDialog() {
+    this.showEditDialog = false;
+    this.editingDocument = null;
+  }
+
+  async saveDocumentChanges() {
+    if (!this.editingDocument) return;
+
+    try {
+      await this.documentsService.updateDocument(this.editingDocument.id, {
+        name: this.editName,
+        description: this.editDescription,
+        category_id: this.editCategoryId,
+      });
+      
+      this.notificationService.success('Document updated successfully');
+      await this.loadDocuments();
+    } catch (error: any) {
+      this.notificationService.error(error.message || 'Failed to update document');
+    } finally {
+      this.closeEditDialog();
+    }
   }
 }

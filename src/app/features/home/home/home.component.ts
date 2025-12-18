@@ -70,7 +70,7 @@ export class HomeComponent implements OnInit {
   incomesAccountChartOptions: any;
 
   // Filters state
-  selectedPeriod: 'current-month' | 'this-month' | 'last-6-months' | 'last-12-months' | 'all' | 'custom' =
+  selectedPeriod: 'current-month' | 'last-30-days' | 'last-6-months' | 'last-12-months' | 'all' | 'custom' =
     'current-month';
   selectedPaymentTypes: number[] = [];
   selectedExpenseCategories: number[] = [];
@@ -83,8 +83,8 @@ export class HomeComponent implements OnInit {
 
   // Period options for select
   periodOptions = [
-    { value: 'current-month', label: 'Current month' },
-    { value: 'this-month', label: 'This month' },
+    { value: 'current-month', label: 'Current Month' },
+    { value: 'last-30-days', label: 'Last 30 days' },
     { value: 'last-6-months', label: 'Last 6 months' },
     { value: 'last-12-months', label: 'Last 12 months' },
     { value: 'all', label: 'All' },
@@ -139,19 +139,23 @@ export class HomeComponent implements OnInit {
 
     switch (this.selectedPeriod) {
       case 'current-month': {
-        // For "Current month", filter from first day to last day of current month
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
-        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        // Current Month: dal 1 di questo mese all'ultimo giorno del mese
+        const year = now.getFullYear();
+        const month = now.getMonth() + 1; // JavaScript months are 0-indexed
+        const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+        
         return {
-          startDate: start.toISOString().slice(0, 10),
-          endDate: lastDayOfMonth.toISOString().slice(0, 10),
+          startDate: `${year}-${String(month).padStart(2, '0')}-01`,
+          endDate: `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`,
         };
       }
-      case 'this-month': {
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      case 'last-30-days': {
+        // Last 30 days: ultimi 30 giorni da oggi
+        const start = new Date(now);
+        start.setDate(start.getDate() - 30);
         return {
           startDate: start.toISOString().slice(0, 10),
-          endDate: endDate,
+          endDate: today,
         };
       }
       case 'last-6-months': {
@@ -227,7 +231,7 @@ export class HomeComponent implements OnInit {
   async onPeriodChange(value: string | number | null) {
     this.selectedPeriod = value as
       | 'current-month'
-      | 'this-month'
+      | 'last-30-days'
       | 'last-6-months'
       | 'last-12-months'
       | 'all'
@@ -451,6 +455,7 @@ export class HomeComponent implements OnInit {
         },
         markers: {
           size: 6,
+          strokeWidth: 0,
         },
       },
       tooltip: {
@@ -557,6 +562,7 @@ export class HomeComponent implements OnInit {
           height: 10,
           radius: 5,
           shape: 'circle',
+          strokeWidth: 0,
         },
       },
       tooltip: {
@@ -654,6 +660,7 @@ export class HomeComponent implements OnInit {
         },
         markers: {
           size: 6,
+          strokeWidth: 0,
         },
       },
       tooltip: {
