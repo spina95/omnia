@@ -100,6 +100,8 @@ export class HomeComponent implements OnInit {
   Math = Math;
 
   private instanceId = Math.random().toString(16).slice(2, 8);
+  private timelineDebounceTimer: any = null;
+  private readonly TIMELINE_DEBOUNCE_MS = 500; // 500ms di delay
 
   constructor(
     private dashboardService: DashboardService,
@@ -711,8 +713,16 @@ export class HomeComponent implements OnInit {
       this.selectedPeriod = 'custom';
     }
     
-    // Ricarica i dati della dashboard con il nuovo range
-    await this.loadDashboardData();
+    // Cancella il timer precedente se esiste
+    if (this.timelineDebounceTimer) {
+      clearTimeout(this.timelineDebounceTimer);
+    }
+    
+    // Imposta un nuovo timer per caricare i dati dopo il delay
+    this.timelineDebounceTimer = setTimeout(async () => {
+      await this.loadDashboardData();
+      this.timelineDebounceTimer = null;
+    }, this.TIMELINE_DEBOUNCE_MS);
   }
 
   private async updateTimelineFromPeriod() {
