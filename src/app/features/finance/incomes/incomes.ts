@@ -27,6 +27,11 @@ export class IncomesComponent implements OnInit {
   pageSize = 20;
   totalRecords = 0;
 
+  // Computed total
+  get totalAmount(): number {
+    return this.rowData.reduce((sum, item) => sum + (item.amount || 0), 0);
+  }
+
   // Sort state
   currentSort = 'date';
   currentOrder: 'asc' | 'desc' = 'desc';
@@ -45,8 +50,6 @@ export class IncomesComponent implements OnInit {
   // Metadata
   categories: any[] = [];
   paymentTypes: any[] = [];
-  // Total of amounts for current filters
-  totalAmount: number = 0;
   months = [
     { value: 1, label: 'January' },
     { value: 2, label: 'February' },
@@ -87,7 +90,7 @@ export class IncomesComponent implements OnInit {
       },
       cellStyle: {
         fontWeight: '600',
-        color: '#3ecf8e',
+        color: '#fff',
         fontSize: '14px',
         display: 'flex',
         alignItems: 'center',
@@ -308,8 +311,6 @@ export class IncomesComponent implements OnInit {
 
       if (data) {
         this.rowData = data;
-        // compute total amount for filtered data
-        this.totalAmount = data.reduce((sum: number, r: any) => sum + (Number(r.amount) || 0), 0);
         if (count !== null) this.totalRecords = count;
       }
     } catch (e: any) {

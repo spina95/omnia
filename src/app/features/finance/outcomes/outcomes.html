@@ -1,13 +1,6 @@
-<div class="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0 mb-3">
-    <div class="flex items-center justify-end text-sm text-white/90">
-        <div class="mr-4">Total:</div>
-        <div class="font-semibold">{{ totalAmount | number:'1.2-2' }} €</div>
-    </div>
-</div>
-
 <app-data-table title="Outcomes" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowData]="rowData"
     [loading]="isLoading" [error]="errorMessage" [currentPage]="currentPage" [pageSize]="pageSize"
-    [totalRecords]="totalRecords" [(searchValue)]="searchQuery" [(selectedMonth)]="selectedMonth"
+    [totalRecords]="totalRecords" [totalAmount]="totalAmount" [(searchValue)]="searchQuery" [(selectedMonth)]="selectedMonth"
     [(selectedYear)]="selectedYear" [(selectedCategory)]="selectedCategory"
     [(selectedPaymentType)]="selectedPaymentType" [categories]="categories" [paymentTypes]="paymentTypes"
     [months]="months" [years]="years" [showAddButton]="true" [showFilters]="true" addButtonText="+ New Outcome"

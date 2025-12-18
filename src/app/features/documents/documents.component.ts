@@ -7,11 +7,14 @@ import { AuthService } from '../../core/auth/auth';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../core/services/notification.service';
 import { SelectComponent } from '../../shared/components/select/select.component';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ManageCategoriesDialogComponent } from './manage-categories-dialog/manage-categories-dialog.component';
+import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 
 @Component({
   selector: 'app-documents',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectComponent],
+  imports: [CommonModule, FormsModule, SelectComponent, ConfirmationDialogComponent, ManageCategoriesDialogComponent, UploadDocumentDialogComponent],
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.css'],
 })
@@ -29,6 +32,14 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   search = '';
   previewUrl: string | null = null;
   Math = Math;
+
+  // Confirmation Dialog state
+  isConfirmDialogOpen = false;
+  confirmDialogTitle = '';
+  confirmDialogMessage = '';
+  pendingDeleteDoc: any = null;
+  showManageCategoriesDialog = false;
+  showUploadDialog = false;
 
   constructor(
     private documentsService: DocumentsService,
@@ -63,7 +74,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   async openUpload() {
-    window.dispatchEvent(new CustomEvent('openUploadDialog'));
+    this.showUploadDialog = true;
   }
 
   async download(doc: any) {
@@ -72,6 +83,19 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   async delete(doc: any) {
+    this.pendingDeleteDoc = doc;
+    this.confirmDialogTitle = 'Delete Document';
+    this.confirmDialogMessage = `Are you sure you want to delete "${doc.name}"? This action cannot be undone.`;
+    this.isConfirmDialogOpen = true;
+  }
+
+  async confirmDelete() {
+    if (!this.pendingDeleteDoc) return;
+    
+    const doc = this.pendingDeleteDoc;
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteDoc = null;
+
     try {
       await this.documentsService.deleteFileFromStorage(doc.storage_path);
       await this.documentsService.deleteDocument(doc.id);
@@ -80,6 +104,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     } catch (e: any) {
       this.notificationService.error(e.message || 'Failed to delete document');
     }
+  }
+
+  cancelDelete() {
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteDoc = null;
   }
 
   async loadDocuments() {
@@ -136,5 +165,26 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  openManageCategories() {
+    this.showManageCategoriesDialog = true;
+  }
+
+  closeManageCategories() {
+    this.showManageCategoriesDialog = false;
+  }
+
+  async onCategoriesUpdated() {
+    await this.loadCategories();
+    await this.loadDocuments();
+  }
+
+  closeUploadDialog() {
+    this.showUploadDialog = false;
+  }
+
+  async onDocumentUploaded() {
+    await this.loadDocuments();
   }
 }

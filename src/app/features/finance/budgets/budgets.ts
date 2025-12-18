@@ -6,11 +6,12 @@ import { Budget } from './budget.interface';
 import { BudgetDialogComponent } from '../budget-dialog/budget-dialog';
 import { SelectComponent } from '../../../shared/components/select/select.component';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-budgets',
   standalone: true,
-  imports: [CommonModule, FormsModule, BudgetDialogComponent],
+  imports: [CommonModule, FormsModule, BudgetDialogComponent, ConfirmationDialogComponent],
   templateUrl: './budgets.html',
   styleUrls: ['./budgets.css'],
 })
@@ -23,6 +24,12 @@ export class BudgetsComponent implements OnInit {
   loading = false;
   selectedBudget: Budget | null = null;
   isDialogOpen = false;
+
+  // Confirmation Dialog state
+  isConfirmDialogOpen = false;
+  confirmDialogTitle = '';
+  confirmDialogMessage = '';
+  pendingDeleteBudget: Budget | null = null;
 
   ngOnInit() {
     this.loadBudgets();
@@ -71,19 +78,32 @@ export class BudgetsComponent implements OnInit {
   }
 
   async deleteBudget(budget: Budget) {
-    if (
-      confirm(
-        `Are you sure you want to delete the budget for ${budget.payment_types?.name || 'Unknown'}?`
-      )
-    ) {
-      try {
-        await this.financeService.deleteBudget(budget.id);
-        await this.loadBudgets();
-        this.notificationService.success('Budget deleted');
-      } catch (error) {
-        console.error('Error deleting budget:', error);
-      }
+    this.pendingDeleteBudget = budget;
+    this.confirmDialogTitle = 'Delete Budget';
+    this.confirmDialogMessage = `Are you sure you want to delete the budget for ${budget.payment_types?.name || 'Unknown'}?`;
+    this.isConfirmDialogOpen = true;
+  }
+
+  async confirmDelete() {
+    if (!this.pendingDeleteBudget) return;
+    
+    const budget = this.pendingDeleteBudget;
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteBudget = null;
+
+    try {
+      await this.financeService.deleteBudget(budget.id);
+      await this.loadBudgets();
+      this.notificationService.success('Budget deleted');
+    } catch (error) {
+      console.error('Error deleting budget:', error);
+      this.notificationService.error('Failed to delete budget');
     }
+  }
+
+  cancelDelete() {
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteBudget = null;
   }
 
   onDialogClose() {

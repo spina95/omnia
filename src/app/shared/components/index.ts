@@ -7,3 +7,4 @@ export { ExpenseDialogComponent } from './expense-dialog/expense-dialog.componen
 export { IncomeDialogComponent } from './income-dialog/income-dialog.component';
 export { ScheduledExpenseDialogComponent } from './scheduled-expense-dialog/scheduled-expense-dialog.component';
 export { FabComponent } from './fab/fab.component';
+export { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinanceService } from '../../../core/services/finance';
 import { SelectComponent, SelectOption } from '../select/select.component';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-scheduled-expense-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectComponent],
+  imports: [CommonModule, FormsModule, SelectComponent, ConfirmationDialogComponent],
   templateUrl: './scheduled-expense-dialog.component.html',
   styleUrls: ['./scheduled-expense-dialog.component.css'],
 })
@@ -44,6 +45,12 @@ export class ScheduledExpenseDialogComponent implements OnInit {
 
   // Scheduled expenses data
   scheduledExpenses: any[] = [];
+
+  // Confirmation Dialog state
+  isConfirmDialogOpen = false;
+  confirmDialogTitle = '';
+  confirmDialogMessage = '';
+  pendingDeleteExpense: any = null;
 
   constructor(private financeService: FinanceService, private cdr: ChangeDetectorRef) {}
 
@@ -265,8 +272,18 @@ export class ScheduledExpenseDialogComponent implements OnInit {
   }
 
   async deleteScheduledExpense(expense: any) {
-    const confirmed = confirm(`Are you sure you want to delete "${expense.name}"?`);
-    if (!confirmed) return;
+    this.pendingDeleteExpense = expense;
+    this.confirmDialogTitle = 'Delete Scheduled Expense';
+    this.confirmDialogMessage = `Are you sure you want to delete "${expense.name}"?`;
+    this.isConfirmDialogOpen = true;
+  }
+
+  async confirmDelete() {
+    if (!this.pendingDeleteExpense) return;
+    
+    const expense = this.pendingDeleteExpense;
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteExpense = null;
 
     try {
       await this.financeService.deleteScheduledExpense(expense.id);
@@ -276,5 +293,10 @@ export class ScheduledExpenseDialogComponent implements OnInit {
       console.error('Failed to delete scheduled expense', e);
       this.errorMessage = 'Failed to delete scheduled expense';
     }
+  }
+
+  cancelDelete() {
+    this.isConfirmDialogOpen = false;
+    this.pendingDeleteExpense = null;
   }
 }

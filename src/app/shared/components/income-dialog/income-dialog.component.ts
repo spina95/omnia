@@ -136,7 +136,7 @@ export class IncomeDialogComponent implements OnInit {
     } catch (e: any) {
       console.error('Failed to save income', e);
       this.errorMessage = e.message || 'Failed to save income';
-      this.notificationService.error((this.errorMessage ?? 'Failed to save income') as string);
+      this.notificationService.error(this.errorMessage ?? 'Failed to save income');
     } finally {
       this.isSaving = false;
     }

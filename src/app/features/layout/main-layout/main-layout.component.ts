@@ -4,7 +4,6 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FabComponent } from '../../../shared/components/fab/fab.component';
 import { ExpenseDialogComponent } from '../../../shared/components/expense-dialog/expense-dialog.component';
-import { UploadDocumentDialogComponent } from '../../documents/upload-document-dialog/upload-document-dialog.component';
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 @Component({
@@ -16,7 +15,6 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
     SidebarComponent,
     FabComponent,
     ExpenseDialogComponent,
-    UploadDocumentDialogComponent,
     ToastComponent,
   ],
   template: `
@@ -78,12 +76,6 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
             [isOpen]="isExpenseDialogOpen()"
             (closeDialog)="onCloseExpenseDialog()"
           ></app-expense-dialog>
-          <!-- Upload Document Dialog -->
-          <app-upload-document-dialog
-            [isOpen]="isUploadDialogOpen()"
-            (closeDialog)="onCloseUploadDialog()"
-            (uploaded)="onDocumentUploaded()"
-          ></app-upload-document-dialog>
           <!-- Toasts -->
           <app-toast></app-toast>
         </main>
@@ -95,13 +87,6 @@ export class MainLayoutComponent {
   isMobileMenuOpen = signal(false);
   isDesktopSidebarCollapsed = signal(false);
   isExpenseDialogOpen = signal(false);
-  isUploadDialogOpen = signal(false);
-
-  constructor() {
-    window.addEventListener('openUploadDialog', () => {
-      this.isUploadDialogOpen.set(true);
-    });
-  }
 
   toggleMobileMenu() {
     this.isMobileMenuOpen.update((v) => !v);
@@ -117,13 +102,5 @@ export class MainLayoutComponent {
 
   onCloseExpenseDialog() {
     this.isExpenseDialogOpen.set(false);
-  }
-
-  onCloseUploadDialog() {
-    this.isUploadDialogOpen.set(false);
-  }
-
-  onDocumentUploaded() {
-    // No-op for now; dialogs emit uploaded event which closes the dialog. Could trigger global refresh here.
   }
 }

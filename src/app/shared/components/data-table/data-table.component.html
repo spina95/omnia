@@ -152,13 +152,21 @@
       *ngIf="showPagination"
       class="px-4 py-3 border-t border-zinc-800 bg-zinc-900 flex items-center justify-between"
     >
-      <div class="text-xs text-zinc-500">
-        Showing
-        <span class="text-zinc-300 font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span> to
-        <span class="text-zinc-300 font-medium">{{
-          Math.min(currentPage * pageSize, totalRecords)
-        }}</span>
-        of <span class="text-zinc-300 font-medium">{{ totalRecords }}</span> results
+      <div class="flex items-center gap-6">
+        <!-- Total Amount -->
+        <div *ngIf="totalAmount !== 0" class="text-sm">
+          <span class="text-zinc-500">Total:</span>
+          <span class="text-white font-semibold ml-2">{{ totalAmount | currency: 'EUR':'symbol':'1.2-2' }}</span>
+        </div>
+        <!-- Records Info -->
+        <div class="text-xs text-zinc-500">
+          Showing
+          <span class="text-zinc-300 font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span> to
+          <span class="text-zinc-300 font-medium">{{
+            Math.min(currentPage * pageSize, totalRecords)
+          }}</span>
+          of <span class="text-zinc-300 font-medium">{{ totalRecords }}</span> results
+        </div>
       </div>
       <div class="flex items-center space-x-1">
         <button

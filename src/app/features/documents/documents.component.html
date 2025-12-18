@@ -17,6 +17,12 @@
         />
       </div>
       <app-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()" [options]="categoriesOptions" placeholder="All categories" bgColor="bg-zinc-950" class="w-48"></app-select>
+      <button (click)="openManageCategories()" class="bg-zinc-800 text-white px-4 py-2 rounded font-medium hover:bg-zinc-700 transition-colors flex items-center text-sm">
+        <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        Manage Categories
+      </button>
       <button (click)="openUpload()" class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors flex items-center text-sm">
         <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -137,3 +143,30 @@
     </div>
   </div>
 </div>
+
+<!-- Confirmation Dialog -->
+<app-confirmation-dialog
+  [isOpen]="isConfirmDialogOpen"
+  [title]="confirmDialogTitle"
+  [message]="confirmDialogMessage"
+  [confirmText]="'Delete'"
+  [cancelText]="'Cancel'"
+  [isDangerous]="true"
+  [iconType]="'error'"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-dialog>
+
+<!-- Manage Categories Dialog -->
+<app-manage-categories-dialog
+  [isOpen]="showManageCategoriesDialog"
+  (closeDialog)="closeManageCategories()"
+  (updated)="onCategoriesUpdated()"
+></app-manage-categories-dialog>
+
+<!-- Upload Document Dialog -->
+<app-upload-document-dialog
+  [isOpen]="showUploadDialog"
+  (closeDialog)="closeUploadDialog()"
+  (uploaded)="onDocumentUploaded()"
+></app-upload-document-dialog>

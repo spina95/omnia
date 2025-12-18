@@ -128,3 +128,15 @@
   (close)="onDialogClose()"
   (save)="onDialogClose()"
 ></app-budget-dialog>
+
+<!-- Confirmation Dialog -->
+<app-confirmation-dialog
+  [isOpen]="isConfirmDialogOpen"
+  [title]="confirmDialogTitle"
+  [message]="confirmDialogMessage"
+  [confirmText]="'Delete'"
+  [cancelText]="'Cancel'"
+  [isDangerous]="true"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+></app-confirmation-dialog>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {
@@ -26,13 +26,13 @@ import {
 import { FinanceService } from '../../../core/services/finance';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
 import { SelectComponent } from '../../../shared/components/select/select.component';
-import { DateRangeTimelineComponent, DateRange } from '../../../shared/components/date-range-timeline/date-range-timeline.component';
 import { FormsModule } from '@angular/forms';
+import { DateRangeTimelineComponent, DateRange } from '../../../shared/components/date-range-timeline/date-range-timeline.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule, MultiselectComponent, SelectComponent, DateRangeTimelineComponent, FormsModule],
+  imports: [CommonModule, NgApexchartsModule, MultiselectComponent, SelectComponent, FormsModule, DateRangeTimelineComponent],
   templateUrl: './home.html',
   styles: [
     `
@@ -42,7 +42,7 @@ import { FormsModule } from '@angular/forms';
     `,
   ],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit {
   // Loading states
   isLoading = true;
 
@@ -75,19 +75,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   selectedPaymentTypes: number[] = [];
   selectedExpenseCategories: number[] = [];
   selectedIncomeCategories: number[] = [];
-  
-  // Custom date range for timeline
-  customDateRange: DateRange = {
-    startDate: '2022-01-01',
-    endDate: new Date().toISOString().split('T')[0]
-  };
-  
-  // Timeline min/max dates
-  timelineMinDate = '2022-01-01';
-  timelineMaxDate = new Date().toISOString().split('T')[0];
-  
-  // Debounce timer for timeline changes
-  private timelineChangeTimer: any = null;
 
   // Filter options
   paymentTypes: any[] = [];
@@ -103,6 +90,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     { value: 'all', label: 'All' },
     { value: 'custom', label: 'Custom' },
   ];
+
+  // Date range timeline properties
+  timelineMinDate: string = '2022-01-01';
+  timelineMaxDate: string = new Date().toISOString().split('T')[0];
+  customDateRange: DateRange | null = null;
 
   // Math object for template usage
   Math = Math;
@@ -120,15 +112,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.loadFilterOptions();
-    // Initialize custom date range based on default period
-    await this.updateTimelineFromPreset();
+    await this.updateTimelineFromPeriod(); // Inizializza i cursori in base al periodo selezionato
     await this.loadDashboardData();
-  }
-  
-  ngOnDestroy() {
-    if (this.timelineChangeTimer) {
-      clearTimeout(this.timelineChangeTimer);
-    }
   }
 
   private async loadFilterOptions() {
@@ -148,8 +133,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private async calculateDateRange(): Promise<{ startDate?: string; endDate?: string }> {
     const now = new Date();
+    const today = now.toISOString().slice(0, 10);
     const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const endDate = this.formatLocalDate(startOfNextMonth);
+    const endDate = startOfNextMonth.toISOString().slice(0, 10);
 
     switch (this.selectedPeriod) {
       case 'current-month': {
@@ -157,36 +143,45 @@ export class HomeComponent implements OnInit, OnDestroy {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         return {
-          startDate: this.formatLocalDate(start),
-          endDate: this.formatLocalDate(lastDayOfMonth),
+          startDate: start.toISOString().slice(0, 10),
+          endDate: lastDayOfMonth.toISOString().slice(0, 10),
         };
       }
       case 'this-month': {
         const start = new Date(now.getFullYear(), now.getMonth(), 1);
         return {
-          startDate: this.formatLocalDate(start),
+          startDate: start.toISOString().slice(0, 10),
           endDate: endDate,
         };
       }
       case 'last-6-months': {
         const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
         return {
-          startDate: this.formatLocalDate(start),
+          startDate: start.toISOString().slice(0, 10),
           endDate: endDate,
         };
       }
       case 'last-12-months': {
         const start = new Date(now.getFullYear(), now.getMonth() - 11, 1);
         return {
-          startDate: this.formatLocalDate(start),
+          startDate: start.toISOString().slice(0, 10),
           endDate: endDate,
         };
       }
       case 'custom': {
-        // Use custom date range from timeline
+        // Per custom, restituisci il range dalla timeline se disponibile
+        if (this.customDateRange) {
+          return {
+            startDate: this.customDateRange.startDate,
+            endDate: this.customDateRange.endDate,
+          };
+        }
+        // Altrimenti fallback a current-month
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         return {
-          startDate: this.customDateRange.startDate,
-          endDate: this.customDateRange.endDate,
+          startDate: start.toISOString().slice(0, 10),
+          endDate: lastDayOfMonth.toISOString().slice(0, 10),
         };
       }
       case 'all':
@@ -201,20 +196,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Format a Date using local timezone to YYYY-MM-DD
-  private formatLocalDate(d: Date): string {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
   private async getFirstTransactionDate(): Promise<string | null> {
     return await this.dashboardService.getFirstTransactionDate();
   }
 
   private async buildFilters(): Promise<DashboardFilters> {
-    const { startDate, endDate } = await this.calculateDateRange();
+    let startDate: string | undefined;
+    let endDate: string | undefined;
+
+    // Se c'è un range personalizzato dalla timeline, usa quello
+    if (this.customDateRange) {
+      startDate = this.customDateRange.startDate;
+      endDate = this.customDateRange.endDate;
+    } else {
+      // Altrimenti usa il calcolo basato sul periodo selezionato
+      const dateRange = await this.calculateDateRange();
+      startDate = dateRange.startDate;
+      endDate = dateRange.endDate;
+    }
+
     return {
       startDate,
       endDate,
@@ -233,38 +233,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       | 'all'
       | 'custom';
     
-    // If a preset is selected, update the timeline to match
+    // Se non è custom, resetta il customDateRange e aggiorna la timeline
     if (this.selectedPeriod !== 'custom') {
-      await this.updateTimelineFromPreset();
+      this.customDateRange = null;
+      await this.updateTimelineFromPeriod();
     }
     
     await this.loadDashboardData();
-  }
-  
-  async onDateRangeChange(range: DateRange) {
-    this.customDateRange = range;
-    this.selectedPeriod = 'custom';
-    
-    // Clear existing timer
-    if (this.timelineChangeTimer) {
-      clearTimeout(this.timelineChangeTimer);
-    }
-    
-    // Set new timer with 500ms delay
-    this.timelineChangeTimer = setTimeout(async () => {
-      await this.loadDashboardData();
-      this.timelineChangeTimer = null;
-    }, 500);
-  }
-  
-  private async updateTimelineFromPreset() {
-    const range = await this.calculateDateRange();
-    if (range.startDate && range.endDate) {
-      this.customDateRange = {
-        startDate: range.startDate,
-        endDate: range.endDate
-      };
-    }
   }
 
   async onPaymentTypesChange(selectedIds: (number | string)[]) {
@@ -718,5 +693,31 @@ export class HomeComponent implements OnInit, OnDestroy {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  async onDateRangeChange(range: DateRange | null) {
+    this.customDateRange = range;
+    console.log('Custom date range selected:', range);
+    
+    // Quando l'utente cambia manualmente la timeline, imposta il periodo su custom
+    if (range && this.selectedPeriod !== 'custom') {
+      this.selectedPeriod = 'custom';
+    }
+    
+    // Ricarica i dati della dashboard con il nuovo range
+    await this.loadDashboardData();
+  }
+
+  private async updateTimelineFromPeriod() {
+    const { startDate, endDate } = await this.calculateDateRange();
+    
+    // Aggiorna solo il customDateRange (i cursori) per riflettere il periodo
+    // min/max della timeline rimangono sempre 2022 - oggi
+    if (startDate && endDate) {
+      this.customDateRange = {
+        startDate,
+        endDate
+      };
+    }
   }
 }

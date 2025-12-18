@@ -75,6 +75,7 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Input() pageSize: number = 20;
   @Input() totalRecords: number = 0;
   @Input() showPagination: boolean = true;
+  @Input() totalAmount: number = 0; // Total amount to display in footer
 
   // Filtering - we'll use individual filter properties instead of complex config
   @Input() searchValue: string = '';

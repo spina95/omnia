@@ -24,6 +24,7 @@ import {
   Country,
 } from './visited-place.interface';
 import { COUNTRIES } from './countries';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 import * as L from 'leaflet';
 
@@ -36,7 +37,7 @@ L.Icon.Default.mergeOptions({
 @Component({
   selector: 'app-travel-map',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgApexchartsModule, ChartComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgApexchartsModule, ChartComponent, ConfirmationDialogComponent],
   templateUrl: './travel-map.component.html',
   styleUrls: ['./travel-map.component.css'],
 })
@@ -65,6 +66,11 @@ export class TravelMapComponent implements OnInit, OnDestroy {
   selectedPlace: WritableSignal<VisitedPlace | null> = signal(null);
   isSaving = false;
   isEditMode = signal(false);
+
+  // Confirmation Dialog state
+  isConfirmDialogOpen = false;
+  confirmDialogTitle = '';
+  confirmDialogMessage = '';
 
   // Chart configuration - matching app styling
   chartConfig: any = {
@@ -390,8 +396,18 @@ export class TravelMapComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (confirm('Are you sure you want to delete this visited place?')) {
-      this.visitedPlacesService.deleteVisitedPlace(place.id).subscribe({
+    this.confirmDialogTitle = 'Delete Place';
+    this.confirmDialogMessage = `Are you sure you want to delete "${place.city || 'this place'}"?`;
+    this.isConfirmDialogOpen = true;
+  }
+
+  confirmDelete(): void {
+    const place = this.selectedPlace();
+    if (!place) return;
+    
+    this.isConfirmDialogOpen = false;
+
+    this.visitedPlacesService.deleteVisitedPlace(place.id).subscribe({
         next: () => {
           // Remove from signal
           this.visitedPlaces.update((places) => places.filter((p) => p.id !== place.id));
@@ -412,7 +428,10 @@ export class TravelMapComponent implements OnInit, OnDestroy {
           this.error.set('Failed to delete visited place. Please try again.');
         },
       });
-    }
+  }
+
+  cancelDelete(): void {
+    this.isConfirmDialogOpen = false;
   }
 
   private updateMarker(updatedPlace: VisitedPlace): void {

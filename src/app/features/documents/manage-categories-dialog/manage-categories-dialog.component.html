@@ -1,0 +1,147 @@
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+  (click)="close()"
+>
+  <div
+    class="bg-zinc-900 rounded-lg shadow-2xl border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+      <h3 class="text-xl font-semibold text-white">Manage Categories</h3>
+      <button
+        (click)="close()"
+        class="text-zinc-400 hover:text-white transition-colors"
+        title="Close"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+      <!-- Create New Category -->
+      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
+        <h4 class="text-sm font-semibold text-white mb-3">Create New Category</h4>
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">
+              Category Name <span class="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              [(ngModel)]="newCategoryName"
+              placeholder="e.g., Contracts, Invoices"
+              class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm"
+              [disabled]="isCreating"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Description (Optional)</label>
+            <textarea
+              [(ngModel)]="newCategoryDescription"
+              placeholder="Brief description of this category"
+              rows="2"
+              class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm resize-none"
+              [disabled]="isCreating"
+            ></textarea>
+          </div>
+          <button
+            (click)="createCategory()"
+            [disabled]="isCreating || !newCategoryName.trim()"
+            class="w-full bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          >
+            <svg
+              *ngIf="isCreating"
+              class="animate-spin h-4 w-4 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            {{ isCreating ? 'Creating...' : 'Create Category' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories List -->
+      <div>
+        <h4 class="text-sm font-semibold text-white mb-3">Existing Categories</h4>
+        <div *ngIf="categories.length === 0" class="text-center py-8 text-zinc-500 text-sm">
+          No categories yet. Create your first category above.
+        </div>
+        <div *ngIf="categories.length > 0" class="space-y-2">
+          <div
+            *ngFor="let category of categories"
+            class="bg-zinc-950 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors"
+          >
+            <div class="flex items-start justify-between">
+              <div class="flex-1 min-w-0">
+                <h5 class="text-white font-medium text-sm">{{ category.name }}</h5>
+                <p *ngIf="category.description" class="text-zinc-400 text-xs mt-1">
+                  {{ category.description }}
+                </p>
+              </div>
+              <button
+                (click)="confirmDelete(category)"
+                class="ml-3 text-zinc-400 hover:text-red-400 transition-colors flex-shrink-0"
+                title="Delete category"
+              >
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t border-zinc-800 flex justify-end">
+      <button
+        (click)="close()"
+        class="bg-zinc-800 text-white px-4 py-2 rounded font-medium hover:bg-zinc-700 transition-colors text-sm"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<app-confirmation-dialog
+  [isOpen]="showDeleteConfirm"
+  title="Delete Category"
+  [message]="getDeleteMessage()"
+  confirmText="Delete"
+  cancelText="Cancel"
+  [iconType]="'warning'"
+  (confirmed)="deleteCategory()"
+  (cancelled)="showDeleteConfirm = false"
+></app-confirmation-dialog>

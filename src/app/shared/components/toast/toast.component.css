@@ -15,3 +15,18 @@
   transform: translateY(-4px);
   transition: opacity 150ms ease, transform 150ms ease;
 }
+
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
