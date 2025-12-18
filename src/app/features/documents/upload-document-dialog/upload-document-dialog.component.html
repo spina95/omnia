@@ -27,7 +27,7 @@
         <!-- Category -->
         <div>
           <label class="block text-sm font-medium text-zinc-300 mb-2">Category</label>
-          <app-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryModelChange($event)" [options]="categoriesOptions" placeholder="Uncategorized" bgColor="bg-zinc-950"></app-select>
+          <app-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryModelChange($event)" [options]="categoriesOptions" placeholder="Uncategorized" bgColor="bg-zinc-950" name="category"></app-select>
         </div>
 
         <!-- Name -->

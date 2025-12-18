@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { DocumentsService } from '../../core/services/documents.service';
 import { FormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
-import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { AuthService } from '../../core/auth/auth';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../core/services/notification.service';
@@ -12,7 +11,7 @@ import { SelectComponent } from '../../shared/components/select/select.component
 @Component({
   selector: 'app-documents',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectComponent, UploadDocumentDialogComponent],
+  imports: [CommonModule, FormsModule, SelectComponent],
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.css'],
 })
@@ -29,6 +28,7 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   total = 0;
   search = '';
   previewUrl: string | null = null;
+  Math = Math;
 
   constructor(
     private documentsService: DocumentsService,
@@ -82,15 +82,6 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async preview(doc: any) {
-    try {
-      const res = await this.documentsService.generateSignedDownloadUrl(doc.storage_path, 300);
-      this.previewUrl = res.signedUrl;
-    } catch (e: any) {
-      this.notificationService.error('Failed to get preview URL');
-    }
-  }
-
   async loadDocuments() {
     const res = await this.documentsService.listDocuments({
       categoryId: this.selectedCategory ?? undefined,
@@ -116,5 +107,34 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   async onPageChange(next: number) {
     this.page = next;
     await this.loadDocuments();
+  }
+
+  getVisiblePages(): number[] {
+    const totalPages = Math.ceil(this.total / this.pageSize);
+    const maxVisible = 5;
+    const pages: number[] = [];
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const start = Math.max(1, this.page - Math.floor(maxVisible / 2));
+      const end = Math.min(totalPages, start + maxVisible - 1);
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  }
+
+  formatFileSize(bytes: number): string {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   }
 }

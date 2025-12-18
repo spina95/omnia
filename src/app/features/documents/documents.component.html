@@ -1,12 +1,25 @@
 <div class="p-6 space-y-6">
   <div class="flex items-center justify-between">
-    <h2 class="text-2xl font-semibold text-white">Documents</h2>
+    <h2 class="text-2xl font-semibold text-white tracking-tight">Documents</h2>
     <div class="flex items-center space-x-3">
-      <input [(ngModel)]="search" (keyup.enter)="onSearch()" placeholder="Search..." class="bg-background-card border-sidebar-border text-zinc-200 p-2 rounded mr-2" />
-      <app-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()" [options]="categoriesOptions" placeholder="All categories" bgColor="bg-background-card" class="w-48"></app-select>
-      <button (click)="openUpload()" class="bg-brand text-black px-3 py-2 rounded font-medium flex items-center">
+      <!-- Search with improved UI -->
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input 
+          [(ngModel)]="search" 
+          (keyup.enter)="onSearch()" 
+          placeholder="Search documents..." 
+          class="block pl-10 pr-3 py-2 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors w-64"
+        />
+      </div>
+      <app-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()" [options]="categoriesOptions" placeholder="All categories" bgColor="bg-zinc-950" class="w-48"></app-select>
+      <button (click)="openUpload()" class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors flex items-center text-sm">
         <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
         Upload
       </button>
@@ -17,55 +30,44 @@
     <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
   </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div *ngFor="let d of documents" class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div 
+      *ngFor="let d of documents" 
+      class="overflow-hidden rounded-lg bg-zinc-900 shadow border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer group"
+      [title]="d.description || 'No description'"
+    >
       <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="h-10 w-10 rounded-full flex items-center justify-center text-white" [style.background]="'#111827'">
-              <span class="text-sm font-semibold">{{ d.name?.charAt(0) || 'D' }}</span>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="truncate text-sm font-medium text-slate-400">Document</dt>
-              <dd>
-                <div class="text-lg font-semibold text-white">{{ d.name }}</div>
-              </dd>
-            </dl>
+        <div class="flex items-start justify-between">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-semibold text-white truncate group-hover:text-brand transition-colors">{{ d.name }}</h3>
+            <p class="text-xs text-zinc-500 mt-1">{{ d.content_type }}</p>
           </div>
           <div class="ml-4 flex space-x-2">
-            <button (click)="preview(d)" class="text-slate-400 hover:text-white transition-colors" title="Preview">
+            <button (click)="download(d); $event.stopPropagation()" class="text-zinc-400 hover:text-brand transition-colors" title="Download">
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0122 9.618V14a2 2 0 01-1.447 1.894L15 18v-8zM3 7v10a2 2 0 002 2h6v-8H5a2 2 0 00-2-2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
             </button>
-            <button (click)="download(d)" class="text-slate-400 hover:text-brand transition-colors" title="Download">
+            <button (click)="delete(d); $event.stopPropagation()" class="text-zinc-400 hover:text-red-400 transition-colors" title="Delete">
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10l5-5 5 5M12 5v12" />
-              </svg>
-            </button>
-            <button (click)="delete(d)" class="text-slate-400 hover:text-red-400 transition-colors" title="Delete">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
             </button>
           </div>
         </div>
 
-        <div class="mt-4 pt-4 border-t border-sidebar-border">
-          <div class="flex items-center justify-between text-sm text-slate-400 mb-2">
-            <span>Category</span>
-            <span>{{ d.document_categories?.name || 'Uncategorized' }}</span>
+        <div class="mt-4 pt-4 border-t border-zinc-800">
+          <div class="flex items-center justify-between text-sm text-zinc-400 mb-2">
+            <span class="text-zinc-500">Category</span>
+            <span class="text-zinc-300 font-medium">{{ d.document_categories?.name || 'Uncategorized' }}</span>
           </div>
-          <div class="flex items-center justify-between text-sm text-slate-400 mt-2">
-            <span>Type</span>
-            <span>{{ d.content_type }}</span>
+          <div class="flex items-center justify-between text-sm text-zinc-400 mt-2">
+            <span class="text-zinc-500">Size</span>
+            <span class="text-zinc-300">{{ formatFileSize(d.size) }}</span>
           </div>
-          <div class="flex items-center justify-between text-sm text-slate-400 mt-2">
-            <span>Uploaded</span>
-            <span>{{ d.created_at | date:'short' }}</span>
+          <div class="flex items-center justify-between text-sm text-zinc-400 mt-2">
+            <span class="text-zinc-500">Uploaded</span>
+            <span class="text-zinc-300">{{ d.created_at | date:'short' }}</span>
           </div>
         </div>
       </div>
@@ -73,24 +75,65 @@
   </div>
 
     <!-- Preview Modal -->
-    <div *ngIf="previewUrl" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div class="bg-background-card border border-sidebar-border rounded p-4 max-w-4xl w-full">
+    <div *ngIf="previewUrl" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-4 max-w-4xl w-full shadow-2xl">
         <div class="flex justify-end mb-2">
-          <button (click)="previewUrl = null" class="text-slate-400 hover:text-white">Close</button>
+          <button (click)="previewUrl = null" class="text-zinc-400 hover:text-white transition-colors px-3 py-1 rounded hover:bg-zinc-800">Close</button>
         </div>
         <div class="h-[80vh]">
-          <iframe [src]="previewUrl" class="w-full h-full" frameborder="0"></iframe>
+          <iframe [src]="previewUrl" class="w-full h-full rounded" frameborder="0"></iframe>
         </div>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="flex items-center justify-between mt-4">
-      <div class="text-sm text-slate-400">Showing {{ documents.length }} of {{ total }}</div>
-      <div class="flex items-center space-x-2">
-        <button (click)="onPageChange(page - 1)" [disabled]="page <= 1" class="px-3 py-1 rounded bg-background-card">Prev</button>
-        <div class="text-sm text-slate-200">Page {{ page }}</div>
-        <button (click)="onPageChange(page + 1)" [disabled]="page * pageSize >= total" class="px-3 py-1 rounded bg-background-card">Next</button>
-      </div>
+  <!-- Enhanced Pagination -->
+  <div *ngIf="total > pageSize" class="flex items-center justify-between mt-6 px-4 py-3 bg-zinc-900/50 rounded-lg border border-zinc-800">
+    <div class="text-sm text-zinc-400">
+      Showing <span class="text-zinc-300 font-medium">{{ (page - 1) * pageSize + 1 }}</span> to 
+      <span class="text-zinc-300 font-medium">{{ Math.min(page * pageSize, total) }}</span> of 
+      <span class="text-zinc-300 font-medium">{{ total }}</span> documents
     </div>
+    <div class="flex items-center space-x-1">
+      <button 
+        (click)="onPageChange(page - 1)" 
+        [disabled]="page <= 1" 
+        class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        title="Previous Page"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <div class="flex items-center space-x-1">
+        <ng-container *ngFor="let p of getVisiblePages()">
+          <button
+            (click)="onPageChange(p)"
+            [class.bg-brand]="page === p"
+            [class.text-black]="page === p"
+            [class.border-brand]="page === p"
+            [class.font-semibold]="page === p"
+            [class.bg-transparent]="page !== p"
+            [class.text-zinc-400]="page !== p"
+            [class.border-transparent]="page !== p"
+            [class.hover:bg-zinc-800]="page !== p"
+            class="px-3 py-1 text-xs rounded-md border transition-all"
+          >
+            {{ p }}
+          </button>
+        </ng-container>
+      </div>
+
+      <button 
+        (click)="onPageChange(page + 1)" 
+        [disabled]="page * pageSize >= total" 
+        class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        title="Next Page"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
 </div>

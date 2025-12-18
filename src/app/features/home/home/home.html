@@ -53,6 +53,16 @@
         ></app-multiselect>
       </div>
     </div>
+    
+    <!-- Date Range Timeline -->
+    <div class="mt-4 pt-4 border-t border-sidebar-border">
+      <app-date-range-timeline
+        [minDate]="timelineMinDate"
+        [maxDate]="timelineMaxDate"
+        [(ngModel)]="customDateRange"
+        (rangeChange)="onDateRangeChange($event)"
+      ></app-date-range-timeline>
+    </div>
   </div>
 
   <!-- Loading State -->

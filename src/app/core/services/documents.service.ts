@@ -101,18 +101,18 @@ export class DocumentsService {
 
   async deleteDocument(id: string) {
     const userId = await this.getCurrentUserId();
-    let query = this.supabaseService.client.from('documents').delete().eq('id', id);
-    if (userId) query = query.eq('user_id', userId);
-    const { data, error } = await query;
+    let queryBuilder = this.supabaseService.client.from('documents').delete().eq('id', id);
+    if (userId) queryBuilder = queryBuilder.eq('user_id', userId);
+    const { data, error } = await queryBuilder;
     if (error) throw error;
     return data;
   }
 
   async updateDocument(id: string, payload: any) {
     const userId = await this.getCurrentUserId();
-    let query = this.supabaseService.client.from('documents').update(payload).eq('id', id).select().single();
-    if (userId) query = query.eq('user_id', userId);
-    const { data, error } = await query;
+    let queryBuilder = this.supabaseService.client.from('documents').update(payload).eq('id', id);
+    if (userId) queryBuilder = queryBuilder.eq('user_id', userId);
+    const { data, error } = await queryBuilder.select().single();
     if (error) throw error;
     return data;
   }

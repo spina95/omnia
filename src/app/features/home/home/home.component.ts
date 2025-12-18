@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {
@@ -26,12 +26,13 @@ import {
 import { FinanceService } from '../../../core/services/finance';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
 import { SelectComponent } from '../../../shared/components/select/select.component';
+import { DateRangeTimelineComponent, DateRange } from '../../../shared/components/date-range-timeline/date-range-timeline.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule, MultiselectComponent, SelectComponent, FormsModule],
+  imports: [CommonModule, NgApexchartsModule, MultiselectComponent, SelectComponent, DateRangeTimelineComponent, FormsModule],
   templateUrl: './home.html',
   styles: [
     `
@@ -41,7 +42,7 @@ import { FormsModule } from '@angular/forms';
     `,
   ],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   // Loading states
   isLoading = true;
 
@@ -69,11 +70,24 @@ export class HomeComponent implements OnInit {
   incomesAccountChartOptions: any;
 
   // Filters state
-  selectedPeriod: 'current-month' | 'this-month' | 'last-6-months' | 'last-12-months' | 'all' =
+  selectedPeriod: 'current-month' | 'this-month' | 'last-6-months' | 'last-12-months' | 'all' | 'custom' =
     'current-month';
   selectedPaymentTypes: number[] = [];
   selectedExpenseCategories: number[] = [];
   selectedIncomeCategories: number[] = [];
+  
+  // Custom date range for timeline
+  customDateRange: DateRange = {
+    startDate: '2022-01-01',
+    endDate: new Date().toISOString().split('T')[0]
+  };
+  
+  // Timeline min/max dates
+  timelineMinDate = '2022-01-01';
+  timelineMaxDate = new Date().toISOString().split('T')[0];
+  
+  // Debounce timer for timeline changes
+  private timelineChangeTimer: any = null;
 
   // Filter options
   paymentTypes: any[] = [];
@@ -87,6 +101,7 @@ export class HomeComponent implements OnInit {
     { value: 'last-6-months', label: 'Last 6 months' },
     { value: 'last-12-months', label: 'Last 12 months' },
     { value: 'all', label: 'All' },
+    { value: 'custom', label: 'Custom' },
   ];
 
   // Math object for template usage
@@ -105,7 +120,15 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
     await this.loadFilterOptions();
+    // Initialize custom date range based on default period
+    await this.updateTimelineFromPreset();
     await this.loadDashboardData();
+  }
+  
+  ngOnDestroy() {
+    if (this.timelineChangeTimer) {
+      clearTimeout(this.timelineChangeTimer);
+    }
   }
 
   private async loadFilterOptions() {
@@ -159,6 +182,13 @@ export class HomeComponent implements OnInit {
           endDate: endDate,
         };
       }
+      case 'custom': {
+        // Use custom date range from timeline
+        return {
+          startDate: this.customDateRange.startDate,
+          endDate: this.customDateRange.endDate,
+        };
+      }
       case 'all':
       default: {
         // Get the first date from expenses or incomes
@@ -200,8 +230,41 @@ export class HomeComponent implements OnInit {
       | 'this-month'
       | 'last-6-months'
       | 'last-12-months'
-      | 'all';
+      | 'all'
+      | 'custom';
+    
+    // If a preset is selected, update the timeline to match
+    if (this.selectedPeriod !== 'custom') {
+      await this.updateTimelineFromPreset();
+    }
+    
     await this.loadDashboardData();
+  }
+  
+  async onDateRangeChange(range: DateRange) {
+    this.customDateRange = range;
+    this.selectedPeriod = 'custom';
+    
+    // Clear existing timer
+    if (this.timelineChangeTimer) {
+      clearTimeout(this.timelineChangeTimer);
+    }
+    
+    // Set new timer with 500ms delay
+    this.timelineChangeTimer = setTimeout(async () => {
+      await this.loadDashboardData();
+      this.timelineChangeTimer = null;
+    }, 500);
+  }
+  
+  private async updateTimelineFromPreset() {
+    const range = await this.calculateDateRange();
+    if (range.startDate && range.endDate) {
+      this.customDateRange = {
+        startDate: range.startDate,
+        endDate: range.endDate
+      };
+    }
   }
 
   async onPaymentTypesChange(selectedIds: (number | string)[]) {
