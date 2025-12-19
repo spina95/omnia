@@ -1,114 +1,109 @@
+<ng-template #headerActions>
+  <button
+    (click)="openManageCategoriesDialog()"
+    class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700"
+    title="Manage Categories"
+  >
+    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+      />
+    </svg>
+    <span class="hidden sm:inline">Categories</span>
+  </button>
+  <button
+    (click)="openAddVideoDialog()"
+    class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
+  >
+    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 4v16m8-8H4"
+      />
+    </svg>
+    Add Video
+  </button>
+</ng-template>
+
 <div class="h-full flex flex-col overflow-hidden">
-  <!-- Header -->
-  <div class="flex-shrink-0 bg-zinc-950/50 backdrop-blur-sm border-b border-zinc-800/50 p-4">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <h1 class="text-2xl font-bold text-white">Videos</h1>
-      
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- Search Input -->
-        <div class="relative flex-1 sm:flex-initial sm:w-64">
-          <input
-            type="text"
-            placeholder="Search videos..."
-            [value]="searchQuery()"
-            (input)="onSearchChange($event)"
-            class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 pl-10 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+  <!-- Filters Card -->
+  <div class="p-6">
+    <div class="flex flex-wrap items-center gap-3 bg-zinc-900/50 p-4 rounded-lg border border-zinc-800">
+      <!-- Search Input -->
+      <div class="relative flex-1 sm:flex-initial sm:w-64">
+        <input
+          type="text"
+          placeholder="Search videos..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($event)"
+          class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+        />
+        <svg
+          class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
-          <svg
-            class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-
-        <!-- Category Filter -->
-        <app-select
-          [options]="categoryOptions()"
-          [value]="selectedCategoryId()"
-          (valueChange)="onCategoryChange($any($event))"
-          placeholder="Category"
-          class="w-full sm:w-48"
-        />
-
-        <!-- Rating Filter -->
-        <app-select
-          [options]="ratingOptions"
-          [value]="selectedRating()"
-          (valueChange)="onRatingChange($any($event))"
-          placeholder="Rating"
-          class="w-full sm:w-40"
-        />
-
-        <!-- To Watch Filter Toggle -->
-        <button
-          (click)="onToWatchFilterChange()"
-          [class.bg-brand]="showToWatchOnly()"
-          [class.text-black]="showToWatchOnly()"
-          [class.bg-zinc-800]="!showToWatchOnly()"
-          [class.text-white]="!showToWatchOnly()"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-90 transition-all border"
-          [class.border-brand]="showToWatchOnly()"
-          [class.border-zinc-700]="!showToWatchOnly()"
-          title="Show only videos to watch"
-        >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-          <span class="hidden sm:inline">To Watch</span>
-        </button>
-
-        <!-- Manage Categories Button -->
-        <button
-          (click)="openManageCategoriesDialog()"
-          class="flex items-center gap-2 px-4 py-2 bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700"
-          title="Manage Categories"
-        >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-            />
-          </svg>
-          <span class="hidden sm:inline">Categories</span>
-        </button>
-
-        <!-- Add Video Button -->
-        <button
-          (click)="openAddVideoDialog()"
-          class="flex items-center gap-2 px-4 py-2 bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
-        >
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Add Video
-        </button>
+        </svg>
       </div>
+
+      <!-- Category Filter -->
+      <app-select
+        [options]="categoryOptions()"
+        [value]="selectedCategoryId()"
+        (valueChange)="onCategoryChange($any($event))"
+        placeholder="Category"
+        class="w-full sm:w-48"
+      />
+
+      <!-- Rating Filter -->
+      <app-select
+        [options]="ratingOptions"
+        [value]="selectedRating()"
+        (valueChange)="onRatingChange($any($event))"
+        placeholder="Rating"
+        class="w-full sm:w-40"
+      />
+
+      <!-- To Watch Filter Toggle -->
+      <button
+        (click)="onToWatchFilterChange()"
+        [class.bg-brand]="showToWatchOnly()"
+        [class.text-black]="showToWatchOnly()"
+        [class.bg-zinc-800]="!showToWatchOnly()"
+        [class.text-white]="!showToWatchOnly()"
+        class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm rounded-lg hover:opacity-90 transition-all border"
+        [class.border-brand]="showToWatchOnly()"
+        [class.border-zinc-700]="!showToWatchOnly()"
+        title="Show only videos to watch"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+        <span class="hidden sm:inline">To Watch</span>
+      </button>
     </div>
   </div>
 

@@ -1,12 +1,24 @@
-<app-data-table title="Incomes" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowData]="rowData"
+<ng-template #headerActions>
+  <button
+    (click)="onAddIncome()"
+    class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
+  >
+    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    New Income
+  </button>
+</ng-template>
+
+<app-data-table [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [rowData]="rowData"
     [loading]="isLoading" [error]="errorMessage" [currentPage]="currentPage" [pageSize]="pageSize"
     [totalRecords]="totalRecords" [totalAmount]="totalAmount" [(searchValue)]="searchQuery" [(selectedMonth)]="selectedMonth"
     [(selectedYear)]="selectedYear" [(selectedCategory)]="selectedCategory"
     [(selectedPaymentType)]="selectedPaymentType" [categories]="categories" [paymentTypes]="paymentTypes"
-    [months]="months" [years]="years" [showAddButton]="true" [showFilters]="true" addButtonText="+ New Income"
+    [months]="months" [years]="years" [showFilters]="true"
     emptyStateMessage="No incomes found matching your criteria." (gridReady)="onGridReady()"
     (sortChanged)="onSortChanged($event)" (pageChanged)="onPageChanged($event)" (filterChanged)="onFilterChanged()"
-    (cellClicked)="onCellClicked($event)" (addClicked)="onAddIncome()"></app-data-table>
+    (cellClicked)="onCellClicked($event)"></app-data-table>
 
 <!-- Income Dialog -->
 <app-income-dialog [income]="selectedIncome" [isOpen]="isDialogOpen" (closeDialog)="onDialogClose()"

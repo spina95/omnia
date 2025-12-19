@@ -1,8 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, ViewChild, TemplateRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
 import { FinanceService } from '../../../core/services/finance';
 import { NotificationService } from '../../../core/services/notification.service';
+import { PageHeaderService } from '../../../core/services/page-header.service';
+import { PageHeaderActionsService } from '../../../core/services/page-header-actions.service';
 import {
   DataTableComponent,
   SortChangeEvent,
@@ -22,7 +24,12 @@ import { ScheduledExpenseDialogComponent } from '../../../shared/components/sche
   templateUrl: './outcomes.html',
   styleUrls: ['./outcomes.css'],
 })
-export class OutcomesComponent implements OnInit {
+export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('headerActions', { static: false }) headerActionsTemplate!: TemplateRef<any>;
+  
+  private pageHeaderService = inject(PageHeaderService);
+  private pageHeaderActionsService = inject(PageHeaderActionsService);
+  
   // Data state
   rowData: any[] = [];
   isLoading = false;
@@ -193,7 +200,17 @@ export class OutcomesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.pageHeaderService.setHeader('Outcomes');
     this.loadMetadata();
+  }
+
+  ngAfterViewInit() {
+    this.pageHeaderActionsService.setActions(this.headerActionsTemplate);
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.pageHeaderActionsService.clearActions();
   }
 
   async loadMetadata() {

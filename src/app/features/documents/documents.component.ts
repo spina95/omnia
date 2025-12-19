@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, TemplateRef, AfterViewInit, ChangeDetectorRef, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocumentsService } from '../../core/services/documents.service';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../core/auth/auth';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../core/services/notification.service';
+import { PageHeaderService } from '../../core/services/page-header.service';
+import { PageHeaderActionsService } from '../../core/services/page-header-actions.service';
 import { SelectComponent } from '../../shared/components/select/select.component';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ManageCategoriesDialogComponent } from './manage-categories-dialog/manage-categories-dialog.component';
@@ -18,7 +19,12 @@ import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-d
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.css'],
 })
-export class DocumentsComponent implements OnInit, OnDestroy {
+export class DocumentsComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('headerActions', { static: false }) headerActionsTemplate!: TemplateRef<any>;
+  
+  private pageHeaderService = inject(PageHeaderService);
+  private pageHeaderActionsService = inject(PageHeaderActionsService);
+  
   categories: any[] = [];
   categoriesOptions: { value: number | null; label: string }[] = [];
   documents: any[] = [];
@@ -32,6 +38,11 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   search = '';
   previewUrl: string | null = null;
   Math = Math;
+
+  // Computed properties for pagination
+  totalPages = computed(() => Math.ceil(this.total / this.pageSize));
+  startItem = computed(() => (this.page - 1) * this.pageSize + 1);
+  endItem = computed(() => Math.min(this.page * this.pageSize, this.total));
 
   // Confirmation Dialog state
   isConfirmDialogOpen = false;
@@ -57,13 +68,20 @@ export class DocumentsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.pageHeaderService.setHeader('Documents');
     this.loadCategories();
     this.loadDocuments();
     // listen for global update events when documents change (upload/delete)
     window.addEventListener('documentsUpdated', this.handleDocumentsUpdated);
   }
 
+  ngAfterViewInit() {
+    this.pageHeaderActionsService.setActions(this.headerActionsTemplate);
+    this.cd.detectChanges();
+  }
+
   ngOnDestroy(): void {
+    this.pageHeaderActionsService.clearActions();
     this.sub?.unsubscribe();
     window.removeEventListener('documentsUpdated', this.handleDocumentsUpdated);
   }
@@ -140,29 +158,35 @@ export class DocumentsComponent implements OnInit, OnDestroy {
     await this.loadDocuments();
   }
 
-  async onPageChange(next: number) {
-    this.page = next;
+  async onPageChange(newPage: number) {
+    if (newPage < 1 || newPage > this.totalPages()) return;
+    this.page = newPage;
     await this.loadDocuments();
   }
 
-  getVisiblePages(): number[] {
-    const totalPages = Math.ceil(this.total / this.pageSize);
-    const maxVisible = 5;
+  goToPage(page: number) {
+    this.onPageChange(page);
+  }
+
+  getPageNumbers(): number[] {
+    const total = this.totalPages();
+    const current = this.page;
     const pages: number[] = [];
-    
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
+
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) {
         pages.push(i);
       }
     } else {
-      const start = Math.max(1, this.page - Math.floor(maxVisible / 2));
-      const end = Math.min(totalPages, start + maxVisible - 1);
-      
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
+      if (current <= 3) {
+        pages.push(1, 2, 3, 4, -1, total);
+      } else if (current >= total - 2) {
+        pages.push(1, -1, total - 3, total - 2, total - 1, total);
+      } else {
+        pages.push(1, -1, current - 1, current, current + 1, -1, total);
       }
     }
-    
+
     return pages;
   }
 

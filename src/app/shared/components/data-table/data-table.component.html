@@ -1,25 +1,4 @@
 <div class="p-6 h-full flex flex-col">
-  <!-- Header -->
-  <div *ngIf="showHeader" class="flex items-center justify-between mb-8">
-    <h1 class="text-2xl font-semibold text-white tracking-tight">{{ title }}</h1>
-    <div class="flex items-center gap-3">
-      <button
-        *ngIf="showAddButton"
-        (click)="onAddButtonClick()"
-        class="bg-brand text-black px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors text-sm"
-      >
-        {{ addButtonText }}
-      </button>
-      <button
-        *ngIf="title === 'Outcomes'"
-        (click)="onScheduledExpensesClick()"
-        class="bg-zinc-800 text-white px-4 py-2 rounded font-medium hover:bg-zinc-700 transition-colors text-sm"
-      >
-        Manage Scheduled Expenses
-      </button>
-    </div>
-  </div>
-
   <!-- Filters Toolbar -->
   <div
     *ngIf="showFilters"
@@ -42,7 +21,7 @@
         [(ngModel)]="searchValue"
         (ngModelChange)="onSearchChange()"
         placeholder="Search..."
-        class="block w-full pl-10 pr-3 py-2 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand sm:text-sm transition-colors"
+        class="block w-full pl-10 pr-3 py-2.5 h-10 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors"
       />
     </div>
 

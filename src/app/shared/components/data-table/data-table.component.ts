@@ -90,10 +90,6 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Input() years: number[] = [];
 
   // Appearance
-  @Input() title: string = '';
-  @Input() showHeader: boolean = true;
-  @Input() showAddButton: boolean = false;
-  @Input() addButtonText: string = '+ New';
   @Input() headerHeight: number = 48;
   @Input() rowHeight: number = 52;
   @Input() emptyStateMessage: string = 'No records found matching your criteria.';
@@ -105,8 +101,6 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Output() pageChanged = new EventEmitter<number>();
   @Output() rowClicked = new EventEmitter<any>();
   @Output() cellClicked = new EventEmitter<any>(); // For handling cell-specific actions like delete
-  @Output() addClicked = new EventEmitter<void>();
-  @Output() scheduledExpensesClicked = new EventEmitter<void>();
   @Output() filterChanged = new EventEmitter<void>();
 
   // Internal search model (two-way binding support)
@@ -274,13 +268,5 @@ export class DataTableComponent implements OnInit, OnChanges {
     }
 
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  }
-
-  onAddButtonClick() {
-    this.addClicked.emit();
-  }
-
-  onScheduledExpensesClick() {
-    this.scheduledExpensesClicked.emit();
   }
 }

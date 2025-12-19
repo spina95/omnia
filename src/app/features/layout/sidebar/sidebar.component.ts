@@ -16,7 +16,7 @@ import { AuthService } from '../../../core/auth/auth';
     >
       <!-- App Header -->
       <div
-        class="h-14 flex items-center border-b border-sidebar-border mb-4 transition-all duration-300"
+        class="h-16 flex items-center border-b border-sidebar-border mb-4 transition-all duration-300"
         [class.px-6]="!collapsed"
         [class.px-0]="collapsed"
         [class.justify-center]="collapsed"

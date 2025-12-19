@@ -1,7 +1,8 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { PlotlyModule } from 'angular-plotly.js';
+import { PageHeaderService } from '../../../core/services/page-header.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -132,7 +133,10 @@ export class HomeComponent implements OnInit {
     this.initializeChartDefaults();
   }
 
+  private pageHeaderService = inject(PageHeaderService);
+
   async ngOnInit() {
+    this.pageHeaderService.setHeader('Dashboard');
     await this.loadFilterOptions();
     await this.updateTimelineFromPeriod(); // Inizializza i cursori in base al periodo selezionato
     await this.loadDashboardData();

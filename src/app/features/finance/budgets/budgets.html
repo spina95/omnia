@@ -1,22 +1,16 @@
+<ng-template #headerActions>
+  <button
+    (click)="openCreateDialog()"
+    class="inline-flex items-center gap-2 px-4 py-2.5 h-10 text-sm font-medium rounded-lg text-black bg-brand hover:bg-brand/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
+  >
+    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+    Create Budget
+  </button>
+</ng-template>
+
 <div class="space-y-6 p-6">
-  <!-- Header -->
-  <div class="border-b border-sidebar-border pb-5">
-    <div class="flex justify-between items-center">
-      <div>
-        <h3 class="text-2xl font-semibold leading-6 text-white">Budgets</h3>
-        <p class="mt-2 max-w-4xl text-sm text-slate-400">Manage your spending limits by payment type</p>
-      </div>
-      <button
-        (click)="openCreateDialog()"
-        class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-black bg-brand hover:bg-brand/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
-      >
-        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-        Create Budget
-      </button>
-    </div>
-  </div>
 
   <!-- Budget Progress Cards -->
   <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

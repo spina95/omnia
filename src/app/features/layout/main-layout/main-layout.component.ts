@@ -5,6 +5,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FabComponent } from '../../../shared/components/fab/fab.component';
 import { ExpenseDialogComponent } from '../../../shared/components/expense-dialog/expense-dialog.component';
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
+import { PageHeaderComponent } from '../../../core/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,6 +17,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
     FabComponent,
     ExpenseDialogComponent,
     ToastComponent,
+    PageHeaderComponent,
   ],
   template: `
     <div class="flex h-screen bg-background overflow-hidden">
@@ -61,6 +63,9 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
           <div class="w-6"></div>
           <!-- Spacer -->
         </header>
+
+        <!-- Page Header -->
+        <app-page-header></app-page-header>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-auto bg-background relative">

@@ -1,53 +1,47 @@
+<ng-template #headerActions>
+  <button (click)="openManageCategories()" class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+    </svg>
+    <span class="hidden sm:inline">Manage Categories</span>
+    <span class="sm:hidden">Categories</span>
+  </button>
+  <button (click)="openUpload()" class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    <span class="hidden sm:inline">Upload</span>
+    <span class="sm:hidden">Upload</span>
+  </button>
+</ng-template>
+
 <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
-  <!-- Header con layout responsive -->
-  <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-    <h2 class="text-xl sm:text-2xl font-semibold text-white tracking-tight">Documents</h2>
-    
-    <!-- Controls - stack su mobile, inline su desktop -->
-    <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-x-3 sm:space-y-0">
-      <!-- Search -->
-      <div class="relative w-full sm:w-auto">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg class="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <input 
-          [(ngModel)]="search" 
-          (keyup.enter)="onSearch()" 
-          placeholder="Search documents..." 
-          class="block w-full sm:w-64 pl-10 pr-3 py-2 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors"
-        />
+  <!-- Filters Card -->
+  <div class="flex flex-wrap items-center gap-3 bg-zinc-900/50 p-4 rounded-lg border border-zinc-800">
+    <!-- Search -->
+    <div class="relative w-full sm:w-64">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
       </div>
-      
-      <!-- Category selector -->
-      <app-select 
-        [(ngModel)]="selectedCategory" 
-        (selectionChange)="onCategoryChange()" 
-        [options]="categoriesOptions" 
-        placeholder="All categories" 
-        bgColor="bg-zinc-950" 
-        class="w-full sm:w-48"
-      ></app-select>
-      
-      <!-- Action buttons -->
-      <div class="flex space-x-2">
-        <button (click)="openManageCategories()" class="flex-1 sm:flex-none bg-zinc-800 text-white px-3 sm:px-4 py-2 rounded font-medium hover:bg-zinc-700 transition-colors flex items-center justify-center text-sm">
-          <svg class="h-4 w-4 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-          </svg>
-          <span class="hidden sm:inline">Manage Categories</span>
-          <span class="sm:hidden">Categories</span>
-        </button>
-        <button (click)="openUpload()" class="flex-1 sm:flex-none bg-brand text-black px-3 sm:px-4 py-2 rounded font-medium hover:bg-brand/90 transition-colors flex items-center justify-center text-sm">
-          <svg class="h-4 w-4 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span class="hidden sm:inline">Upload</span>
-          <span class="sm:hidden">Upload</span>
-        </button>
-      </div>
+      <input 
+        [(ngModel)]="search" 
+        (keyup.enter)="onSearch()" 
+        placeholder="Search documents..." 
+        class="block w-full sm:w-64 pl-10 pr-3 py-2.5 h-10 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors"
+      />
     </div>
+    
+    <!-- Category selector -->
+    <app-select 
+      [(ngModel)]="selectedCategory" 
+      (selectionChange)="onCategoryChange()" 
+      [options]="categoriesOptions" 
+      placeholder="All categories" 
+      bgColor="bg-zinc-950" 
+      class="w-full sm:w-48"
+    ></app-select>
   </div>
 
   <div *ngIf="uploading" class="flex items-center justify-center py-6">
@@ -112,58 +106,44 @@
       </div>
     </div>
 
-  <!-- Enhanced Pagination - responsive -->
-  <div *ngIf="total > pageSize" class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0 mt-4 sm:mt-6 px-3 sm:px-4 py-3 bg-zinc-900/50 rounded-lg border border-zinc-800">
-    <div class="text-xs sm:text-sm text-zinc-400 text-center sm:text-left">
-      <span class="hidden sm:inline">
-        Showing <span class="text-zinc-300 font-medium">{{ (page - 1) * pageSize + 1 }}</span> to 
-        <span class="text-zinc-300 font-medium">{{ Math.min(page * pageSize, total) }}</span> of 
-        <span class="text-zinc-300 font-medium">{{ total }}</span> documents
-      </span>
-      <span class="sm:hidden">
-        <span class="text-zinc-300 font-medium">{{ (page - 1) * pageSize + 1 }}-{{ Math.min(page * pageSize, total) }}</span> of 
-        <span class="text-zinc-300 font-medium">{{ total }}</span>
-      </span>
+  <!-- Pagination -->
+  <div *ngIf="total > pageSize" class="flex items-center justify-between mt-6 px-4 py-3 bg-zinc-900/50 rounded-lg border border-zinc-800">
+    <div class="text-sm text-zinc-400">
+      Showing {{ startItem() }} to {{ endItem() }} of {{ total }} documents
     </div>
-    <div class="flex items-center space-x-1">
-      <button 
-        (click)="onPageChange(page - 1)" 
-        [disabled]="page <= 1" 
-        class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        title="Previous Page"
+
+    <div class="flex items-center gap-2">
+      <button
+        (click)="goToPage(page - 1)"
+        [disabled]="page === 1"
+        class="px-3 py-2 rounded-lg border border-zinc-700 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <div class="flex items-center space-x-1">
-        <ng-container *ngFor="let p of getVisiblePages()">
-          <button
-            (click)="onPageChange(p)"
-            [class.bg-brand]="page === p"
-            [class.text-black]="page === p"
-            [class.border-brand]="page === p"
-            [class.font-semibold]="page === p"
-            [class.bg-transparent]="page !== p"
-            [class.text-zinc-400]="page !== p"
-            [class.border-transparent]="page !== p"
-            [class.hover:bg-zinc-800]="page !== p"
-            class="px-2 sm:px-3 py-1 text-xs rounded-md border transition-all min-w-[28px] sm:min-w-[32px]"
-          >
-            {{ p }}
-          </button>
-        </ng-container>
+      <div *ngFor="let p of getPageNumbers()" class="flex items-center">
+        <button
+          *ngIf="p !== -1"
+          (click)="goToPage(p)"
+          [class.bg-brand]="page === p"
+          [class.text-black]="page === p"
+          [class.font-medium]="page === p"
+          class="px-4 py-2 rounded-lg border border-zinc-700 hover:bg-zinc-800 transition-colors min-w-[2.5rem]"
+        >
+          {{ p }}
+        </button>
+        <span *ngIf="p === -1" class="px-2 text-zinc-500">...</span>
       </div>
 
-      <button 
-        (click)="onPageChange(page + 1)" 
-        [disabled]="page * pageSize >= total" 
-        class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        title="Next Page"
+      <button
+        (click)="goToPage(page + 1)"
+        [disabled]="page === totalPages()"
+        class="px-3 py-2 rounded-lg border border-zinc-700 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
     </div>

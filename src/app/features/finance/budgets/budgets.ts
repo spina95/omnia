@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { FinanceService } from '../../../core/services/finance';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,8 @@ import { BudgetDialogComponent } from '../budget-dialog/budget-dialog';
 import { SelectComponent } from '../../../shared/components/select/select.component';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { PageHeaderService } from '../../../core/services/page-header.service';
+import { PageHeaderActionsService } from '../../../core/services/page-header-actions.service';
 
 @Component({
   selector: 'app-budgets',
@@ -15,10 +17,14 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
   templateUrl: './budgets.html',
   styleUrls: ['./budgets.css'],
 })
-export class BudgetsComponent implements OnInit {
+export class BudgetsComponent implements OnInit, AfterViewInit, OnDestroy {
   private financeService = inject(FinanceService);
   private cdr = inject(ChangeDetectorRef);
   private notificationService = inject(NotificationService);
+  private pageHeaderService = inject(PageHeaderService);
+  private pageHeaderActionsService = inject(PageHeaderActionsService);
+
+  @ViewChild('headerActions', { static: false }) headerActionsTemplate!: TemplateRef<any>;
 
   budgets: Budget[] = [];
   loading = false;
@@ -32,7 +38,17 @@ export class BudgetsComponent implements OnInit {
   pendingDeleteBudget: Budget | null = null;
 
   ngOnInit() {
+    this.pageHeaderService.setHeader('Budgets');
     this.loadBudgets();
+  }
+
+  ngAfterViewInit() {
+    this.pageHeaderActionsService.setActions(this.headerActionsTemplate);
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.pageHeaderActionsService.clearActions();
   }
 
   async loadBudgets() {

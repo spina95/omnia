@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject, signal, WritableSignal } from '@a
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PageHeaderService } from '../../../core/services/page-header.service';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -165,7 +166,10 @@ export class TravelMapComponent implements OnInit, OnDestroy {
     });
   }
 
+  private pageHeaderService = inject(PageHeaderService);
+
   ngOnInit(): void {
+    this.pageHeaderService.setHeader('Travel Map');
     // Initialize selectedPosition to null to ensure dialog is closed on load
     this.selectedPosition.set(null);
     this.initMap();

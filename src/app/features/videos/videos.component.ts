@@ -4,11 +4,18 @@ import {
   ChangeDetectorRef,
   signal,
   computed,
+  inject,
+  ViewChild,
+  TemplateRef,
+  AfterViewInit,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VideosService, Video, VideoCategory } from '../../core/services/videos.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { PageHeaderService } from '../../core/services/page-header.service';
+import { PageHeaderActionsService } from '../../core/services/page-header-actions.service';
 import { SelectComponent } from '../../shared/components/select/select.component';
 import { AddVideoDialogComponent } from './add-video-dialog/add-video-dialog.component';
 import { ManageVideoCategoriesDialogComponent } from './manage-video-categories-dialog/manage-video-categories-dialog.component';
@@ -26,7 +33,12 @@ import { ManageVideoCategoriesDialogComponent } from './manage-video-categories-
   templateUrl: './videos.component.html',
   styleUrls: ['./videos.component.css'],
 })
-export class VideosComponent implements OnInit {
+export class VideosComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('headerActions', { static: false }) headerActionsTemplate!: TemplateRef<any>;
+  
+  private pageHeaderService = inject(PageHeaderService);
+  private pageHeaderActionsService = inject(PageHeaderActionsService);
+  
   videos = signal<Video[]>([]);
   categories = signal<VideoCategory[]>([]);
   
@@ -74,8 +86,18 @@ export class VideosComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.pageHeaderService.setHeader('Videos');
     this.loadCategories();
     this.loadVideos();
+  }
+
+  ngAfterViewInit() {
+    this.pageHeaderActionsService.setActions(this.headerActionsTemplate);
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy() {
+    this.pageHeaderActionsService.clearActions();
   }
 
   async loadCategories() {
