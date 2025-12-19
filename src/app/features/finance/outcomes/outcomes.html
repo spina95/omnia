@@ -1,21 +1,21 @@
 <ng-template #headerActions>
   <button
     (click)="onManageScheduledExpenses()"
-    class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700"
+    class="flex items-center justify-center gap-2 px-2 sm:px-4 py-2.5 h-10 text-sm bg-zinc-800 text-white rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700"
   >
-    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
-    <span class="hidden sm:inline">Scheduled Expenses</span>
+    <span class="hidden sm:inline whitespace-nowrap">Scheduled Expenses</span>
   </button>
   <button
     (click)="onAddOutcome()"
-    class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
+    class="flex items-center justify-center gap-2 px-2 sm:px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
   >
-    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
     </svg>
-    New Outcome
+    <span class="hidden sm:inline whitespace-nowrap">New Outcome</span>
   </button>
 </ng-template>
 

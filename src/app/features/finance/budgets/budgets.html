@@ -1,12 +1,12 @@
 <ng-template #headerActions>
   <button
     (click)="openCreateDialog()"
-    class="inline-flex items-center gap-2 px-4 py-2.5 h-10 text-sm font-medium rounded-lg text-black bg-brand hover:bg-brand/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
+    class="inline-flex items-center justify-center gap-2 px-2 sm:px-4 py-2.5 h-10 text-sm font-medium rounded-lg text-black bg-brand hover:bg-brand/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand"
   >
-    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
     </svg>
-    Create Budget
+    <span class="hidden sm:inline whitespace-nowrap">Create Budget</span>
   </button>
 </ng-template>
 
