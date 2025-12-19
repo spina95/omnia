@@ -361,7 +361,13 @@ export class HomeComponent implements OnInit {
         );
         
         // Update Sankey chart
+        console.log('[HomeComponent] Sankey data received:', sankeyData);
         this.createSankeyChart(sankeyData);
+        console.log('[HomeComponent] Sankey chart created:', { 
+          hasData: !!this.sankeyChartData, 
+          hasLayout: !!this.sankeyChartLayout,
+          nodeCount: this.sankeyChartData?.[0]?.node?.label?.length || 0
+        });
 
         // Force change detection to ensure the view updates
         this.cdr.detectChanges();
