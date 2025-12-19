@@ -40,6 +40,31 @@ export interface DashboardFilters {
   incomeCategoryIds?: number[];
 }
 
+export interface SankeyFlowData {
+  flow_type: string;
+  source_name: string;
+  source_color: string;
+  target_name: string;
+  target_color: string;
+  total_amount: number;
+}
+
+export interface SankeyData {
+  node: {
+    label: string[];
+    color: string[];
+    pad: number;
+    thickness: number;
+  };
+  link: {
+    source: number[];
+    target: number[];
+    value: number[];
+    color: string[];
+  };
+  type: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -670,5 +695,170 @@ export class DashboardService {
       console.error('Error fetching recent transactions:', error);
       return [];
     }
+  }
+
+  /**
+   * Get Sankey flow data for income categories → accounts → expense categories
+   * Uses server-side aggregation via RPC function for performance
+   */
+  async getSankeyFlowData(filters?: DashboardFilters): Promise<SankeyData> {
+    try {
+      const { data, error } = await this.supabase.client.rpc('get_sankey_flow_data', {
+        start_date: filters?.startDate || '1900-01-01',
+        end_date: filters?.endDate || '2100-12-31',
+        payment_type_ids: filters?.paymentTypeIds?.length ? filters.paymentTypeIds : null,
+        income_category_ids: filters?.incomeCategoryIds?.length ? filters.incomeCategoryIds : null,
+        expense_category_ids: filters?.expenseCategoryIds?.length ? filters.expenseCategoryIds : null,
+      });
+
+      if (error) {
+        console.error('Error fetching Sankey flow data:', error);
+        return this.getEmptySankeyData();
+      }
+
+      const flowData = data as SankeyFlowData[];
+      
+      if (!flowData || flowData.length === 0) {
+        return this.getEmptySankeyData();
+      }
+
+      // Separate the two flow types
+      const incomeToAccount = flowData.filter(d => d.flow_type === 'income_to_account');
+      const accountToExpense = flowData.filter(d => d.flow_type === 'account_to_expense');
+
+      // Build unique node sets for each level
+      const incomeCategoriesMap = new Map<string, string>();
+      const accountsMap = new Map<string, string>();
+      const expenseCategoriesMap = new Map<string, string>();
+
+      incomeToAccount.forEach(flow => {
+        incomeCategoriesMap.set(flow.source_name, flow.source_color);
+        accountsMap.set(flow.target_name, flow.target_color);
+      });
+
+      accountToExpense.forEach(flow => {
+        accountsMap.set(flow.source_name, flow.source_color);
+        expenseCategoriesMap.set(flow.target_name, flow.target_color);
+      });
+
+      // Create ordered node arrays: Income Categories | Accounts | Expense Categories
+      const incomeCategories = Array.from(incomeCategoriesMap.keys());
+      const accounts = Array.from(accountsMap.keys());
+      const expenseCategories = Array.from(expenseCategoriesMap.keys());
+
+      const nodeLabels = [
+        ...incomeCategories,
+        ...accounts,
+        ...expenseCategories,
+      ];
+
+      const nodeColors = [
+        ...incomeCategories.map(name => incomeCategoriesMap.get(name) || '#3ECF8E'),
+        ...accounts.map(name => accountsMap.get(name) || '#3B82F6'),
+        ...expenseCategories.map(name => expenseCategoriesMap.get(name) || '#EF4444'),
+      ];
+
+      // Create index map for quick lookup
+      const nodeIndexMap = new Map<string, number>();
+      incomeCategories.forEach((name, i) => 
+        nodeIndexMap.set(`income::${name}`, i)
+      );
+      accounts.forEach((name, i) => 
+        nodeIndexMap.set(`account::${name}`, incomeCategories.length + i)
+      );
+      expenseCategories.forEach((name, i) => 
+        nodeIndexMap.set(`expense::${name}`, incomeCategories.length + accounts.length + i)
+      );
+
+      // Build links
+      const sources: number[] = [];
+      const targets: number[] = [];
+      const values: number[] = [];
+      const linkColors: string[] = [];
+
+      // Income → Account links
+      incomeToAccount.forEach(flow => {
+        const sourceIdx = nodeIndexMap.get(`income::${flow.source_name}`);
+        const targetIdx = nodeIndexMap.get(`account::${flow.target_name}`);
+        
+        if (sourceIdx !== undefined && targetIdx !== undefined) {
+          sources.push(sourceIdx);
+          targets.push(targetIdx);
+          values.push(flow.total_amount);
+          // Use income category color with transparency
+          const color = flow.source_color || '#3ECF8E';
+          linkColors.push(this.hexToRgba(color, 0.4));
+        }
+      });
+
+      // Account → Expense links
+      accountToExpense.forEach(flow => {
+        const sourceIdx = nodeIndexMap.get(`account::${flow.source_name}`);
+        const targetIdx = nodeIndexMap.get(`expense::${flow.target_name}`);
+        
+        if (sourceIdx !== undefined && targetIdx !== undefined) {
+          sources.push(sourceIdx);
+          targets.push(targetIdx);
+          values.push(flow.total_amount);
+          // Use expense category color with transparency
+          const color = flow.target_color || '#EF4444';
+          linkColors.push(this.hexToRgba(color, 0.4));
+        }
+      });
+
+      return {
+        node: {
+          label: nodeLabels,
+          color: nodeColors,
+          pad: 15,
+          thickness: 20,
+        },
+        link: {
+          source: sources,
+          target: targets,
+          value: values,
+          color: linkColors,
+        },
+        type: 'sankey',
+      };
+    } catch (error) {
+      console.error('Error processing Sankey data:', error);
+      return this.getEmptySankeyData();
+    }
+  }
+
+  /**
+   * Returns empty Sankey data structure
+   */
+  private getEmptySankeyData(): SankeyData {
+    return {
+      node: {
+        label: [],
+        color: [],
+        pad: 15,
+        thickness: 20,
+      },
+      link: {
+        source: [],
+        target: [],
+        value: [],
+        color: [],
+      },
+      type: 'sankey',
+    };
+  }
+
+  /**
+   * Convert hex color to rgba with opacity
+   */
+  private hexToRgba(hex: string, opacity: number): string {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) {
+      return `rgba(128, 128, 128, ${opacity})`;
+    }
+    const r = parseInt(result[1], 16);
+    const g = parseInt(result[2], 16);
+    const b = parseInt(result[3], 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
 }

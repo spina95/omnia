@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
+import { PlotlyModule } from 'angular-plotly.js';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -22,6 +23,7 @@ import {
   DashboardStats,
   DashboardFilters,
   AccountData,
+  SankeyData,
 } from '../../../core/services/dashboard.service';
 import { FinanceService } from '../../../core/services/finance';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
@@ -32,7 +34,7 @@ import { DateRangeTimelineComponent, DateRange } from '../../../shared/component
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule, MultiselectComponent, SelectComponent, FormsModule, DateRangeTimelineComponent],
+  imports: [CommonModule, NgApexchartsModule, PlotlyModule, MultiselectComponent, SelectComponent, FormsModule, DateRangeTimelineComponent],
   templateUrl: './home.html',
   styles: [
     `
@@ -68,6 +70,8 @@ export class HomeComponent implements OnInit {
   expensesCategoryChartOptions: any;
   expensesAccountChartOptions: any;
   incomesAccountChartOptions: any;
+  sankeyChartData: any;
+  sankeyChartLayout: any;
 
   // Filters state
   selectedPeriod: 'current-month' | 'last-30-days' | 'last-6-months' | 'last-12-months' | 'all' | 'custom' =
@@ -287,6 +291,7 @@ export class HomeComponent implements OnInit {
         this.dashboardService.getExpensesByAccount(filters),
         this.dashboardService.getIncomesByAccount(filters),
         this.dashboardService.getTopExpenses(filters),
+        this.dashboardService.getSankeyFlowData(filters),
       ]);
 
       const [
@@ -297,6 +302,7 @@ export class HomeComponent implements OnInit {
         expensesAccountRes,
         incomesAccountRes,
         topExpensesRes,
+        sankeyDataRes,
       ] = results;
 
       // Helper to extract fulfilled values with sensible fallbacks
@@ -319,6 +325,11 @@ export class HomeComponent implements OnInit {
       const expensesAccount = getValue(expensesAccountRes, []);
       const incomesAccount = getValue(incomesAccountRes, []);
       const topExpenses = getValue(topExpensesRes, []);
+      const sankeyData = getValue(sankeyDataRes, {
+        node: { label: [], color: [], pad: 15, thickness: 20 },
+        link: { source: [], target: [], value: [], color: [] },
+        type: 'sankey',
+      });
 
       // Ensure ALL state updates happen within Angular zone for proper change detection
       this.ngZone.run(() => {
@@ -348,6 +359,9 @@ export class HomeComponent implements OnInit {
           incomesAccount,
           'Incomes by account'
         );
+        
+        // Update Sankey chart
+        this.createSankeyChart(sankeyData);
 
         // Force change detection to ensure the view updates
         this.cdr.detectChanges();
@@ -702,6 +716,56 @@ export class HomeComponent implements OnInit {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  private createSankeyChart(sankeyData: SankeyData) {
+    this.sankeyChartData = [
+      {
+        type: 'sankey',
+        orientation: 'h',
+        node: {
+          pad: sankeyData.node.pad,
+          thickness: sankeyData.node.thickness,
+          line: {
+            color: 'rgba(255, 255, 255, 0.1)',
+            width: 0.5,
+          },
+          label: sankeyData.node.label,
+          color: sankeyData.node.color,
+        },
+        link: {
+          source: sankeyData.link.source,
+          target: sankeyData.link.target,
+          value: sankeyData.link.value,
+          color: sankeyData.link.color,
+        },
+      },
+    ];
+
+    this.sankeyChartLayout = {
+      title: {
+        text: 'Money Flow',
+        font: {
+          size: 16,
+          color: '#ffffff',
+          family: 'Inter, system-ui, sans-serif',
+        },
+      },
+      font: {
+        size: 11,
+        color: '#a1a1aa',
+        family: 'Inter, system-ui, sans-serif',
+      },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      height: 600,
+      margin: {
+        l: 20,
+        r: 20,
+        t: 60,
+        b: 20,
+      },
+    };
   }
 
   async onDateRangeChange(range: DateRange | null) {

@@ -355,6 +355,32 @@
       </div>
     </div>
 
+    <!-- Sankey Flow Diagram -->
+    <div
+      class="mb-6 overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+    >
+      <div class="px-5 py-4 border-b border-sidebar-border">
+        <h4 class="text-base font-semibold text-white">Money Flow</h4>
+        <p class="mt-1 text-xs text-slate-400">Income Categories → Accounts → Expense Categories</p>
+      </div>
+      <div class="p-5">
+        <plotly-plot
+          *ngIf="sankeyChartData && sankeyChartLayout"
+          [data]="sankeyChartData"
+          [layout]="sankeyChartLayout"
+          [config]="{ responsive: true, displayModeBar: false }"
+          [style]="{ width: '100%', height: '600px' }"
+        >
+        </plotly-plot>
+        <div
+          *ngIf="!sankeyChartData || sankeyChartData[0]?.node?.label?.length === 0"
+          class="flex items-center justify-center h-96 text-slate-400"
+        >
+          <p>No data available for the selected period and filters</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Three Pie Charts Row -->
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-3">
       <!-- Expenses by Category -->
