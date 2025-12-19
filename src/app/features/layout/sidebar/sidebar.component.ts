@@ -270,6 +270,40 @@ import { AuthService } from '../../../core/auth/auth';
                 >Documents</span
               >
             </a>
+
+            <a
+              routerLink="/videos"
+              routerLinkActive="bg-brand/10 text-brand"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              [class.px-2]="!collapsed"
+              [class.justify-center]="collapsed"
+              [title]="collapsed ? 'Videos' : ''"
+            >
+              <svg
+                class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
+                [class.mr-3]="!collapsed"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
+              </svg>
+              <span
+                class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                [class.w-0]="collapsed"
+                [class.opacity-0]="collapsed"
+                [class.ml-0]="collapsed"
+                [class.w-auto]="!collapsed"
+                [class.opacity-100]="!collapsed"
+                [class.ml-3]="!collapsed"
+                >Videos</span
+              >
+            </a>
           </div>
         </div>
 

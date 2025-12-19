@@ -1,0 +1,174 @@
+<div
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="bg-zinc-900 rounded-lg border border-zinc-800 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-zinc-800">
+      <h2 class="text-xl font-semibold text-white">Manage Video Categories</h2>
+      <button
+        (click)="onClose()"
+        class="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
+      >
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <!-- Create New Category Form -->
+      <div class="bg-zinc-950 rounded-lg border border-zinc-800 p-4 mb-6">
+        <h3 class="text-sm font-medium text-zinc-300 mb-4">Create New Category</h3>
+        <form class="space-y-4" (submit)="$event.preventDefault(); createCategory()">
+          <div class="flex gap-3">
+            <div class="flex-1">
+              <input
+                type="text"
+                [value]="newCategoryName()"
+                (input)="newCategoryName.set($any($event.target).value)"
+                placeholder="Category name"
+                class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+                [disabled]="isCreating()"
+              />
+            </div>
+            <div class="flex-shrink-0">
+              <input
+                type="color"
+                [value]="newCategoryColor()"
+                (input)="newCategoryColor.set($any($event.target).value)"
+                class="h-full w-16 bg-zinc-900 border border-zinc-700 rounded-lg cursor-pointer"
+                [disabled]="isCreating()"
+                title="Choose category color"
+              />
+            </div>
+            <button
+              type="submit"
+              [disabled]="isCreating() || !newCategoryName().trim()"
+              class="px-4 py-2.5 bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <div
+                *ngIf="isCreating()"
+                class="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"
+              ></div>
+              <svg *ngIf="!isCreating()" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Categories List -->
+      <div class="space-y-3">
+        <h3 class="text-sm font-medium text-zinc-300 mb-3">Existing Categories</h3>
+        
+        <div *ngIf="categories().length === 0" class="text-center py-8 text-zinc-500">
+          <svg class="h-12 w-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+            />
+          </svg>
+          <p>No categories yet</p>
+          <p class="text-sm mt-1">Create your first category above</p>
+        </div>
+
+        <div
+          *ngFor="let category of categories()"
+          class="flex items-center justify-between bg-zinc-950 rounded-lg border border-zinc-800 p-4 hover:border-zinc-700 transition-colors"
+        >
+          <div class="flex items-center gap-3 flex-1">
+            <div
+              class="w-4 h-4 rounded-full flex-shrink-0"
+              [style.backgroundColor]="category.color"
+            ></div>
+            <span class="text-white font-medium">{{ category.name }}</span>
+          </div>
+          
+          <button
+            (click)="confirmDelete(category)"
+            class="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-900/20"
+            title="Delete category"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 p-6 border-t border-zinc-800">
+      <button
+        (click)="onClose()"
+        class="px-4 py-2 bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
+      >
+        Done
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<div
+  *ngIf="categoryToDelete()"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+  (click)="onBackdropClick($event)"
+>
+  <div class="bg-zinc-900 rounded-lg border border-zinc-800 shadow-2xl w-full max-w-md">
+    <!-- Header -->
+    <div class="p-6 border-b border-zinc-800">
+      <h3 class="text-lg font-semibold text-white">Delete Category</h3>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <p class="text-zinc-300">
+        Are you sure you want to delete the category
+        <span class="font-semibold text-white">"{{ categoryToDelete()!.name }}"</span>?
+      </p>
+      <p class="text-zinc-500 text-sm mt-2">
+        Videos in this category will not be deleted, but will become uncategorized.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 p-6 border-t border-zinc-800">
+      <button
+        (click)="cancelDelete()"
+        class="px-4 py-2 border border-zinc-700 text-white rounded-lg hover:bg-zinc-800 transition-colors"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="deleteCategory()"
+        class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

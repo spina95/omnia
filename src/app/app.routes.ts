@@ -51,6 +51,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/documents/documents.component').then((m) => m.DocumentsComponent),
       },
+      {
+        path: 'videos',
+        loadComponent: () =>
+          import('./features/videos/videos.component').then((m) => m.VideosComponent),
+      },
     ],
   },
   {

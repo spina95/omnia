@@ -35,7 +35,11 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
   @Input() placeholder: string = 'Select...';
   @Input() label: string = '';
   @Input() bgColor: string = 'bg-dark-blue'; // Default dark blue
+  @Input() set value(val: string | number | null) {
+    this.selectedValue = val;
+  }
   @Output() selectionChange = new EventEmitter<string | number | null>();
+  @Output() valueChange = new EventEmitter<string | number | null>();
 
   selectedValue: string | number | null = null;
   isOpen = false;
@@ -65,6 +69,7 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
     this.onChange(this.selectedValue);
     this.onTouched();
     this.selectionChange.emit(this.selectedValue);
+    this.valueChange.emit(this.selectedValue);
   }
 
   getSelectedLabel(): string {
