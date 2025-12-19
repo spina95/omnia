@@ -43,6 +43,9 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
 
   selectedValue: string | number | null = null;
   isOpen = false;
+  dropdownWidth = 0;
+  dropdownTop = 0;
+  dropdownLeft = 0;
 
   private onChange = (value: string | number | null) => {};
   private onTouched = () => {};
@@ -83,7 +86,18 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
   toggleDropdown(): void {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
+      this.calculateDropdownPosition();
       this.onTouched();
+    }
+  }
+
+  private calculateDropdownPosition(): void {
+    const button = this.elementRef.nativeElement.querySelector('button');
+    if (button) {
+      const rect = button.getBoundingClientRect();
+      this.dropdownWidth = rect.width;
+      this.dropdownTop = rect.bottom + 4; // 4px margin
+      this.dropdownLeft = rect.left;
     }
   }
 

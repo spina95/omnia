@@ -1,7 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild, TemplateRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ColDef } from 'ag-grid-community';
-import { FinanceService } from '../../../core/services/finance';
+import { FinanceService, ExpenseTag } from '../../../core/services/finance';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageHeaderService } from '../../../core/services/page-header.service';
 import { PageHeaderActionsService } from '../../../core/services/page-header-actions.service';
@@ -11,15 +12,20 @@ import {
 } from '../../../shared/components/data-table/data-table.component';
 import { ExpenseDialogComponent } from '../../../shared/components/expense-dialog/expense-dialog.component';
 import { ScheduledExpenseDialogComponent } from '../../../shared/components/scheduled-expense-dialog/scheduled-expense-dialog.component';
+import { ManageTagsDialogComponent } from '../../../shared/components/manage-tags-dialog/manage-tags-dialog.component';
+import { MultiselectComponent, MultiselectOption } from '../../../shared/components/multiselect/multiselect.component';
 
 @Component({
   selector: 'app-outcomes',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     DataTableComponent,
     ExpenseDialogComponent,
     ScheduledExpenseDialogComponent,
+    ManageTagsDialogComponent,
+    MultiselectComponent,
   ],
   templateUrl: './outcomes.html',
   styleUrls: ['./outcomes.css'],
@@ -55,6 +61,7 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedYear: number | null = new Date().getFullYear();
   selectedCategory: number | null = null;
   selectedPaymentType: number | null = null;
+  selectedTagIds: number[] = [];
 
   // Dialog state
   isDialogOpen = false;
@@ -63,9 +70,14 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Scheduled Expenses Dialog state
   isScheduledDialogOpen = false;
 
+  // Manage Tags Dialog state
+  isManageTagsDialogOpen = false;
+
   // Metadata
   categories: any[] = [];
   paymentTypes: any[] = [];
+  tags: ExpenseTag[] = [];
+  tagsOptions: MultiselectOption[] = [];
   months = [
     { value: 1, label: 'January' },
     { value: 2, label: 'February' },
@@ -158,6 +170,36 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
       cellStyle: { display: 'flex', alignItems: 'center' },
     },
     {
+      field: 'expense_tags',
+      headerName: 'Tags',
+      width: 150,
+      cellRenderer: (params: any) => {
+        const tags = params.value || [];
+        if (tags.length === 0) return '';
+        
+        if (tags.length === 1) {
+          const tag = tags[0];
+          return `<span style="background: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;" 
+                       class="px-2 py-1 rounded text-xs whitespace-nowrap">
+                    ${tag.name}
+                  </span>`;
+        }
+        
+        // Show first tag name + count of others
+        const firstTag = tags[0];
+        const othersCount = tags.length - 1;
+        return `<span style="background: ${firstTag.color}20; color: ${firstTag.color}; border: 1px solid ${firstTag.color}40;" 
+                     class="px-2 py-1 rounded text-xs whitespace-nowrap">
+                  ${firstTag.name} +${othersCount}
+                </span>`;
+      },
+      tooltipValueGetter: (params: any) => {
+        const tags = params.value || [];
+        if (tags.length === 0) return '';
+        return tags.map((t: ExpenseTag) => t.name).join(', ');
+      },
+    },
+    {
       headerName: '',
       width: 60,
       pinned: 'right',
@@ -215,12 +257,19 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadMetadata() {
     try {
-      const [cats, pts] = await Promise.all([
+      const [cats, pts, tgs] = await Promise.all([
         this.financeService.getCategories(),
         this.financeService.getPaymentTypes(),
+        this.financeService.getTags(),
       ]);
       this.categories = cats || [];
       this.paymentTypes = pts || [];
+      this.tags = tgs || [];
+      this.tagsOptions = this.tags.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        color: tag.color,
+      }));
     } catch (e) {
       console.error('Failed to load metadata', e);
     }
@@ -316,6 +365,16 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  openManageTags() {
+    this.isManageTagsDialogOpen = true;
+  }
+
+  onTagsUpdated() {
+    // Reload tags and data when tags are updated
+    this.loadMetadata();
+    this.loadData();
+  }
+
   onScheduledDialogClose() {
     this.isScheduledDialogOpen = false;
   }
@@ -365,6 +424,7 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
         year: this.selectedYear || undefined,
         categoryId: this.selectedCategory || undefined,
         paymentTypeId: this.selectedPaymentType || undefined,
+        tagIds: this.selectedTagIds.length > 0 ? this.selectedTagIds : undefined,
         search: this.searchQuery,
       });
 

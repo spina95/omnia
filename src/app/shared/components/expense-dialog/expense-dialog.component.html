@@ -110,6 +110,17 @@
                     </div>
                 </div>
 
+                <!-- Tags -->
+                <div>
+                    <app-multiselect
+                        [options]="tagsOptions"
+                        [label]="'Tags'"
+                        [placeholder]="'Select tags...'"
+                        [(ngModel)]="formData.tag_ids"
+                        name="tag_ids"
+                    ></app-multiselect>
+                </div>
+
             </form>
         </div>
 

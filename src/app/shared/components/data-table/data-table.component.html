@@ -71,6 +71,16 @@
       class="w-32 md:w-40"
     ></app-select>
 
+    <!-- Tags Filter -->
+    <app-multiselect
+      *ngIf="tags.length > 0"
+      [options]="tagsOptions"
+      [placeholder]="'All Tags'"
+      [(ngModel)]="selectedTagIds"
+      (selectionChange)="onTagsChange($event)"
+      class="w-32 md:w-40"
+    ></app-multiselect>
+
     <div class="flex-grow"></div>
 
     <!-- Clear Filters -->

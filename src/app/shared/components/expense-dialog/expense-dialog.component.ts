@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FinanceService } from '../../../core/services/finance';
+import { FinanceService, ExpenseTag } from '../../../core/services/finance';
 import { NotificationService } from '../../../core/services/notification.service';
 import { SelectComponent, SelectOption } from '../select/select.component';
+import { MultiselectComponent, MultiselectOption } from '../multiselect/multiselect.component';
 
 @Component({
   selector: 'app-expense-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, SelectComponent],
+  imports: [CommonModule, FormsModule, SelectComponent, MultiselectComponent],
   templateUrl: './expense-dialog.component.html',
   styleUrls: ['./expense-dialog.component.css'],
 })
@@ -25,15 +26,18 @@ export class ExpenseDialogComponent implements OnInit {
     date: '',
     category_id: null,
     payment_type_id: null,
+    tag_ids: [],
   };
 
   // Metadata
   categories: any[] = [];
   paymentTypes: any[] = [];
+  tags: ExpenseTag[] = [];
 
   // Select options for Spartan Select component
   categoriesOptions: SelectOption[] = [];
   paymentTypesOptions: SelectOption[] = [];
+  tagsOptions: MultiselectOption[] = [];
 
   isLoading = false;
   isSaving = false;
@@ -58,6 +62,7 @@ export class ExpenseDialogComponent implements OnInit {
           date: this.expense.date ? new Date(this.expense.date).toISOString().split('T')[0] : '',
           category_id: this.expense.expense_categories?.id || null,
           payment_type_id: this.expense.payment_types?.id || null,
+          tag_ids: this.expense.expense_tags?.map((tag: ExpenseTag) => tag.id) || [],
         };
       } else {
         // Create mode - reset form with default values
@@ -67,6 +72,7 @@ export class ExpenseDialogComponent implements OnInit {
           date: new Date().toISOString().split('T')[0], // Default to today
           category_id: null,
           payment_type_id: null,
+          tag_ids: [],
         };
 
         // Set Bank as default payment type when creating new expense
@@ -90,12 +96,14 @@ export class ExpenseDialogComponent implements OnInit {
   async loadMetadata() {
     this.isLoading = true;
     try {
-      const [cats, pts] = await Promise.all([
+      const [cats, pts, tgs] = await Promise.all([
         this.financeService.getCategories(),
         this.financeService.getPaymentTypes(),
+        this.financeService.getTags(),
       ]);
       this.categories = cats || [];
       this.paymentTypes = pts || [];
+      this.tags = tgs || [];
 
       // Convert to SelectOption format for Spartan Select component
       this.categoriesOptions = this.categories.map((cat) => ({
@@ -105,6 +113,11 @@ export class ExpenseDialogComponent implements OnInit {
       this.paymentTypesOptions = this.paymentTypes.map((pt) => ({
         value: pt.id,
         label: pt.name,
+      }));
+      this.tagsOptions = this.tags.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        color: tag.color,
       }));
 
       // Set Bank as default payment type if creating a new expense
@@ -147,6 +160,7 @@ export class ExpenseDialogComponent implements OnInit {
           date: this.formData.date,
           category_id: this.formData.category_id,
           payment_type_id: this.formData.payment_type_id,
+          tag_ids: this.formData.tag_ids,
         });
         this.expenseSaved.emit(updatedExpense);
         this.notificationService.success(
@@ -163,6 +177,7 @@ export class ExpenseDialogComponent implements OnInit {
           date: this.formData.date,
           category_id: this.formData.category_id,
           payment_type_id: this.formData.payment_type_id,
+          tag_ids: this.formData.tag_ids,
         });
         this.expenseSaved.emit(newExpense);
         this.notificationService.success(

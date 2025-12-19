@@ -18,6 +18,7 @@ import {
   colorSchemeDark,
 } from 'ag-grid-community';
 import { SelectComponent, SelectOption } from '../select/select.component';
+import { MultiselectComponent, MultiselectOption } from '../multiselect/multiselect.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -50,7 +51,7 @@ export interface FilterChangeEvent {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, FormsModule, SelectComponent],
+  imports: [CommonModule, AgGridAngular, FormsModule, SelectComponent, MultiselectComponent],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.css'],
 })
@@ -83,9 +84,11 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Input() selectedYear: number | null = null;
   @Input() selectedCategory: number | null = null;
   @Input() selectedPaymentType: number | null = null;
+  @Input() selectedTagIds: number[] = [];
 
   @Input() categories: any[] = [];
   @Input() paymentTypes: any[] = [];
+  @Input() tags: any[] = [];
   @Input() months: any[] = [];
   @Input() years: number[] = [];
 
@@ -109,6 +112,7 @@ export class DataTableComponent implements OnInit, OnChanges {
   @Output() selectedYearChange = new EventEmitter<number | null>();
   @Output() selectedCategoryChange = new EventEmitter<number | null>();
   @Output() selectedPaymentTypeChange = new EventEmitter<number | null>();
+  @Output() selectedTagIdsChange = new EventEmitter<number[]>();
 
   // Internal state
   private gridApi!: GridApi;
@@ -189,18 +193,26 @@ export class DataTableComponent implements OnInit, OnChanges {
     this.filterChanged.emit();
   }
 
+  onTagsChange(value: (string | number)[]) {
+    this.selectedTagIds = value as number[];
+    this.selectedTagIdsChange.emit(this.selectedTagIds);
+    this.filterChanged.emit();
+  }
+
   clearFilters() {
     this.searchValue = '';
     this.selectedMonth = null;
     this.selectedYear = new Date().getFullYear();
     this.selectedCategory = null;
     this.selectedPaymentType = null;
+    this.selectedTagIds = [];
 
     this.searchValueChange.emit(this.searchValue);
     this.selectedMonthChange.emit(this.selectedMonth);
     this.selectedYearChange.emit(this.selectedYear);
     this.selectedCategoryChange.emit(this.selectedCategory);
     this.selectedPaymentTypeChange.emit(this.selectedPaymentType);
+    this.selectedTagIdsChange.emit(this.selectedTagIds);
     this.filterChanged.emit();
   }
 
@@ -210,8 +222,17 @@ export class DataTableComponent implements OnInit, OnChanges {
       this.selectedMonth !== null ||
       this.selectedYear !== new Date().getFullYear() ||
       this.selectedCategory !== null ||
-      this.selectedPaymentType !== null
+      this.selectedPaymentType !== null ||
+      this.selectedTagIds.length > 0
     );
+  }
+
+  get tagsOptions(): MultiselectOption[] {
+    return this.tags.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+      color: tag.color,
+    }));
   }
 
   get monthOptions(): SelectOption[] {

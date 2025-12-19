@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SupabaseService } from './supabase';
 
+export interface ExpenseTag {
+  id: number;
+  name: string;
+  color: string;
+}
+
 export interface Expense {
   id: number;
   name: string;
@@ -16,6 +22,7 @@ export interface Expense {
     id: number;
     name: string;
   };
+  expense_tags?: ExpenseTag[];
 }
 
 @Injectable({
@@ -33,9 +40,10 @@ export class FinanceService {
     year?: number;
     categoryId?: number;
     paymentTypeId?: number;
+    tagIds?: number[];
     search?: string;
   }) {
-    const { page, pageSize, sort, order, month, year, categoryId, paymentTypeId, search } = params;
+    const { page, pageSize, sort, order, month, year, categoryId, paymentTypeId, tagIds, search } = params;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -48,7 +56,8 @@ export class FinanceService {
         category_id,
         expense_categories ( id, name, color ),
         paymentType_id,
-        payment_types ( id, name, color )
+        payment_types ( id, name, color ),
+        expense_tag_mappings ( expense_tags ( id, name, color ) )
       `,
       { count: 'exact' }
     );
@@ -96,6 +105,23 @@ export class FinanceService {
       query = query.eq('paymentType_id', paymentTypeId);
     }
 
+    if (tagIds && tagIds.length > 0) {
+      // Filter expenses that have at least one of the selected tags
+      // We need to get the expense_ids first, then filter
+      const { data: mappings } = await this.supabase.client
+        .from('expense_tag_mappings')
+        .select('expense_id')
+        .in('tag_id', tagIds);
+      
+      if (mappings && mappings.length > 0) {
+        const expenseIds = [...new Set(mappings.map(m => m.expense_id))];
+        query = query.in('id', expenseIds);
+      } else {
+        // No expenses with these tags, return empty result
+        query = query.eq('id', -1);
+      }
+    }
+
     if (search) {
       query = query.ilike('name', `%${search}%`);
     }
@@ -125,7 +151,13 @@ export class FinanceService {
       throw error;
     }
 
-    return { data, count };
+    // Flatten expense_tags from nested structure
+    const expenses = data?.map((expense: any) => ({
+      ...expense,
+      expense_tags: expense.expense_tag_mappings?.map((mapping: any) => mapping.expense_tags).filter(Boolean) || []
+    }));
+
+    return { data: expenses, count };
   }
 
   async getCategories() {
@@ -154,6 +186,7 @@ export class FinanceService {
     date: string;
     category_id?: number;
     payment_type_id?: number;
+    tag_ids?: number[];
   }) {
     // Map payment_type_id to paymentType_id (database column name)
     const dbExpense: any = { ...expense };
@@ -161,6 +194,7 @@ export class FinanceService {
       dbExpense.paymentType_id = expense.payment_type_id;
       delete dbExpense.payment_type_id;
     }
+    delete dbExpense.tag_ids;
 
     const { data, error } = await this.supabase.client
       .from('expenses')
@@ -180,6 +214,21 @@ export class FinanceService {
       .single();
 
     if (error) throw error;
+
+    // Insert tag mappings if provided
+    if (expense.tag_ids && expense.tag_ids.length > 0) {
+      const mappings = expense.tag_ids.map(tag_id => ({
+        expense_id: data.id,
+        tag_id
+      }));
+
+      const { error: mappingError } = await this.supabase.client
+        .from('expense_tag_mappings')
+        .insert(mappings);
+
+      if (mappingError) throw mappingError;
+    }
+
     return data;
   }
 
@@ -191,6 +240,7 @@ export class FinanceService {
       date?: string;
       category_id?: number;
       payment_type_id?: number;
+      tag_ids?: number[];
     }
   ) {
     // Map payment_type_id to paymentType_id (database column name)
@@ -199,6 +249,7 @@ export class FinanceService {
       dbUpdates.paymentType_id = updates.payment_type_id;
       delete dbUpdates.payment_type_id;
     }
+    delete dbUpdates.tag_ids;
 
     const { data, error } = await this.supabase.client
       .from('expenses')
@@ -219,11 +270,106 @@ export class FinanceService {
       .single();
 
     if (error) throw error;
+
+    // Update tag mappings if provided
+    if (updates.tag_ids !== undefined) {
+      // Delete existing mappings
+      const { error: deleteError } = await this.supabase.client
+        .from('expense_tag_mappings')
+        .delete()
+        .eq('expense_id', id);
+
+      if (deleteError) throw deleteError;
+
+      // Insert new mappings
+      if (updates.tag_ids.length > 0) {
+        const mappings = updates.tag_ids.map(tag_id => ({
+          expense_id: id,
+          tag_id
+        }));
+
+        const { error: insertError } = await this.supabase.client
+          .from('expense_tag_mappings')
+          .insert(mappings);
+
+        if (insertError) throw insertError;
+      }
+    }
+
     return data;
   }
 
   async deleteExpense(id: number) {
     const { error } = await this.supabase.client.from('expenses').delete().eq('id', id);
+
+    if (error) throw error;
+  }
+
+  // ==================== EXPENSE TAGS ====================
+
+  private generateRandomColor(): string {
+    const colors = [
+      '#ef4444', // red
+      '#f97316', // orange
+      '#f59e0b', // amber
+      '#eab308', // yellow
+      '#84cc16', // lime
+      '#22c55e', // green
+      '#10b981', // emerald
+      '#14b8a6', // teal
+      '#06b6d4', // cyan
+      '#0ea5e9', // sky
+      '#3b82f6', // blue
+      '#6366f1', // indigo
+      '#8b5cf6', // violet
+      '#a855f7', // purple
+      '#d946ef', // fuchsia
+      '#ec4899', // pink
+      '#f43f5e', // rose
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  async getTags() {
+    const { data, error } = await this.supabase.client
+      .from('expense_tags')
+      .select('id, name, color')
+      .order('name');
+
+    if (error) throw error;
+    return data as ExpenseTag[];
+  }
+
+  async createTag(name: string, color?: string) {
+    const tagColor = color || this.generateRandomColor();
+    
+    const { data, error } = await this.supabase.client
+      .from('expense_tags')
+      .insert({ name, color: tagColor })
+      .select('id, name, color')
+      .single();
+
+    if (error) throw error;
+    return data as ExpenseTag;
+  }
+
+  async updateTag(id: number, name: string, color: string) {
+    const { data, error } = await this.supabase.client
+      .from('expense_tags')
+      .update({ name, color })
+      .eq('id', id)
+      .select('id, name, color')
+      .single();
+
+    if (error) throw error;
+    return data as ExpenseTag;
+  }
+
+  async deleteTag(id: number) {
+    const { error } = await this.supabase.client
+      .from('expense_tags')
+      .delete()
+      .eq('id', id);
 
     if (error) throw error;
   }

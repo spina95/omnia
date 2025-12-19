@@ -8,3 +8,4 @@ export { IncomeDialogComponent } from './income-dialog/income-dialog.component';
 export { ScheduledExpenseDialogComponent } from './scheduled-expense-dialog/scheduled-expense-dialog.component';
 export { FabComponent } from './fab/fab.component';
 export { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+export { ManageTagsDialogComponent } from './manage-tags-dialog/manage-tags-dialog.component';
