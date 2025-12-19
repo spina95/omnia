@@ -29,12 +29,23 @@ import { FinanceService } from '../../../core/services/finance';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
 import { SelectComponent } from '../../../shared/components/select/select.component';
 import { FormsModule } from '@angular/forms';
-import { DateRangeTimelineComponent, DateRange } from '../../../shared/components/date-range-timeline/date-range-timeline.component';
+import {
+  DateRangeTimelineComponent,
+  DateRange,
+} from '../../../shared/components/date-range-timeline/date-range-timeline.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NgApexchartsModule, PlotlyModule, MultiselectComponent, SelectComponent, FormsModule, DateRangeTimelineComponent],
+  imports: [
+    CommonModule,
+    NgApexchartsModule,
+    PlotlyModule,
+    MultiselectComponent,
+    SelectComponent,
+    FormsModule,
+    DateRangeTimelineComponent,
+  ],
   templateUrl: './home.html',
   styles: [
     `
@@ -74,8 +85,13 @@ export class HomeComponent implements OnInit {
   sankeyChartLayout: any;
 
   // Filters state
-  selectedPeriod: 'current-month' | 'last-30-days' | 'last-6-months' | 'last-12-months' | 'all' | 'custom' =
-    'current-month';
+  selectedPeriod:
+    | 'current-month'
+    | 'last-30-days'
+    | 'last-6-months'
+    | 'last-12-months'
+    | 'all'
+    | 'custom' = 'current-month';
   selectedPaymentTypes: number[] = [];
   selectedExpenseCategories: number[] = [];
   selectedIncomeCategories: number[] = [];
@@ -149,7 +165,7 @@ export class HomeComponent implements OnInit {
         const year = now.getFullYear();
         const month = now.getMonth() + 1; // JavaScript months are 0-indexed
         const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
-        
+
         return {
           startDate: `${year}-${String(month).padStart(2, '0')}-01`,
           endDate: `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`,
@@ -242,13 +258,13 @@ export class HomeComponent implements OnInit {
       | 'last-12-months'
       | 'all'
       | 'custom';
-    
+
     // Se non è custom, resetta il customDateRange e aggiorna la timeline
     if (this.selectedPeriod !== 'custom') {
       this.customDateRange = null;
       await this.updateTimelineFromPeriod();
     }
-    
+
     await this.loadDashboardData();
   }
 
@@ -359,14 +375,14 @@ export class HomeComponent implements OnInit {
           incomesAccount,
           'Incomes by account'
         );
-        
+
         // Update Sankey chart
         console.log('[HomeComponent] Sankey data received:', sankeyData);
         this.createSankeyChart(sankeyData);
-        console.log('[HomeComponent] Sankey chart created:', { 
-          hasData: !!this.sankeyChartData, 
+        console.log('[HomeComponent] Sankey chart created:', {
+          hasData: !!this.sankeyChartData,
           hasLayout: !!this.sankeyChartLayout,
-          nodeCount: this.sankeyChartData?.[0]?.node?.label?.length || 0
+          nodeCount: this.sankeyChartData?.[0]?.node?.label?.length || 0,
         });
 
         // Force change detection to ensure the view updates
@@ -750,7 +766,6 @@ export class HomeComponent implements OnInit {
 
     this.sankeyChartLayout = {
       title: {
-        text: 'Money Flow',
         font: {
           size: 16,
           color: '#ffffff',
@@ -777,17 +792,17 @@ export class HomeComponent implements OnInit {
   async onDateRangeChange(range: DateRange | null) {
     this.customDateRange = range;
     console.log('Custom date range selected:', range);
-    
+
     // Quando l'utente cambia manualmente la timeline, imposta il periodo su custom
     if (range && this.selectedPeriod !== 'custom') {
       this.selectedPeriod = 'custom';
     }
-    
+
     // Cancella il timer precedente se esiste
     if (this.timelineDebounceTimer) {
       clearTimeout(this.timelineDebounceTimer);
     }
-    
+
     // Imposta un nuovo timer per caricare i dati dopo il delay
     this.timelineDebounceTimer = setTimeout(async () => {
       await this.loadDashboardData();
@@ -797,13 +812,13 @@ export class HomeComponent implements OnInit {
 
   private async updateTimelineFromPeriod() {
     const { startDate, endDate } = await this.calculateDateRange();
-    
+
     // Aggiorna solo il customDateRange (i cursori) per riflettere il periodo
     // min/max della timeline rimangono sempre 2022 - oggi
     if (startDate && endDate) {
       this.customDateRange = {
         startDate,
-        endDate
+        endDate,
       };
     }
   }
