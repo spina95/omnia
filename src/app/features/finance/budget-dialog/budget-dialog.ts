@@ -70,7 +70,7 @@ export class BudgetDialogComponent {
       const categories = await this.financeService.getCategories();
       this.categoriesOptions = [
         { value: null, label: 'All Categories' },
-        ...categories.map((cat: any) => ({ value: cat.id, label: cat.name })),
+        ...categories.map((cat: any) => ({ value: cat.id, label: cat.name, description: cat.description })),
       ];
     } catch (error) {
       console.error('Error loading categories:', error);

@@ -109,6 +109,7 @@ export class ExpenseDialogComponent implements OnInit {
       this.categoriesOptions = this.categories.map((cat) => ({
         value: cat.id,
         label: cat.name,
+        description: cat.description,
       }));
       this.paymentTypesOptions = this.paymentTypes.map((pt) => ({
         value: pt.id,

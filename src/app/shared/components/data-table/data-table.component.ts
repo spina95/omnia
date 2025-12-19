@@ -252,7 +252,7 @@ export class DataTableComponent implements OnInit, OnChanges {
   get categoryOptions(): SelectOption[] {
     return [
       { value: null, label: 'All Categories' },
-      ...this.categories.map((c) => ({ value: c.id, label: c.name })),
+      ...this.categories.map((c) => ({ value: c.id, label: c.name, description: c.description })),
     ];
   }
 

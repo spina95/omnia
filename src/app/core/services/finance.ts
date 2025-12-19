@@ -163,7 +163,7 @@ export class FinanceService {
   async getCategories() {
     const { data, error } = await this.supabase.client
       .from('expense_categories')
-      .select('id, name, color')
+      .select('id, name, color, description')
       .order('name');
 
     if (error) throw error;
