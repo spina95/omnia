@@ -131,13 +131,39 @@ export class DataTableComponent implements OnInit, OnChanges {
     fontSize: '13px',
   });
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('🏗️ DataTable initialized with rowData:', this.rowData?.length);
+  }
 
-  ngOnChanges(changes: SimpleChanges) {}
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['rowData']) {
+      console.log('🔄 DataTable rowData changed:', changes['rowData'].currentValue?.length, 'rows');
+      // Auto-set totalRecords from rowData length if not explicitly provided
+      if (this.totalRecords === 0 && this.rowData && this.rowData.length > 0) {
+        this.totalRecords = this.rowData.length;
+        console.log('📊 Auto-set totalRecords to:', this.totalRecords);
+      }
+    }
+  }
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
+    console.log('✅ AG Grid ready with', this.rowData?.length, 'rows');
+    console.log('📋 Column defs:', this.columnDefs?.length, 'columns');
+    console.log(
+      '📋 Columns:',
+      this.columnDefs.map((c) => c.field || c.headerName)
+    );
+    console.log('📊 First row data:', this.rowData?.[0]);
     this.gridReady.emit(params);
+
+    // Force grid to refresh and auto-size columns
+    setTimeout(() => {
+      if (this.gridApi) {
+        this.gridApi.refreshCells();
+        this.gridApi.sizeColumnsToFit();
+      }
+    }, 100);
   }
 
   onSortChanged(event: any) {

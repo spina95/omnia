@@ -1,0 +1,188 @@
+<!-- Dialog Backdrop -->
+<div
+  *ngIf="isOpen"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+  (click)="close()">
+  <!-- Dialog Container -->
+  <div
+    class="bg-zinc-900 rounded-lg border border-zinc-800 shadow-2xl max-w-2xl w-full max-h-[85vh] md:max-h-[90vh] overflow-hidden animate-scale-in"
+    (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/50">
+      <h2 class="text-xl font-semibold text-white">{{ dialogTitle }}</h2>
+      <button
+        (click)="close()"
+        class="text-zinc-400 hover:text-white transition-colors p-1 hover:bg-zinc-800 rounded">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="px-6 py-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+      <!-- Form -->
+      <form class="space-y-5">
+        <!-- Ticker -->
+        <div class="relative">
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Ticker Symbol <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="formData.ticker"
+            (input)="onTickerInput($event)"
+            (blur)="onTickerBlur()"
+            name="ticker"
+            placeholder="e.g., AAPL, MSFT, NVDA"
+            class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors uppercase"
+            [class.border-red-500]="tickerValidationError()"
+            [class.border-green-500]="exchangeName() && !tickerValidationError()" />
+
+          <!-- Ticker Suggestions Dropdown -->
+          <div
+            *ngIf="showSuggestions() && getFilteredSuggestions().length > 0"
+            class="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+            <button
+              *ngFor="let ticker of getFilteredSuggestions()"
+              type="button"
+              (click)="selectTickerSuggestion(ticker)"
+              class="w-full px-4 py-2 text-left text-zinc-200 hover:bg-zinc-700 transition-colors">
+              {{ ticker }}
+            </button>
+          </div>
+
+          <!-- Validation Status -->
+          <div class="mt-1 text-sm">
+            <div *ngIf="isValidatingTicker()" class="flex items-center text-zinc-400">
+              <svg class="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Validating ticker...
+            </div>
+            <div *ngIf="tickerValidationError()" class="text-red-400">
+              {{ tickerValidationError() }}
+            </div>
+            <div *ngIf="exchangeName() && !tickerValidationError()" class="text-green-400">
+              ✓ Valid ticker ({{ exchangeName() }})
+            </div>
+            <button
+              *ngIf="formData.ticker && !isValidatingTicker()"
+              type="button"
+              (click)="validateTicker()"
+              class="mt-1 text-xs text-blue-400 hover:text-blue-300">
+              Verify ticker online
+            </button>
+          </div>
+        </div>
+
+        <!-- Transaction Type -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Transaction Type <span class="text-red-400">*</span>
+          </label>
+          <app-select
+            [options]="transactionTypeOptions"
+            [(value)]="formData.transaction_type"
+            placeholder="Select transaction type"></app-select>
+        </div>
+
+        <!-- Quantity -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Quantity <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="formData.quantity"
+            name="quantity"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+        </div>
+
+        <!-- Purchase Price -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Price per Share (€) <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="formData.purchase_price"
+            name="purchase_price"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+          <p class="text-xs text-zinc-500 mt-1">
+            Total: €{{ (formData.quantity * formData.purchase_price).toFixed(2) }}
+          </p>
+        </div>
+
+        <!-- Transaction Date -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Transaction Date <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="date"
+            [(ngModel)]="formData.transaction_date"
+            name="transaction_date"
+            class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors" />
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2"> Notes </label>
+          <textarea
+            [(ngModel)]="formData.notes"
+            name="notes"
+            rows="3"
+            placeholder="Additional notes about this transaction..."
+            class="w-full px-4 py-2.5 bg-zinc-950 border border-zinc-700 rounded-md text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors resize-none"></textarea>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-900/50">
+      <button
+        type="button"
+        (click)="close()"
+        [disabled]="isSaving()"
+        class="px-4 py-2 text-zinc-300 hover:text-white border border-zinc-700 hover:bg-zinc-800 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="save()"
+        [disabled]="isSaving() || isValidatingTicker() || !!tickerValidationError()"
+        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+        <svg
+          *ngIf="isSaving()"
+          class="animate-spin h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>{{ isSaving() ? 'Saving...' : isEditMode ? 'Update' : 'Add Transaction' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

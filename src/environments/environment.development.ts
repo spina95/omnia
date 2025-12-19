@@ -5,4 +5,10 @@ export const environment = {
     anonKey:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qb2lncmNreWd1bm52d2l4b3dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDM2MTU3OTYsImV4cCI6MjAxOTE5MTc5Nn0.lkKA_uiQ8LIFN_fL7Y32KHWHGXrBedXfkBVa7B_61UE',
   },
+  finnhub: {
+    apiKey: 'd52qrshr01qggm5tffl0d52qrshr01qggm5tfflg', // Get free API key from https://finnhub.io/register
+  },
+  alphaVantage: {
+    apiKey: 'YOUR_ALPHA_VANTAGE_API_KEY', // Get free API key from https://www.alphavantage.co/support/#api-key (500 requests/day)
+  },
 };

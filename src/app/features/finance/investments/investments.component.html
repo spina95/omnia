@@ -1,0 +1,242 @@
+<div class="container mx-auto p-6 space-y-6">
+  <!-- Header Actions Template -->
+  <ng-template #headerActions>
+    <div class="flex gap-2">
+      <button
+        (click)="refreshPrices()"
+        [disabled]="isRefreshing()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+        <svg
+          [class.animate-spin]="isRefreshing()"
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>{{ isRefreshing() ? 'Updating...' : 'Update Prices' }}</span>
+      </button>
+      <button
+        (click)="openAddDialog()"
+        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add Transaction</span>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading()" class="flex items-center justify-center h-64">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading()">
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      <!-- Total Value Card -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Total Portfolio Value</dt>
+                <dd>
+                  <div class="text-lg font-semibold text-white">
+                    {{ formatCurrency(totalValue()) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div *ngIf="lastUpdated()" class="text-xs text-slate-500 mt-3">
+            Last updated: {{ lastUpdated()!.toLocaleString('it-IT') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Gain/Loss Card -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-6 h-6" [class]="totalGainLoss() >= 0 ? 'text-green-500' : 'text-red-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  [attr.d]="
+                    totalGainLoss() >= 0
+                      ? 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6'
+                      : 'M13 17h8m0 0V9m0 8l-8-8-4 4-6-6'
+                  " />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Total Gain/Loss</dt>
+                <dd>
+                  <div class="text-lg font-semibold" [class]="getGainLossColor(totalGainLoss())">
+                    {{ formatCurrency(totalGainLoss()) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gain/Loss Percent Card -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="w-6 h-6" [class]="totalGainLossPercent() >= 0 ? 'text-green-500' : 'text-red-500'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="truncate text-sm font-medium text-slate-400">Return on Investment</dt>
+                <dd>
+                  <div class="text-lg font-semibold" [class]="getGainLossColor(totalGainLossPercent())">
+                    {{ formatPercent(totalGainLossPercent()) }}
+                  </div>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+      <!-- Composition Chart -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <h3 class="text-lg font-semibold text-white mb-4">Portfolio Composition</h3>
+          <div *ngIf="(portfolioSummary()?.holdings?.length ?? 0) > 0; else noData">
+            <apx-chart
+              [series]="compositionChartOptions.series!"
+              [chart]="compositionChartOptions.chart"
+              [labels]="compositionChartOptions.labels!"
+              [colors]="compositionChartOptions.colors!"
+              [legend]="compositionChartOptions.legend!"
+              [dataLabels]="compositionChartOptions.dataLabels!"
+              [tooltip]="compositionChartOptions.tooltip!"></apx-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Geographical Allocation Chart -->
+      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+        <div class="p-5">
+          <h3 class="text-lg font-semibold text-white mb-4">Geographical Allocation</h3>
+          <div *ngIf="geographicalAllocation().length > 0; else noData">
+            <apx-chart
+              [series]="geographicalChartOptions.series!"
+              [chart]="geographicalChartOptions.chart"
+              [colors]="geographicalChartOptions.colors!"
+              [legend]="geographicalChartOptions.legend!"
+              [dataLabels]="geographicalChartOptions.dataLabels!"
+              [tooltip]="geographicalChartOptions.tooltip!"></apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Holdings Table -->
+    <div class="mb-12" style="height: 40rem;">
+      <h3 class="text-lg font-semibold text-white">Current Holdings</h3>
+      <div style="height: 10px; display: block; position: relative;">
+        <app-data-table 
+          [columnDefs]="portfolioColumnDefs" 
+          [rowData]="portfolioSummary()?.holdings || []"
+          [loading]="isLoading()"
+          [showPagination]="false"
+          [showFilters]="false"
+          [totalRecords]="portfolioSummary()?.holdings?.length || 0"
+          emptyStateMessage="No holdings yet. Add your first investment transaction to get started."
+        ></app-data-table>
+      </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="mb-16">
+      <h3 class="text-lg font-semibold text-white">Transaction History</h3>
+      <div style="height: 600px; display: block; position: relative;">
+        <app-data-table 
+          [columnDefs]="transactionsColumnDefs" 
+          [rowData]="transactions()"
+          [loading]="isLoading()"
+          [showPagination]="true"
+          [showFilters]="false"
+          [pageSize]="20"
+          [totalRecords]="transactions().length"
+          emptyStateMessage="No transactions yet. Add your first investment to get started."
+          (cellClicked)="onCellClicked($event)"
+        ></app-data-table>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="text-center py-12 text-gray-400">
+      <svg
+        class="w-16 h-16 mx-auto mb-4 text-gray-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+      <p class="text-lg font-medium mb-2">No investment data yet</p>
+      <p class="text-sm">Start tracking your investments by adding a transaction</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Confirmation Dialog -->
+<app-confirmation-dialog
+  *ngIf="isConfirmDialogOpen"
+  [isOpen]="isConfirmDialogOpen"
+  [title]="confirmDialogTitle"
+  [message]="confirmDialogMessage"
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()"></app-confirmation-dialog>
+
+<!-- Investment Dialog -->
+<app-investment-dialog
+  *ngIf="showInvestmentDialog()"
+  [isOpen]="showInvestmentDialog()"
+  [transaction]="editingTransaction()"
+  (closeDialog)="onDialogClose()"
+  (transactionSaved)="onDialogClose()"></app-investment-dialog>
