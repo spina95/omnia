@@ -7,6 +7,14 @@ export interface ExpenseTag {
   color: string;
 }
 
+export interface PaymentType {
+  id: number;
+  name: string;
+  color: string;
+  current_balance?: number;
+  last_balance_update?: string;
+}
+
 export interface Expense {
   id: number;
   name: string;
@@ -177,6 +185,38 @@ export class FinanceService {
       .order('name');
 
     if (error) throw error;
+    return data;
+  }
+
+  async getPaymentTypesWithBalance() {
+    const { data, error } = await this.supabase.client
+      .from('payment_types')
+      .select('id, name, color, current_balance, last_balance_update')
+      .order('name');
+
+    if (error) throw error;
+    return data as PaymentType[];
+  }
+
+  async updateCurrentBalance(id: number, current_balance: number) {
+    console.log('FinanceService.updateCurrentBalance called:', { id, current_balance });
+    
+    // Directly update the current_balance
+    const { data, error } = await this.supabase.client
+      .from('payment_types')
+      .update({ 
+        current_balance,
+        last_balance_update: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Error updating current_balance:', error);
+      throw error;
+    }
+    
+    console.log('Balance updated successfully:', data);
     return data;
   }
 

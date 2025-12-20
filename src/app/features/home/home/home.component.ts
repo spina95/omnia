@@ -27,6 +27,7 @@ import {
   SankeyData,
 } from '../../../core/services/dashboard.service';
 import { FinanceService } from '../../../core/services/finance';
+import { PaymentType } from '../../../core/services/finance';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
 import { SelectComponent } from '../../../shared/components/select/select.component';
 import { FormsModule } from '@angular/forms';
@@ -75,6 +76,12 @@ export class HomeComponent implements OnInit {
   // Payment types proportions
   incomesPaymentTypes: AccountData[] = [];
   expensesPaymentTypes: AccountData[] = [];
+
+  // Payment types with balance
+  paymentTypesWithBalance: PaymentType[] = [];
+  editingBalanceId: number | null = null;
+  editingBalanceValue: number = 0;
+  isSavingBalance: boolean = false;
 
   // Chart configurations
   lineChartOptions: any;
@@ -138,6 +145,7 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
     this.pageHeaderService.setHeader('Dashboard');
     await this.loadFilterOptions();
+    await this.loadPaymentTypesBalances();
     await this.updateTimelineFromPeriod(); // Inizializza i cursori in base al periodo selezionato
     await this.loadDashboardData();
   }
@@ -742,6 +750,88 @@ export class HomeComponent implements OnInit {
       day: 'numeric',
       year: 'numeric',
     });
+  }
+
+  async loadPaymentTypesBalances() {
+    try {
+      this.paymentTypesWithBalance = await this.financeService.getPaymentTypesWithBalance();
+    } catch (error) {
+      console.error('Error loading payment types balances:', error);
+    }
+  }
+
+  startEditBalance(paymentType: PaymentType) {
+    this.editingBalanceId = paymentType.id;
+    this.editingBalanceValue = paymentType.current_balance || 0;
+  }
+
+  cancelEditBalance() {
+    this.editingBalanceId = null;
+    this.editingBalanceValue = 0;
+  }
+
+  async saveBalance(paymentTypeId: number) {
+    if (this.isSavingBalance) {
+      console.log('Save already in progress, ignoring...');
+      return;
+    }
+    
+    this.isSavingBalance = true;
+    
+    try {
+      console.log('Saving balance - ID:', paymentTypeId, 'Value:', this.editingBalanceValue, 'Type:', typeof this.editingBalanceValue);
+      
+      // Ensure the value is a number
+      const balanceValue = Number(this.editingBalanceValue);
+      if (isNaN(balanceValue)) {
+        alert('Please enter a valid number');
+        this.isSavingBalance = false;
+        return;
+      }
+      
+      console.log('Converted value:', balanceValue);
+      
+      // Update optimistically in local array
+      const paymentType = this.paymentTypesWithBalance.find(pt => pt.id === paymentTypeId);
+      if (paymentType) {
+        paymentType.current_balance = balanceValue;
+        paymentType.last_balance_update = new Date().toISOString();
+      }
+      
+      // Close edit mode immediately
+      this.editingBalanceId = null;
+      this.editingBalanceValue = 0;
+      
+      // Save to database in background
+      await this.financeService.updateCurrentBalance(paymentTypeId, balanceValue);
+      console.log('Balance saved successfully');
+      
+    } catch (error) {
+      console.error('Error updating balance:', error);
+      alert('Error updating balance: ' + (error as any)?.message || 'Unknown error');
+      // Reload to get correct values from server on error
+      await this.loadPaymentTypesBalances();
+    } finally {
+      this.isSavingBalance = false;
+    }
+  }
+
+  formatRelativeTime(dateStr: string | undefined): string {
+    if (!dateStr) return 'Never updated';
+    
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+    
+    return this.formatDate(dateStr);
   }
 
   private createSankeyChart(sankeyData: SankeyData) {
