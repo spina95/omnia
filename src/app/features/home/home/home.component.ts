@@ -25,6 +25,7 @@ import {
   DashboardFilters,
   AccountData,
   SankeyData,
+  BalanceHistoryData,
 } from '../../../core/services/dashboard.service';
 import { FinanceService } from '../../../core/services/finance';
 import { PaymentType } from '../../../core/services/finance';
@@ -89,6 +90,7 @@ export class HomeComponent implements OnInit {
   expensesCategoryChartOptions: any;
   expensesAccountChartOptions: any;
   incomesAccountChartOptions: any;
+  balanceHistoryChartOptions: any;
   sankeyChartData: any;
   sankeyChartLayout: any;
 
@@ -302,6 +304,7 @@ export class HomeComponent implements OnInit {
     this.expensesCategoryChartOptions = this.createPieChartOptions([], 'Expenses by category');
     this.expensesAccountChartOptions = this.createPieChartOptions([], 'Expenses by account');
     this.incomesAccountChartOptions = this.createPieChartOptions([], 'Incomes by account');
+    this.balanceHistoryChartOptions = this.createBalanceHistoryChartOptions([]);
   }
 
   async loadDashboardData() {
@@ -320,6 +323,7 @@ export class HomeComponent implements OnInit {
         this.dashboardService.getIncomesByAccount(filters),
         this.dashboardService.getTopExpenses(filters),
         this.dashboardService.getSankeyFlowData(filters),
+        this.dashboardService.getBalanceHistory(filters),
       ]);
 
       const [
@@ -331,6 +335,7 @@ export class HomeComponent implements OnInit {
         incomesAccountRes,
         topExpensesRes,
         sankeyDataRes,
+        balanceHistoryRes,
       ] = results;
 
       // Helper to extract fulfilled values with sensible fallbacks
@@ -358,6 +363,7 @@ export class HomeComponent implements OnInit {
         link: { source: [], target: [], value: [], color: [] },
         type: 'sankey',
       });
+      const balanceHistory = getValue(balanceHistoryRes, []);
 
       // Ensure ALL state updates happen within Angular zone for proper change detection
       this.ngZone.run(() => {
@@ -387,6 +393,9 @@ export class HomeComponent implements OnInit {
           incomesAccount,
           'Incomes by account'
         );
+
+        // Update Balance History chart
+        this.balanceHistoryChartOptions = this.createBalanceHistoryChartOptions(balanceHistory);
 
         // Update Sankey chart
         console.log('[HomeComponent] Sankey data received:', sankeyData);
@@ -744,6 +753,176 @@ export class HomeComponent implements OnInit {
     }).format(value);
   }
 
+  private createBalanceHistoryChartOptions(data: BalanceHistoryData[]): any {
+    if (!data || data.length === 0) {
+      return {
+        series: [],
+        chart: {
+          type: 'line',
+          height: 400,
+          background: 'transparent',
+          toolbar: { show: false },
+        },
+        xaxis: { categories: [] },
+        yaxis: { labels: { style: { colors: '#a1a1aa' } } },
+        theme: { mode: 'dark' },
+      };
+    }
+
+    // Group data by payment type
+    const groupedByPaymentType = data.reduce((acc, item) => {
+      if (!acc[item.paymentTypeId]) {
+        acc[item.paymentTypeId] = {
+          name: item.paymentTypeName,
+          color: item.color,
+          data: [],
+        };
+      }
+      acc[item.paymentTypeId].data.push({
+        date: item.date,
+        balance: item.balance,
+      });
+      return acc;
+    }, {} as Record<number, { name: string; color: string; data: { date: string; balance: number }[] }>);
+
+    // Get all unique dates sorted
+    const allDates = [...new Set(data.map((d) => d.date))].sort();
+
+    // Create series for each payment type
+    const series = Object.values(groupedByPaymentType).map((pt) => {
+      // Create a map of date to balance for this payment type
+      const dateBalanceMap = new Map(pt.data.map((d) => [d.date, d.balance]));
+      
+      // Fill in balances for all dates (use null if no data for that date)
+      const balances = allDates.map((date) => dateBalanceMap.get(date) ?? null);
+      
+      return {
+        name: pt.name,
+        data: balances,
+        color: pt.color,
+      };
+    });
+
+    // Format dates for display
+    const categories = allDates.map((date) => {
+      const d = new Date(date);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+    });
+
+    return {
+      series,
+      chart: {
+        type: 'line',
+        height: 400,
+        background: 'transparent',
+        toolbar: {
+          show: true,
+          tools: {
+            download: true,
+            selection: false,
+            zoom: false,
+            zoomin: false,
+            zoomout: false,
+            pan: false,
+            reset: false,
+          },
+        },
+        zoom: {
+          enabled: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 3,
+      },
+      xaxis: {
+        categories,
+        labels: {
+          style: {
+            colors: '#a1a1aa',
+            fontSize: '12px',
+          },
+          rotate: -45,
+          rotateAlways: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#a1a1aa',
+            fontSize: '12px',
+          },
+          formatter: (value: number) => {
+            if (value === null || value === undefined) return '';
+            return new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'EUR',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(value);
+          },
+        },
+      },
+      grid: {
+        borderColor: '#2a2a2a',
+        strokeDashArray: 4,
+        xaxis: {
+          lines: {
+            show: false,
+          },
+        },
+      },
+      legend: {
+        position: 'top',
+        horizontalAlign: 'left',
+        labels: {
+          colors: '#e4e4e7',
+        },
+        markers: {
+          size: 6,
+          strokeWidth: 0,
+        },
+      },
+      tooltip: {
+        theme: 'dark',
+        x: {
+          show: true,
+        },
+        y: {
+          formatter: (value: number) => {
+            if (value === null || value === undefined) return 'No data';
+            return new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'EUR',
+            }).format(value);
+          },
+        },
+      },
+      theme: {
+        mode: 'dark',
+      },
+      markers: {
+        size: 4,
+        hover: {
+          size: 6,
+        },
+      },
+    };
+  }
+
+  get totalAccountsBalance(): number {
+    return this.paymentTypesWithBalance.reduce((sum, p) => sum + (p.current_balance || 0), 0);
+  }
+
   formatDate(dateStr: string): string {
     return new Date(dateStr).toLocaleDateString('en-US', {
       month: 'short',
@@ -775,12 +954,19 @@ export class HomeComponent implements OnInit {
       console.log('Save already in progress, ignoring...');
       return;
     }
-    
+
     this.isSavingBalance = true;
-    
+
     try {
-      console.log('Saving balance - ID:', paymentTypeId, 'Value:', this.editingBalanceValue, 'Type:', typeof this.editingBalanceValue);
-      
+      console.log(
+        'Saving balance - ID:',
+        paymentTypeId,
+        'Value:',
+        this.editingBalanceValue,
+        'Type:',
+        typeof this.editingBalanceValue
+      );
+
       // Ensure the value is a number
       const balanceValue = Number(this.editingBalanceValue);
       if (isNaN(balanceValue)) {
@@ -788,24 +974,23 @@ export class HomeComponent implements OnInit {
         this.isSavingBalance = false;
         return;
       }
-      
+
       console.log('Converted value:', balanceValue);
-      
+
       // Update optimistically in local array
-      const paymentType = this.paymentTypesWithBalance.find(pt => pt.id === paymentTypeId);
+      const paymentType = this.paymentTypesWithBalance.find((pt) => pt.id === paymentTypeId);
       if (paymentType) {
         paymentType.current_balance = balanceValue;
         paymentType.last_balance_update = new Date().toISOString();
       }
-      
+
       // Close edit mode immediately
       this.editingBalanceId = null;
       this.editingBalanceValue = 0;
-      
+
       // Save to database in background
       await this.financeService.updateCurrentBalance(paymentTypeId, balanceValue);
       console.log('Balance saved successfully');
-      
     } catch (error) {
       console.error('Error updating balance:', error);
       alert('Error updating balance: ' + (error as any)?.message || 'Unknown error');
@@ -818,7 +1003,7 @@ export class HomeComponent implements OnInit {
 
   formatRelativeTime(dateStr: string | undefined): string {
     if (!dateStr) return 'Never updated';
-    
+
     const date = new Date(dateStr);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -830,7 +1015,7 @@ export class HomeComponent implements OnInit {
     if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    
+
     return this.formatDate(dateStr);
   }
 

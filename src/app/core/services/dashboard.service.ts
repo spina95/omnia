@@ -65,6 +65,14 @@ export interface SankeyData {
   type: string;
 }
 
+export interface BalanceHistoryData {
+  date: string;
+  balance: number;
+  paymentTypeId: number;
+  paymentTypeName: string;
+  color: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -846,6 +854,59 @@ export class DashboardService {
       },
       type: 'sankey',
     };
+  }
+
+  /**
+   * Get balance history from weekly snapshots
+   */
+  async getBalanceHistory(filters?: DashboardFilters): Promise<BalanceHistoryData[]> {
+    try {
+      let query = this.supabase.client
+        .from('payment_type_balance_history')
+        .select(`
+          snapshot_date,
+          balance,
+          payment_type_id,
+          payment_types!inner(name, color)
+        `)
+        .order('snapshot_date', { ascending: true });
+
+      // Apply date filters
+      if (filters?.startDate) {
+        query = query.gte('snapshot_date', filters.startDate);
+      }
+      if (filters?.endDate) {
+        query = query.lte('snapshot_date', filters.endDate);
+      }
+
+      // Apply payment type filter
+      if (filters?.paymentTypeIds?.length) {
+        query = query.in('payment_type_id', filters.paymentTypeIds);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching balance history:', error);
+        return [];
+      }
+
+      if (!data || data.length === 0) {
+        return [];
+      }
+
+      // Transform data to BalanceHistoryData format
+      return data.map((row: any) => ({
+        date: row.snapshot_date,
+        balance: row.balance || 0,
+        paymentTypeId: row.payment_type_id,
+        paymentTypeName: row.payment_types?.name || 'Unknown',
+        color: row.payment_types?.color || '#71717a',
+      }));
+    } catch (error) {
+      console.error('Error in getBalanceHistory:', error);
+      return [];
+    }
   }
 
   /**

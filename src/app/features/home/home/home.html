@@ -238,7 +238,9 @@
 
     <!-- Payment Types Balance Cards -->
     <div class="mb-6">
-      <h3 class="text-base font-semibold text-white mb-4">Account Balances</h3>
+      <h3 class="text-base font-semibold text-white mb-4">Account Balances
+        <span class="text-sm font-medium text-slate-400 ml-3">{{ formatCurrency(totalAccountsBalance) }}</span>
+      </h3>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <div
           *ngFor="let paymentType of paymentTypesWithBalance"
@@ -338,6 +340,45 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Balance History Chart -->
+    <div
+      class="mb-6 overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+    >
+      <div class="px-5 py-4 border-b border-sidebar-border">
+        <h4 class="text-base font-semibold text-white">Balance History</h4>
+        <p class="mt-1 text-xs text-slate-400">Weekly balance snapshots over time</p>
+      </div>
+      <div class="p-5">
+        <div *ngIf="balanceHistoryChartOptions?.series?.length > 0; else noBalanceHistory">
+          <apx-chart
+            [series]="balanceHistoryChartOptions.series"
+            [chart]="balanceHistoryChartOptions.chart"
+            [dataLabels]="balanceHistoryChartOptions.dataLabels"
+            [stroke]="balanceHistoryChartOptions.stroke"
+            [xaxis]="balanceHistoryChartOptions.xaxis"
+            [yaxis]="balanceHistoryChartOptions.yaxis"
+            [grid]="balanceHistoryChartOptions.grid"
+            [legend]="balanceHistoryChartOptions.legend"
+            [tooltip]="balanceHistoryChartOptions.tooltip"
+            [theme]="balanceHistoryChartOptions.theme"
+            [markers]="balanceHistoryChartOptions.markers"
+          >
+          </apx-chart>
+        </div>
+        <ng-template #noBalanceHistory>
+          <div class="flex items-center justify-center h-96 text-slate-400">
+            <div class="text-center">
+              <svg class="w-16 h-16 mx-auto mb-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p class="text-sm">No historical balance data available</p>
+              <p class="text-xs mt-2">Weekly snapshots will appear here after they are collected</p>
+            </div>
+          </div>
+        </ng-template>
       </div>
     </div>
 

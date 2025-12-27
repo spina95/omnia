@@ -1,0 +1,56 @@
+name: Weekly Balance Snapshot
+
+# Runs every Sunday at 22:00 UTC (23:00 CET / 00:00 CEST+1)
+on:
+  schedule:
+    - cron: '50 23 * * 0'  # Sunday at 23:50 UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  save-snapshot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Call Supabase Edge Function
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          echo "Calling save-balance-snapshot Edge Function..."
+          
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            -X POST \
+            "${SUPABASE_URL}/functions/v1/save-balance-snapshot" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json")
+          
+          HTTP_BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          HTTP_STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+          
+          echo "Response Status: $HTTP_STATUS"
+          echo "Response Body: $HTTP_BODY"
+          
+          # Pretty print JSON if jq is available
+          if command -v jq &> /dev/null; then
+            echo "$HTTP_BODY" | jq .
+          fi
+          
+          # Check if request was successful
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Error: Edge Function returned status $HTTP_STATUS"
+            exit 1
+          fi
+          
+          echo "✅ Balance snapshot saved successfully"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "⚠️ Weekly balance snapshot failed!"
+          echo "Please check the logs and verify:"
+          echo "  1. SUPABASE_URL and SUPABASE_ANON_KEY secrets are set"
+          echo "  2. Edge Function 'save-balance-snapshot' is deployed"
+          echo "  3. Database migration 011 has been applied"
