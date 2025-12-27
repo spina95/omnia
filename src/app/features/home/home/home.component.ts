@@ -792,10 +792,10 @@ export class HomeComponent implements OnInit {
     const series = Object.values(groupedByPaymentType).map((pt) => {
       // Create a map of date to balance for this payment type
       const dateBalanceMap = new Map(pt.data.map((d) => [d.date, d.balance]));
-      
+
       // Fill in balances for all dates (use null if no data for that date)
       const balances = allDates.map((date) => dateBalanceMap.get(date) ?? null);
-      
+
       return {
         name: pt.name,
         data: balances,

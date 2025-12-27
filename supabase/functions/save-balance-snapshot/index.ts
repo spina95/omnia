@@ -51,14 +51,14 @@ serve(async (req) => {
 
     if (!paymentTypes || paymentTypes.length === 0) {
       return new Response(
-        JSON.stringify({ 
-          success: true, 
+        JSON.stringify({
+          success: true,
           message: 'No payment types found',
-          count: 0 
+          count: 0,
         }),
-        { 
+        {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200 
+          status: 200,
         }
       );
     }
@@ -76,9 +76,9 @@ serve(async (req) => {
     // Insert snapshots (upsert to handle duplicates)
     const { error: insertError, count } = await supabase
       .from('payment_type_balance_history')
-      .upsert(snapshots, { 
+      .upsert(snapshots, {
         onConflict: 'payment_type_id,snapshot_date',
-        count: 'exact'
+        count: 'exact',
       });
 
     if (insertError) {
@@ -100,26 +100,22 @@ serve(async (req) => {
 
     console.log('Snapshot saved:', responseData);
 
-    return new Response(
-      JSON.stringify(responseData),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
-    );
-
+    return new Response(JSON.stringify(responseData), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
     console.error('Error in save-balance-snapshot function:', error);
-    
+
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
-      { 
+      {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
+        status: 500,
       }
     );
   }
