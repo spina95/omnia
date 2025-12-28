@@ -61,13 +61,13 @@ import { AuthService } from '../../../core/auth/auth';
       </div>
 
       <div class="flex-1 overflow-y-auto py-2 w-full">
-        <!-- Section: Manage -->
+        <!-- Section: Finance -->
         <div class="mb-6 w-full" [class.px-2]="collapsed" [class.px-4]="!collapsed">
           <h2
             *ngIf="!collapsed"
             class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
           >
-            Manage
+            Finance
           </h2>
           <div class="space-y-0.5">
             <a
@@ -239,7 +239,18 @@ import { AuthService } from '../../../core/auth/auth';
                 >Investments</span
               >
             </a>
+          </div>
+        </div>
 
+        <!-- Section: Utilities -->
+        <div class="mb-6 w-full" [class.px-2]="collapsed" [class.px-4]="!collapsed">
+          <h2
+            *ngIf="!collapsed"
+            class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
+          >
+            Utilities
+          </h2>
+          <div class="space-y-0.5">
             <a
               routerLink="/travel-map"
               routerLinkActive="bg-brand/10 text-brand"
