@@ -29,6 +29,7 @@ import {
 } from '../../../core/services/dashboard.service';
 import { FinanceService } from '../../../core/services/finance';
 import { PaymentType } from '../../../core/services/finance';
+import { InvestmentsService } from '../../../core/services/investments.service';
 import { MultiselectComponent } from '../../../shared/components/multiselect/multiselect.component';
 import { SelectComponent } from '../../../shared/components/select/select.component';
 import { FormsModule } from '@angular/forms';
@@ -84,6 +85,9 @@ export class HomeComponent implements OnInit {
   editingBalanceValue: number = 0;
   isSavingBalance: boolean = false;
 
+  // Portfolio value
+  totalPortfolioValue: number = 0;
+
   // Chart configurations
   lineChartOptions: any;
   stackedBarChartOptions: any;
@@ -136,6 +140,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private dashboardService: DashboardService,
     private financeService: FinanceService,
+    private investmentsService: InvestmentsService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {
@@ -148,6 +153,7 @@ export class HomeComponent implements OnInit {
     this.pageHeaderService.setHeader('Dashboard');
     await this.loadFilterOptions();
     await this.loadPaymentTypesBalances();
+    await this.loadPortfolioValue();
     await this.updateTimelineFromPeriod(); // Inizializza i cursori in base al periodo selezionato
     await this.loadDashboardData();
   }
@@ -919,8 +925,12 @@ export class HomeComponent implements OnInit {
     };
   }
 
-  get totalAccountsBalance(): number {
+  get totalPaymentTypesBalance(): number {
     return this.paymentTypesWithBalance.reduce((sum, p) => sum + (p.current_balance || 0), 0);
+  }
+
+  get totalAccountsBalance(): number {
+    return this.totalPaymentTypesBalance + this.totalPortfolioValue;
   }
 
   formatDate(dateStr: string): string {
@@ -936,6 +946,16 @@ export class HomeComponent implements OnInit {
       this.paymentTypesWithBalance = await this.financeService.getPaymentTypesWithBalance();
     } catch (error) {
       console.error('Error loading payment types balances:', error);
+    }
+  }
+
+  async loadPortfolioValue() {
+    try {
+      const portfolioSummary = await this.investmentsService.getPortfolioSummary();
+      this.totalPortfolioValue = portfolioSummary.totalValue;
+    } catch (error) {
+      console.error('Error loading portfolio value:', error);
+      this.totalPortfolioValue = 0;
     }
   }
 
