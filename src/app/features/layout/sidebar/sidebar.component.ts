@@ -266,12 +266,10 @@ import { AuthService } from '../../../core/auth/auth';
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 stroke-width="2"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 002.83 0l1.42-1.42A1.99 1.99 0 0118 3.9c.52 0 1.02.18 1.41 1.42l1.42 1.42a1.99 1.99 0 010 2.83l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42a1.99 1.99 0 01-2.83 0l-1.42 1.42a1.99 1.99 0 00-2.83 0l-1.42-1.42A1.99 1.99 0 013.055 3.9z"
-                />
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+                <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" stroke="currentColor" stroke-width="2" fill="none" />
               </svg>
               <span
                 class="whitespace-nowrap overflow-hidden transition-all duration-300"
