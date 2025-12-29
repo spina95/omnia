@@ -1,1 +1,0 @@
-import{H as t,da as r}from"./chunk-MW6OH7V5.js";var i=class e{headerSignal=r({title:""});header=this.headerSignal.asReadonly();setHeader(a){this.headerSignal.set({title:a})}clearHeader(){this.headerSignal.set({title:""})}static \u0275fac=function(n){return new(n||e)};static \u0275prov=t({token:e,factory:e.\u0275fac,providedIn:"root"})};export{i as a};
