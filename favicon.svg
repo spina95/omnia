@@ -1,7 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#151515"></rect>
-  <circle cx="16" cy="16" r="10" fill="none" stroke="#3ECF8E" stroke-width="3"></circle>
-  <circle cx="16" cy="16" r="4" fill="#3ECF8E"></circle>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: none; } }
-</style></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#151515"/>
+  <circle cx="16" cy="16" r="10" fill="none" stroke="#3ECF8E" stroke-width="3"/>
+  <circle cx="16" cy="16" r="4" fill="#3ECF8E"/>
+</svg>
