@@ -203,19 +203,38 @@
             </div>
 
             <!-- Checkbox with Task Title -->
-            <div class="flex-1 flex items-center" (click)="onToggleCompleted(task)">
-              <app-checkbox
-                [checked]="task.completed"
-                class="pointer-events-none"
-              >
+            <div class="flex-1 flex items-center">
+              <!-- Checkbox -->
+              <div (click)="onToggleCompleted(task)" class="flex-shrink-0">
+                <app-checkbox
+                  [checked]="task.completed"
+                  class="pointer-events-none"
+                />
+              </div>
+
+              <!-- Task Title - Editable -->
+              <div class="flex-1 ml-3" *ngIf="editingTaskId() !== task.id">
                 <span
-                  class="ml-3 text-white transition-all pointer-events-none"
+                  (click)="startEditingTask(task, $event)"
+                  class="text-white transition-all cursor-text"
                   [class.line-through]="task.completed"
                   [class.text-zinc-500]="task.completed"
                 >
                   {{ task.title }}
                 </span>
-              </app-checkbox>
+              </div>
+
+              <!-- Edit Input -->
+              <input
+                *ngIf="editingTaskId() === task.id"
+                type="text"
+                [(ngModel)]="editingTaskTitle"
+                (blur)="saveTaskEdit(task)"
+                (keydown.enter)="saveTaskEdit(task)"
+                (keydown.escape)="cancelTaskEdit()"
+                class="flex-1 ml-3 bg-zinc-900 border border-brand rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-brand"
+                [attr.autofocus]="true"
+              />
             </div>
 
             <!-- Delete Button -->

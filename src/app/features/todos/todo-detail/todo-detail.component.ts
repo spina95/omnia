@@ -55,6 +55,8 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   showDeleteListConfirmation = signal(false);
   showDeleteTaskConfirmation = signal(false);
   taskToDelete = signal<TodoTask | null>(null);
+  editingTaskId = signal<string | null>(null);
+  editingTaskTitle = signal('');
 
   listId = computed(() => this.route.snapshot.paramMap.get('id'));
 
@@ -150,6 +152,44 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.notificationService.error('Failed to update task');
     }
+  }
+
+  startEditingTask(task: TodoTask, event: Event) {
+    event.stopPropagation();
+    this.editingTaskId.set(task.id);
+    this.editingTaskTitle.set(task.title);
+  }
+
+  async saveTaskEdit(task: TodoTask) {
+    const newTitle = this.editingTaskTitle().trim();
+    if (!newTitle) {
+      this.notificationService.error('Task title cannot be empty');
+      this.cancelTaskEdit();
+      return;
+    }
+
+    if (newTitle === task.title) {
+      this.cancelTaskEdit();
+      return;
+    }
+
+    const success = await this.todosService.updateTask(task.id, { title: newTitle });
+
+    if (success) {
+      this.tasks.update((tasks) =>
+        tasks.map((t) => (t.id === task.id ? { ...t, title: newTitle } : t))
+      );
+      this.notificationService.success('Task updated successfully');
+      this.cancelTaskEdit();
+      this.cdr.detectChanges();
+    } else {
+      this.notificationService.error('Failed to update task');
+    }
+  }
+
+  cancelTaskEdit() {
+    this.editingTaskId.set(null);
+    this.editingTaskTitle.set('');
   }
 
   confirmDeleteTask(task: TodoTask, event: Event) {
