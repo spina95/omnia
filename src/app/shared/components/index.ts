@@ -9,3 +9,4 @@ export { ScheduledExpenseDialogComponent } from './scheduled-expense-dialog/sche
 export { FabComponent } from './fab/fab.component';
 export { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 export { ManageTagsDialogComponent } from './manage-tags-dialog/manage-tags-dialog.component';
+export { CheckboxComponent } from './checkbox/checkbox.component';

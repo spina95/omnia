@@ -1,0 +1,40 @@
+/* Checkbox component styles */
+.checkbox-box {
+  flex-shrink: 0;
+}
+
+/* Focus styles for accessibility */
+input:focus-visible + .checkbox-box {
+  outline: 2px solid #3ecf8e;
+  outline-offset: 2px;
+}
+
+/* Smooth scale animation on check */
+.checkbox-box svg {
+  animation: checkmark-pop 0.2s ease-in-out;
+}
+
+@keyframes checkmark-pop {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

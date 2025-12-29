@@ -1,0 +1,49 @@
+<label class="inline-flex items-center cursor-pointer group" [class.cursor-not-allowed]="disabled" [class.opacity-50]="disabled">
+  <div class="relative" (click)="toggle()">
+    <!-- Hidden native checkbox for accessibility -->
+    <input
+      type="checkbox"
+      [checked]="checked"
+      [disabled]="disabled"
+      class="sr-only"
+      tabindex="-1"
+    />
+    
+    <!-- Custom checkbox box -->
+    <div
+      class="checkbox-box transition-all duration-200 ease-in-out rounded border-2 flex items-center justify-center"
+      [ngClass]="[
+        getSizeClasses(),
+        checked 
+          ? 'bg-brand border-brand' 
+          : 'bg-zinc-950 border-zinc-600 group-hover:border-zinc-500',
+        disabled ? '' : 'cursor-pointer'
+      ]"
+    >
+      <!-- Check icon -->
+      <svg
+        *ngIf="checked"
+        [ngClass]="getCheckSizeClasses()"
+        class="text-black transition-transform duration-200 ease-in-out"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3.5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+    </div>
+  </div>
+  
+  <!-- Label -->
+  <span *ngIf="label" class="ml-3 text-sm text-zinc-300 select-none">
+    {{ label }}
+  </span>
+  
+  <!-- Slot for custom content -->
+  <ng-content></ng-content>
+</label>

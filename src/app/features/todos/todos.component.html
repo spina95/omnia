@@ -1,0 +1,262 @@
+<ng-template #headerActions>
+  <button
+    (click)="openAddDialog()"
+    class="flex items-center justify-center gap-2 px-2 sm:px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors"
+  >
+    <svg class="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M12 4v16m8-8H4"
+      />
+    </svg>
+    <span class="hidden sm:inline whitespace-nowrap">Add List</span>
+  </button>
+</ng-template>
+
+<div class="h-full overflow-y-auto">
+  <div class="p-6 space-y-6">
+    <!-- Filters Card -->
+    <div class="flex flex-wrap items-center gap-3 bg-background-card/50 p-4 rounded-lg border border-zinc-800">
+      <!-- Search Input -->
+      <div class="relative flex-1 sm:flex-initial sm:w-64">
+        <input
+          type="text"
+          placeholder="Search todo lists..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($event)"
+          class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+        />
+        <svg
+          class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </div>
+
+      <!-- Priority Filter -->
+      <app-select
+        [options]="priorityOptions"
+        [value]="selectedPriority()"
+        (valueChange)="onPriorityChange($any($event))"
+        placeholder="Priority"
+        class="w-full sm:w-48"
+      />
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="flex justify-center items-center h-64">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="!loading() && todoLists().length === 0"
+      class="flex flex-col items-center justify-center h-64 text-zinc-500"
+    >
+      <svg class="h-16 w-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+        />
+      </svg>
+      <p class="text-lg font-medium mb-2">No todo lists found</p>
+      <p class="text-sm">Start by creating your first todo list</p>
+    </div>
+
+    <!-- Todo Lists Grid -->
+    <div
+      *ngIf="!loading() && todoLists().length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
+      <div
+        *ngFor="let list of todoLists()"
+        (click)="openListDetail(list)"
+        class="bg-background-card rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all overflow-hidden group cursor-pointer"
+      >
+        <div class="p-5">
+          <!-- Header with Title and Actions -->
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-lg font-semibold text-white group-hover:text-brand transition-colors flex-1 pr-2">
+              {{ list.title }}
+            </h3>
+            <div class="flex items-center gap-2">
+              <button
+                (click)="openEditDialog(list, $event)"
+                class="text-zinc-400 hover:text-brand transition-colors p-1 rounded hover:bg-zinc-800"
+                title="Edit"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+              <button
+                (click)="confirmDelete(list, $event)"
+                class="text-zinc-400 hover:text-red-400 transition-colors p-1 rounded hover:bg-zinc-800"
+                title="Delete"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p *ngIf="list.description" class="text-sm text-zinc-400 mb-4 line-clamp-2">
+            {{ list.description }}
+          </p>
+
+          <!-- Badges Row -->
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <!-- Priority Badge -->
+            <span
+              *ngIf="list.priority"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+              [ngClass]="getPriorityBadgeClass(list.priority)"
+            >
+              {{ getPriorityLabel(list.priority) }}
+            </span>
+
+            <!-- Due Date Badge -->
+            <span
+              *ngIf="list.due_date"
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+              [ngClass]="getDueDateBadgeClass(list.due_date)"
+            >
+              <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              {{ getDueDateLabel(list.due_date) }}
+            </span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-zinc-400">Tasks Progress</span>
+              <span class="text-zinc-300 font-medium">
+                {{ list.completedTasksCount || 0 }} / {{ list.totalTasksCount || 0 }}
+              </span>
+            </div>
+            <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div
+                class="h-full transition-all duration-300 rounded-full"
+                [ngClass]="getProgressBarColor(getProgressPercentage(list))"
+                [style.width.%]="getProgressPercentage(list)"
+              ></div>
+            </div>
+            <div class="text-xs text-zinc-500 text-right">
+              {{ getProgressPercentage(list) }}% Complete
+            </div>
+          </div>
+
+          <!-- Created Date -->
+          <div class="mt-4 pt-4 border-t border-zinc-800">
+            <div class="flex items-center justify-between text-xs text-zinc-500">
+              <span>Created</span>
+              <span>{{ formatDate(list.created_at) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      *ngIf="!loading() && todoLists().length > 0 && totalPages() > 1"
+      class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 px-4 py-3 bg-background-card/50 rounded-lg border border-zinc-800"
+    >
+      <div class="text-sm text-zinc-400">
+        Showing {{ startItem() }} to {{ endItem() }} of {{ totalLists() }} todo lists
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          (click)="prevPage()"
+          [disabled]="currentPage() === 1"
+          class="px-3 py-2 rounded-lg border text-white hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          [class.border-zinc-700]="currentPage() !== 1"
+          [class.border-zinc-800]="currentPage() === 1"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <div class="flex items-center gap-1">
+          <button
+            *ngFor="let page of [].constructor(totalPages()); let i = index"
+            (click)="goToPage(i + 1)"
+            [class.bg-brand]="currentPage() === i + 1"
+            [class.text-black]="currentPage() === i + 1"
+            [class.font-medium]="currentPage() === i + 1"
+            [class.bg-zinc-800]="currentPage() !== i + 1"
+            [class.text-zinc-300]="currentPage() !== i + 1"
+            class="px-3 py-1.5 min-w-[2.5rem] rounded-lg border border-zinc-700 hover:bg-zinc-700 transition-colors text-sm"
+          >
+            {{ i + 1 }}
+          </button>
+        </div>
+
+        <button
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()"
+          class="px-3 py-2 rounded-lg border text-white hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          [class.border-zinc-700]="currentPage() !== totalPages()"
+          [class.border-zinc-800]="currentPage() === totalPages()"
+        >
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Dialog -->
+<app-add-todo-list-dialog
+  *ngIf="showAddDialog()"
+  [todoList]="editingList()"
+  (close)="closeAddDialog()"
+  (save)="onSaveDialog()"
+/>
+
+<!-- Delete Confirmation Dialog -->
+<app-confirmation-dialog
+  [isOpen]="showDeleteConfirmation()"
+  [title]="'Delete Todo List'"
+  [message]="'Are you sure you want to delete &quot;' + listToDelete()?.title + '&quot;? This will also delete all tasks in this list. This action cannot be undone.'"
+  [confirmText]="'Delete'"
+  [iconType]="'error'"
+  [isDangerous]="true"
+  (confirmed)="onDeleteConfirmed()"
+  (cancelled)="onDeleteCancelled()"
+/>

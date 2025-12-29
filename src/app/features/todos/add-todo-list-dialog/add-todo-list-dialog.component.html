@@ -1,0 +1,129 @@
+<div
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="bg-background-card rounded-lg border border-zinc-800 shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col"
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-zinc-800">
+      <h2 class="text-xl font-semibold text-white">
+        {{ isEditMode() ? 'Edit Todo List' : 'Add Todo List' }}
+      </h2>
+      <button
+        (click)="onClose()"
+        class="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
+      >
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <form class="space-y-5" (submit)="$event.preventDefault()">
+        <!-- Title Input -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Title *
+          </label>
+          <input
+            type="text"
+            [value]="title()"
+            (input)="title.set($any($event.target).value)"
+            placeholder="e.g., Shopping List, Work Tasks, etc."
+            class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+          />
+        </div>
+
+        <!-- Description Textarea -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Description (Optional)
+          </label>
+          <textarea
+            [value]="description()"
+            (input)="description.set($any($event.target).value)"
+            placeholder="Add a description or notes about this todo list..."
+            rows="3"
+            class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Priority Select -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Priority
+          </label>
+          <app-select
+            [options]="priorityOptions"
+            [value]="priority()"
+            (valueChange)="priority.set($any($event))"
+            placeholder="Select priority"
+          />
+          
+          <!-- Priority Preview -->
+          <div *ngIf="priority()" class="mt-3 flex items-center gap-2">
+            <span class="text-sm text-zinc-400">Preview:</span>
+            <span
+              class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+              [ngClass]="getPriorityBgColor(priority())"
+            >
+              <span [ngClass]="getPriorityColor(priority())">
+                {{ priority() === 'high' ? 'High Priority' : priority() === 'medium' ? 'Medium Priority' : 'Low Priority' }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Due Date Input -->
+        <div>
+          <label class="block text-sm font-medium text-zinc-300 mb-2">
+            Due Date (Optional)
+          </label>
+          <input
+            type="date"
+            [value]="dueDate()"
+            (input)="dueDate.set($any($event.target).value)"
+            class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+          />
+          <p class="text-zinc-500 text-sm mt-1">
+            Set a deadline for this todo list
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div
+      class="flex items-center justify-end gap-3 p-6 border-t border-zinc-800"
+    >
+      <button
+        (click)="onClose()"
+        type="button"
+        class="px-4 py-2.5 h-10 text-sm border border-zinc-700 text-zinc-300 rounded-lg hover:bg-zinc-800 transition-colors"
+        [disabled]="loading()"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="onSave()"
+        type="submit"
+        class="flex items-center gap-2 px-4 py-2.5 h-10 text-sm bg-brand text-black font-medium rounded-lg hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="loading()"
+      >
+        <div
+          *ngIf="loading()"
+          class="animate-spin h-4 w-4 border-2 border-black border-t-transparent rounded-full"
+        ></div>
+        <span>{{ loading() ? 'Saving...' : isEditMode() ? 'Update' : 'Create' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

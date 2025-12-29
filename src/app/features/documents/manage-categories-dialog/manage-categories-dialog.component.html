@@ -4,7 +4,7 @@
   (click)="close()"
 >
   <div
-    class="bg-zinc-900 rounded-lg shadow-2xl border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+    class="bg-background-card rounded-lg shadow-2xl border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
     (click)="$event.stopPropagation()"
   >
     <!-- Header -->
@@ -40,7 +40,7 @@
               type="text"
               [(ngModel)]="newCategoryName"
               placeholder="e.g., Contracts, Invoices"
-              class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm"
+              class="w-full px-3 py-2 bg-background-card border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm"
               [disabled]="isCreating"
             />
           </div>
@@ -50,7 +50,7 @@
               [(ngModel)]="newCategoryDescription"
               placeholder="Brief description of this category"
               rows="2"
-              class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm resize-none"
+              class="w-full px-3 py-2 bg-background-card border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm resize-none"
               [disabled]="isCreating"
             ></textarea>
           </div>

@@ -63,6 +63,18 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/videos/videos.component').then((m) => m.VideosComponent),
       },
+      {
+        path: 'todos',
+        loadComponent: () =>
+          import('./features/todos/todos.component').then((m) => m.TodosComponent),
+      },
+      {
+        path: 'todos/:id',
+        loadComponent: () =>
+          import('./features/todos/todo-detail/todo-detail.component').then(
+            (m) => m.TodoDetailComponent
+          ),
+      },
     ],
   },
   {
