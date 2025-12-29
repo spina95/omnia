@@ -2,7 +2,7 @@
   <!-- Filters Toolbar -->
   <div
     *ngIf="showFilters"
-    class="flex flex-wrap items-center gap-3 mb-6 bg-zinc-900/50 p-4 rounded-lg border border-zinc-800"
+    class="flex flex-wrap items-center gap-3 mb-6 bg-background-card/50 p-4 rounded-lg border border-zinc-800"
   >
     <!-- Search -->
     <div class="relative w-full md:w-64">
@@ -102,12 +102,12 @@
 
   <!-- Table Container -->
   <div
-    class="flex-1 bg-zinc-900 rounded-lg border border-zinc-800 overflow-hidden relative min-h-[600px] flex flex-col shadow-xl"
+    class="flex-1 bg-background-card rounded-lg border border-zinc-800 overflow-hidden relative min-h-[600px] flex flex-col shadow-xl"
   >
     <!-- Empty State -->
     <div
       *ngIf="rowData.length === 0 && !loading && !error"
-      class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 z-0 h-full w-full bg-zinc-900/50"
+      class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 z-0 h-full w-full bg-background-card/50"
     >
       <svg class="h-10 w-10 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -139,7 +139,7 @@
     <!-- Custom Pagination Controls -->
     <div
       *ngIf="showPagination"
-      class="px-4 py-3 border-t border-zinc-800 bg-zinc-900 flex items-center justify-between"
+      class="px-4 py-3 border-t border-zinc-800 bg-background-card flex items-center justify-between"
     >
       <div class="flex items-center gap-6">
         <!-- Total Amount -->
