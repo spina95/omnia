@@ -203,17 +203,17 @@
             </div>
 
             <!-- Checkbox with Task Title -->
-            <div class="flex-1 flex items-center">
+            <div class="flex-1 flex items-center min-h-0">
               <!-- Checkbox -->
-              <div (click)="onToggleCompleted(task)" class="flex-shrink-0">
+              <div (click)="onToggleCompleted(task)" class="flex items-center">
                 <app-checkbox
                   [checked]="task.completed"
-                  class="pointer-events-none"
+                  class="pointer-events-none flex items-center"
                 />
               </div>
 
               <!-- Task Title - Editable -->
-              <div class="flex-1 ml-3" *ngIf="editingTaskId() !== task.id">
+              <div class="flex-1 ml-3 flex items-center" *ngIf="editingTaskId() !== task.id">
                 <span
                   (click)="startEditingTask(task, $event)"
                   class="text-white transition-all cursor-text"
