@@ -79,7 +79,7 @@ export class JournalFullViewComponent implements OnInit, AfterViewInit, OnDestro
       this.loadDayEntry();
     });
 
-    this.pageHeaderService.setHeader('Journal - ' + this.formattedDate());
+    this.pageHeaderService.setHeader(this.formattedDate());
   }
 
   ngAfterViewInit() {

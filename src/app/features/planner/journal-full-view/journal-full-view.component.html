@@ -18,7 +18,6 @@
   <div *ngIf="!loading() && dayEntry()" class="max-w-5xl mx-auto h-[calc(100vh-8rem)]">
     <!-- Minimal Header -->
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-medium text-zinc-400 capitalize">{{ formattedDate() }}</h2>
       <span *ngIf="savingJournal()" class="text-xs text-zinc-500">Saving...</span>
     </div>
 
