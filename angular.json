@@ -26,6 +26,7 @@
               "src/site.webmanifest",
               "src/web-app-manifest-192x192.png",
               "src/web-app-manifest-512x512.png",
+              "src/404.html",
               "src/assets",
               {
                 "glob": "**/*",
