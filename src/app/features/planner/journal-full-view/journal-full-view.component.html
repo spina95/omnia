@@ -1,0 +1,34 @@
+<div class="min-h-screen bg-background p-4 md:p-8">
+  <!-- Header Actions Template -->
+  <ng-template #headerActions>
+    <button
+      (click)="goBack()"
+      class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors text-sm"
+    >
+      ← Back to planner
+    </button>
+  </ng-template>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="flex items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+  </div>
+
+  <!-- Main Content - Full Screen Journal -->
+  <div *ngIf="!loading() && dayEntry()" class="max-w-5xl mx-auto h-[calc(100vh-8rem)]">
+    <!-- Minimal Header -->
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-medium text-zinc-400 capitalize">{{ formattedDate() }}</h2>
+      <span *ngIf="savingJournal()" class="text-xs text-zinc-500">Saving...</span>
+    </div>
+
+    <!-- Full Screen Text Editor -->
+    <textarea
+      [value]="freeText()"
+      (input)="freeText.set($any($event.target).value); onJournalChange()"
+      placeholder="Start writing..."
+      class="w-full h-full bg-background border-none rounded-lg px-6 py-4 text-white placeholder-zinc-600 focus:outline-none resize-none text-lg leading-relaxed"
+      autofocus
+    ></textarea>
+  </div>
+</div>

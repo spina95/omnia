@@ -269,7 +269,12 @@ import { AuthService } from '../../../core/auth/auth';
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-                <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" stroke="currentColor" stroke-width="2" fill="none" />
+                <path
+                  d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                />
               </svg>
               <span
                 class="whitespace-nowrap overflow-hidden transition-all duration-300"
@@ -280,6 +285,40 @@ import { AuthService } from '../../../core/auth/auth';
                 [class.opacity-100]="!collapsed"
                 [class.ml-3]="!collapsed"
                 >Travel Map</span
+              >
+            </a>
+
+            <a
+              routerLink="/planner/today"
+              routerLinkActive="bg-brand/10 text-brand"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              [class.px-2]="!collapsed"
+              [class.justify-center]="collapsed"
+              [title]="collapsed ? 'Planner & Journal' : ''"
+            >
+              <svg
+                class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
+                [class.mr-3]="!collapsed"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              <span
+                class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                [class.w-0]="collapsed"
+                [class.opacity-0]="collapsed"
+                [class.ml-0]="collapsed"
+                [class.w-auto]="!collapsed"
+                [class.opacity-100]="!collapsed"
+                [class.ml-3]="!collapsed"
+                >Planner & Journal</span
               >
             </a>
 

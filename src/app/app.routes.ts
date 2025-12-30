@@ -75,6 +75,30 @@ export const routes: Routes = [
             (m) => m.TodoDetailComponent
           ),
       },
+      {
+        path: 'planner/today',
+        loadComponent: () =>
+          import('./features/planner/day-view/day-view.component').then((m) => m.DayViewComponent),
+      },
+      {
+        path: 'planner/day/:date',
+        loadComponent: () =>
+          import('./features/planner/day-view/day-view.component').then((m) => m.DayViewComponent),
+      },
+      {
+        path: 'planner/search',
+        loadComponent: () =>
+          import('./features/planner/search-view/search-view.component').then(
+            (m) => m.SearchViewComponent
+          ),
+      },
+      {
+        path: 'planner/journal/:date',
+        loadComponent: () =>
+          import('./features/planner/journal-full-view/journal-full-view.component').then(
+            (m) => m.JournalFullViewComponent
+          ),
+      },
     ],
   },
   {

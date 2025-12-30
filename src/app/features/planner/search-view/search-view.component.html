@@ -1,0 +1,222 @@
+<div class="max-w-7xl mx-auto p-4 space-y-6">
+  <!-- Header Actions Template -->
+  <ng-template #headerActions>
+    <button
+      (click)="goBack()"
+      class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors text-sm"
+    >
+      ← Back to planner
+    </button>
+  </ng-template>
+
+  <!-- Tags Section -->
+  <div class="bg-background-card border border-zinc-800 rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+        <svg class="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        Available tags
+      </h3>
+      <div class="flex items-center gap-3">
+        <button
+          *ngIf="hasSelectedTags()"
+          (click)="clearSelectedTags()"
+          class="text-sm text-zinc-400 hover:text-white transition-colors"
+        >
+          Clear selection
+        </button>
+        <button
+          *ngIf="hasSelectedTags()"
+          (click)="toggleSearchMode()"
+          class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors text-sm font-medium"
+        >
+          Mode: {{ searchMode() }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Search input for tags -->
+    <div class="mb-4">
+      <input
+        type="text"
+        [value]="tagSearchQuery()"
+        (input)="tagSearchQuery.set($any($event.target).value)"
+        placeholder="Search tags..."
+        class="w-full bg-zinc-950 border border-zinc-700 rounded-md px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand"
+      />
+    </div>
+
+    <!-- Selected Tags -->
+    <div *ngIf="hasSelectedTags()" class="mb-4 pb-4 border-b border-zinc-800">
+      <p class="text-sm text-zinc-400 mb-2">Selected tags:</p>
+      <div class="flex flex-wrap gap-2">
+        <button
+          *ngFor="let tag of selectedTags()"
+          (click)="toggleTag(tag)"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-brand text-black border border-brand hover:bg-brand/90 transition-colors"
+        >
+          {{ tag }}
+          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <p class="text-xs text-zinc-500 mt-2">
+        <span *ngIf="searchMode() === 'AND'">
+          Show days containing <strong>all</strong> selected tags
+        </span>
+        <span *ngIf="searchMode() === 'OR'">
+          Show days containing <strong>at least one</strong> of the selected tags
+        </span>
+      </p>
+    </div>
+
+    <!-- Loading tags -->
+    <div *ngIf="loadingTags()" class="flex items-center justify-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+    </div>
+
+    <!-- Available Tags -->
+    <div *ngIf="!loadingTags()" class="space-y-3">
+      <!-- Show filtered or top tags -->
+      <div *ngIf="filteredTags().length > 0" class="flex flex-wrap gap-2">
+        <button
+          *ngFor="let tagStat of filteredTags()"
+          (click)="toggleTag(tagStat.tag)"
+          [class.bg-brand]="selectedTags().includes(tagStat.tag)"
+          [class.text-black]="selectedTags().includes(tagStat.tag)"
+          [class.border-brand]="selectedTags().includes(tagStat.tag)"
+          [class.bg-zinc-800]="!selectedTags().includes(tagStat.tag)"
+          [class.text-zinc-300]="!selectedTags().includes(tagStat.tag)"
+          [class.border-zinc-700]="!selectedTags().includes(tagStat.tag)"
+          class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium border hover:opacity-80 transition-all"
+        >
+          <span>{{ tagStat.tag }}</span>
+          <span class="text-xs opacity-70">({{ tagStat.count }})</span>
+        </button>
+      </div>
+
+      <!-- No tags found -->
+      <div *ngIf="filteredTags().length === 0 && !tagSearchQuery()" class="text-center py-8 text-zinc-500">
+        <svg class="h-12 w-12 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        <p>No tags available</p>
+        <p class="text-sm mt-1">Add tags to your journals to get started</p>
+      </div>
+
+      <!-- No results for search -->
+      <div *ngIf="filteredTags().length === 0 && tagSearchQuery()" class="text-center py-8 text-zinc-500">
+        <p>No tags found for "{{ tagSearchQuery() }}"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div *ngIf="hasSelectedTags()" class="bg-background-card border border-zinc-800 rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-white">
+        Results
+        <span *ngIf="!loading()" class="text-sm text-zinc-400 font-normal ml-2">
+          ({{ total() }} {{ total() === 1 ? 'day' : 'days' }})
+        </span>
+      </h3>
+    </div>
+
+    <!-- Loading results -->
+    <div *ngIf="loading()" class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+    </div>
+
+    <!-- Results list -->
+    <div *ngIf="!loading() && searchResults().length > 0" class="space-y-4">
+      <button
+        *ngFor="let result of searchResults()"
+        (click)="goToDay(result)"
+        class="w-full text-left p-4 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-brand/50 transition-all group"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="h-4 w-4 text-brand flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <h4 class="text-white font-medium capitalize">{{ formatDate(result.dayEntry.entry_date) }}</h4>
+            </div>
+
+            <p *ngIf="result.excerpt" class="text-zinc-400 text-sm mb-3 line-clamp-3">
+              {{ result.excerpt }}
+            </p>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                *ngFor="let tag of result.matchedTags"
+                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand/10 text-brand border border-brand/20"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+
+          <svg
+            class="h-5 w-5 text-zinc-600 group-hover:text-brand transition-colors flex-shrink-0 mt-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    <!-- No results -->
+    <div *ngIf="!loading() && searchResults().length === 0" class="text-center py-12 text-zinc-500">
+      <svg class="h-12 w-12 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <p>No days found with these tags</p>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading() && searchResults().length > 0 && totalPages() > 1" class="mt-6 pt-6 border-t border-zinc-800">
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-zinc-400">
+          Showing {{ startItem() }}-{{ endItem() }} of {{ total() }}
+        </div>
+        <div class="flex gap-2">
+          <button
+            (click)="previousPage()"
+            [disabled]="currentPage() === 1"
+            class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          >
+            ← Previous
+          </button>
+          <span class="px-3 py-1.5 text-sm text-zinc-400">
+            Page {{ currentPage() }} of {{ totalPages() }}
+          </span>
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage() >= totalPages()"
+            class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state when no tags selected -->
+  <div *ngIf="!hasSelectedTags() && !loadingTags()" class="bg-background-card border border-zinc-800 rounded-lg p-12 text-center">
+    <svg class="h-16 w-16 mx-auto mb-4 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <h3 class="text-lg font-semibold text-white mb-2">Select one or more tags</h3>
+    <p class="text-zinc-400">
+      Click on the tags above to search through your days
+    </p>
+  </div>
+</div>
