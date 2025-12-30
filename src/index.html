@@ -17,10 +17,17 @@
   <!-- GitHub Pages SPA redirect script -->
   <script>
     (function() {
-      var redirect = sessionStorage.redirect;
-      delete sessionStorage.redirect;
-      if (redirect && redirect !== location.href) {
-        history.replaceState(null, null, redirect);
+      var redirect = sessionStorage.getItem('redirect');
+      if (redirect) {
+        sessionStorage.removeItem('redirect');
+        // Remove the base path from the stored redirect
+        var basePath = '/omnia';
+        if (redirect.startsWith(basePath)) {
+          redirect = redirect.substring(basePath.length);
+        }
+        if (redirect && redirect !== location.pathname + location.search + location.hash) {
+          history.replaceState(null, null, redirect);
+        }
       }
     })();
   </script>
