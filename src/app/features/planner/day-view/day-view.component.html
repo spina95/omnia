@@ -366,13 +366,13 @@
 
           <div>
             <label class="block text-sm font-medium text-zinc-400 mb-2">
-              What I learned
+              What I am grateful for
             </label>
             <textarea
               [value]="takeaway()"
               (input)="takeaway.set($any($event.target).value); onJournalChange()"
               rows="3"
-              placeholder="Lessons and insights from today..."
+              placeholder="Things I appreciate today..."
               class="w-full bg-background border border-zinc-700 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm"
             ></textarea>
           </div>
