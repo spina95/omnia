@@ -252,43 +252,6 @@ import { AuthService } from '../../../core/auth/auth';
           </h2>
           <div class="space-y-0.5">
             <a
-              routerLink="/travel-map"
-              routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
-              [class.px-2]="!collapsed"
-              [class.justify-center]="collapsed"
-              [title]="collapsed ? 'Travel Map' : ''"
-            >
-              <svg
-                class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
-                [class.mr-3]="!collapsed"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
-                <path
-                  d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  fill="none"
-                />
-              </svg>
-              <span
-                class="whitespace-nowrap overflow-hidden transition-all duration-300"
-                [class.w-0]="collapsed"
-                [class.opacity-0]="collapsed"
-                [class.ml-0]="collapsed"
-                [class.w-auto]="!collapsed"
-                [class.opacity-100]="!collapsed"
-                [class.ml-3]="!collapsed"
-                >Travel Map</span
-              >
-            </a>
-
-            <a
               routerLink="/planner/today"
               routerLinkActive="bg-brand/10 text-brand"
               class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
@@ -319,6 +282,40 @@ import { AuthService } from '../../../core/auth/auth';
                 [class.opacity-100]="!collapsed"
                 [class.ml-3]="!collapsed"
                 >Planner & Journal</span
+              >
+            </a>
+
+            <a
+              routerLink="/todos"
+              routerLinkActive="bg-brand/10 text-brand"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              [class.px-2]="!collapsed"
+              [class.justify-center]="collapsed"
+              [title]="collapsed ? 'Todo Lists' : ''"
+            >
+              <svg
+                class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
+                [class.mr-3]="!collapsed"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                />
+              </svg>
+              <span
+                class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                [class.w-0]="collapsed"
+                [class.opacity-0]="collapsed"
+                [class.ml-0]="collapsed"
+                [class.w-auto]="!collapsed"
+                [class.opacity-100]="!collapsed"
+                [class.ml-3]="!collapsed"
+                >Todo Lists</span
               >
             </a>
 
@@ -388,12 +385,12 @@ import { AuthService } from '../../../core/auth/auth';
             </a>
 
             <a
-              routerLink="/todos"
+              routerLink="/travel-map"
               routerLinkActive="bg-brand/10 text-brand"
               class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
-              [title]="collapsed ? 'Todo Lists' : ''"
+              [title]="collapsed ? 'Travel Map' : ''"
             >
               <svg
                 class="h-5 w-5 opacity-70 group-hover:opacity-100 transition-all flex-shrink-0"
@@ -402,11 +399,14 @@ import { AuthService } from '../../../core/auth/auth';
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 stroke-width="2"
+                xmlns="http://www.w3.org/2000/svg"
               >
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
                 />
               </svg>
               <span
@@ -417,7 +417,7 @@ import { AuthService } from '../../../core/auth/auth';
                 [class.w-auto]="!collapsed"
                 [class.opacity-100]="!collapsed"
                 [class.ml-3]="!collapsed"
-                >Todo Lists</span
+                >Travel Map</span
               >
             </a>
           </div>

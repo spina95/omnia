@@ -17,9 +17,7 @@
   <!-- Main Content - Full Screen Journal -->
   <div *ngIf="!loading() && dayEntry()" class="max-w-5xl mx-auto h-[calc(100vh-8rem)]">
     <!-- Minimal Header -->
-    <div class="mb-4 flex items-center justify-between">
-      <span *ngIf="savingJournal()" class="text-xs text-zinc-500">Saving...</span>
-    </div>
+  
 
     <!-- Full Screen Text Editor -->
     <textarea
