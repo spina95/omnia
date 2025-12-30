@@ -1,0 +1,1 @@
+import{L as a,ha as n}from"./chunk-TKY7A7V6.js";var o=class e{actionsTemplate=n(null);actions=this.actionsTemplate.asReadonly();setActions(t){this.actionsTemplate.set(t)}clearActions(){this.actionsTemplate.set(null)}static \u0275fac=function(l){return new(l||e)};static \u0275prov=a({token:e,factory:e.\u0275fac,providedIn:"root"})};export{o as a};
