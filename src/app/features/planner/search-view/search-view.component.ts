@@ -68,7 +68,7 @@ export class SearchViewComponent implements OnInit, AfterViewInit, OnDestroy {
   hasSelectedTags = computed(() => this.selectedTags().length > 0);
 
   async ngOnInit() {
-    this.pageHeaderService.setHeader('Cerca nei Journal');
+    this.pageHeaderService.setHeader('Search');
     await this.loadAllTags();
   }
 

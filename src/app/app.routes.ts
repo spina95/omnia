@@ -76,6 +76,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'planner',
+        redirectTo: 'planner/today',
+        pathMatch: 'full',
+      },
+      {
         path: 'planner/today',
         loadComponent: () =>
           import('./features/planner/day-view/day-view.component').then((m) => m.DayViewComponent),

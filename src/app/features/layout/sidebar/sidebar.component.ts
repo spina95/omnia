@@ -252,8 +252,9 @@ import { AuthService } from '../../../core/auth/auth';
           </h2>
           <div class="space-y-0.5">
             <a
-              routerLink="/planner/today"
+              routerLink="/planner"
               routerLinkActive="bg-brand/10 text-brand"
+              [routerLinkActiveOptions]="{ exact: false }"
               class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
