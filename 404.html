@@ -5,10 +5,19 @@
   <title>Omnia</title>
   <script>
     // GitHub Pages SPA redirect script
-    // Store the current URL (with the 404 path) so that index.html can redirect to it
-    sessionStorage.redirect = location.href;
+    // Split the path and query string and save them
+    var pathSegmentsToKeep = 1; // Keep '/omnia'
+    var l = window.location;
+    
+    // Store the full path after the base for Angular to restore
+    sessionStorage.setItem('redirect', l.pathname + l.search + l.hash);
+    
+    // Redirect to base URL
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, pathSegmentsToKeep + 1).join('/') + '/'
+    );
   </script>
-  <meta http-equiv="refresh" content="0;URL='/omnia/'">
 </head>
 <body>
 </body>
