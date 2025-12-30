@@ -281,7 +281,7 @@ export class ScheduledExpenseDialogComponent implements OnInit {
 
   async confirmDelete() {
     if (!this.pendingDeleteExpense) return;
-    
+
     const expense = this.pendingDeleteExpense;
     this.isConfirmDialogOpen = false;
     this.pendingDeleteExpense = null;

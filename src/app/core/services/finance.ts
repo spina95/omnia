@@ -51,7 +51,8 @@ export class FinanceService {
     tagIds?: number[];
     search?: string;
   }) {
-    const { page, pageSize, sort, order, month, year, categoryId, paymentTypeId, tagIds, search } = params;
+    const { page, pageSize, sort, order, month, year, categoryId, paymentTypeId, tagIds, search } =
+      params;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -120,9 +121,9 @@ export class FinanceService {
         .from('expense_tag_mappings')
         .select('expense_id')
         .in('tag_id', tagIds);
-      
+
       if (mappings && mappings.length > 0) {
-        const expenseIds = [...new Set(mappings.map(m => m.expense_id))];
+        const expenseIds = [...new Set(mappings.map((m) => m.expense_id))];
         query = query.in('id', expenseIds);
       } else {
         // No expenses with these tags, return empty result
@@ -162,7 +163,9 @@ export class FinanceService {
     // Flatten expense_tags from nested structure
     const expenses = data?.map((expense: any) => ({
       ...expense,
-      expense_tags: expense.expense_tag_mappings?.map((mapping: any) => mapping.expense_tags).filter(Boolean) || []
+      expense_tags:
+        expense.expense_tag_mappings?.map((mapping: any) => mapping.expense_tags).filter(Boolean) ||
+        [],
     }));
 
     return { data: expenses, count };
@@ -200,13 +203,13 @@ export class FinanceService {
 
   async updateCurrentBalance(id: number, current_balance: number) {
     console.log('FinanceService.updateCurrentBalance called:', { id, current_balance });
-    
+
     // Directly update the current_balance
     const { data, error } = await this.supabase.client
       .from('payment_types')
-      .update({ 
+      .update({
         current_balance,
-        last_balance_update: new Date().toISOString()
+        last_balance_update: new Date().toISOString(),
       })
       .eq('id', id)
       .select();
@@ -215,7 +218,7 @@ export class FinanceService {
       console.error('Error updating current_balance:', error);
       throw error;
     }
-    
+
     console.log('Balance updated successfully:', data);
     return data;
   }
@@ -257,9 +260,9 @@ export class FinanceService {
 
     // Insert tag mappings if provided
     if (expense.tag_ids && expense.tag_ids.length > 0) {
-      const mappings = expense.tag_ids.map(tag_id => ({
+      const mappings = expense.tag_ids.map((tag_id) => ({
         expense_id: data.id,
-        tag_id
+        tag_id,
       }));
 
       const { error: mappingError } = await this.supabase.client
@@ -323,9 +326,9 @@ export class FinanceService {
 
       // Insert new mappings
       if (updates.tag_ids.length > 0) {
-        const mappings = updates.tag_ids.map(tag_id => ({
+        const mappings = updates.tag_ids.map((tag_id) => ({
           expense_id: id,
-          tag_id
+          tag_id,
         }));
 
         const { error: insertError } = await this.supabase.client
@@ -382,7 +385,7 @@ export class FinanceService {
 
   async createTag(name: string, color?: string) {
     const tagColor = color || this.generateRandomColor();
-    
+
     const { data, error } = await this.supabase.client
       .from('expense_tags')
       .insert({ name, color: tagColor })
@@ -406,10 +409,7 @@ export class FinanceService {
   }
 
   async deleteTag(id: number) {
-    const { error } = await this.supabase.client
-      .from('expense_tags')
-      .delete()
-      .eq('id', id);
+    const { error } = await this.supabase.client.from('expense_tags').delete().eq('id', id);
 
     if (error) throw error;
   }
