@@ -20,7 +20,9 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
     PageHeaderComponent,
   ],
   template: `
-    <div class="flex h-screen bg-white dark:bg-background overflow-hidden transition-colors duration-200">
+    <div
+      class="flex h-screen bg-white dark:bg-background overflow-hidden transition-colors duration-200"
+    >
       <!-- Mobile Overlay -->
       <div
         *ngIf="isMobileMenuOpen()"
@@ -48,7 +50,10 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
         <header
           class="md:hidden flex items-center justify-between px-4 py-3 bg-sidebar-light dark:bg-sidebar border-b border-sidebar-border-light dark:border-sidebar-border transition-colors duration-200"
         >
-          <button (click)="toggleMobileMenu()" class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-200">
+          <button
+            (click)="toggleMobileMenu()"
+            class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-200"
+          >
             <span class="sr-only">Open menu</span>
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -59,7 +64,10 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
               />
             </svg>
           </button>
-          <span class="text-lg font-bold text-zinc-900 dark:text-white transition-colors duration-200">Omnia</span>
+          <span
+            class="text-lg font-bold text-zinc-900 dark:text-white transition-colors duration-200"
+            >Omnia</span
+          >
           <div class="w-6"></div>
           <!-- Spacer -->
         </header>
@@ -68,7 +76,9 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
         <app-page-header></app-page-header>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-auto bg-white dark:bg-background relative transition-colors duration-200">
+        <main
+          class="flex-1 overflow-auto bg-white dark:bg-background relative transition-colors duration-200"
+        >
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
             <router-outlet></router-outlet>
           </div>

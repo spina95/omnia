@@ -1,18 +1,18 @@
 import { Injectable, signal, effect } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   private readonly THEME_STORAGE_KEY = 'omnia-theme';
-  
+
   // Signal per tracciare se siamo in dark mode
   isDarkMode = signal<boolean>(true);
 
   constructor() {
     // Carica tema salvato da localStorage o usa default (dark)
     this.loadTheme();
-    
+
     // Effect per sincronizzare il tema con il DOM e localStorage
     effect(() => {
       const isDark = this.isDarkMode();
@@ -26,7 +26,7 @@ export class ThemeService {
    */
   private loadTheme(): void {
     const savedTheme = localStorage.getItem(this.THEME_STORAGE_KEY);
-    
+
     if (savedTheme === 'light') {
       this.isDarkMode.set(false);
     } else if (savedTheme === 'dark') {
@@ -61,7 +61,7 @@ export class ThemeService {
    * Toggle tra light e dark mode
    */
   toggleTheme(): void {
-    this.isDarkMode.update(current => !current);
+    this.isDarkMode.update((current) => !current);
   }
 
   /**

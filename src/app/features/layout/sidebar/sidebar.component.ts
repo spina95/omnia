@@ -476,12 +476,15 @@ import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/th
       </div>
 
       <!-- User Profile / Logout -->
-      <div class="p-4 border-t border-sidebar-border-light dark:border-sidebar-border" [class.px-2]="collapsed">
+      <div
+        class="p-4 border-t border-sidebar-border-light dark:border-sidebar-border"
+        [class.px-2]="collapsed"
+      >
         <!-- Theme Toggle -->
         <div *ngIf="!collapsed" class="mb-2">
           <app-theme-toggle></app-theme-toggle>
         </div>
-        
+
         <button
           (click)="signOut()"
           class="flex w-full items-center py-2 text-sm font-medium rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover transition-colors duration-200 group"

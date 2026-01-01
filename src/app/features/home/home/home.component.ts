@@ -150,11 +150,11 @@ export class HomeComponent implements OnInit {
 
   private pageHeaderService = inject(PageHeaderService);
   private themeService = inject(ThemeService);
-  
+
   // Computed properties for chart theme
-  chartThemeMode = computed(() => this.themeService.isDarkMode() ? 'dark' : 'light');
-  chartLegendColor = computed(() => this.themeService.isDarkMode() ? '#e4e4e7' : '#3f3f46');
-  chartAxisColor = computed(() => this.themeService.isDarkMode() ? '#a1a1aa' : '#71717a');
+  chartThemeMode = computed(() => (this.themeService.isDarkMode() ? 'dark' : 'light'));
+  chartLegendColor = computed(() => (this.themeService.isDarkMode() ? '#e4e4e7' : '#3f3f46'));
+  chartAxisColor = computed(() => (this.themeService.isDarkMode() ? '#a1a1aa' : '#71717a'));
 
   async ngOnInit() {
     this.pageHeaderService.setHeader('Dashboard');

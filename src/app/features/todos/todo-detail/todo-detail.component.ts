@@ -20,7 +20,9 @@ import { PageHeaderService } from '../../../core/services/page-header.service';
 import { PageHeaderActionsService } from '../../../core/services/page-header-actions.service';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { CheckboxComponent } from '../../../shared/components/checkbox/checkbox.component';
+import { SelectComponent, SelectOption } from '../../../shared/components/select/select.component';
 import { AddTodoListDialogComponent } from '../add-todo-list-dialog/add-todo-list-dialog.component';
+import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 
 @Component({
   selector: 'app-todo-detail',
@@ -31,7 +33,9 @@ import { AddTodoListDialogComponent } from '../add-todo-list-dialog/add-todo-lis
     DragDropModule,
     ConfirmationDialogComponent,
     CheckboxComponent,
+    SelectComponent,
     AddTodoListDialogComponent,
+    EditTaskDialogComponent,
   ],
   templateUrl: './todo-detail.component.html',
   styleUrls: ['./todo-detail.component.css'],
@@ -49,14 +53,39 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loading = signal(false);
   newTaskTitle = signal('');
+  newTaskPriority = signal<string | null>('medium');
+  newTaskCategory = signal<string>('task');
   addingTask = signal(false);
+
+  sortOrder = signal<'none' | 'priority-asc' | 'priority-desc'>('none');
 
   showEditDialog = signal(false);
   showDeleteListConfirmation = signal(false);
   showDeleteTaskConfirmation = signal(false);
   taskToDelete = signal<TodoTask | null>(null);
+  showEditTaskDialog = signal(false);
+  editingTaskForDialog = signal<TodoTask | null>(null);
   editingTaskId = signal<string | null>(null);
   editingTaskTitle = signal('');
+
+  priorityOptions: SelectOption[] = [
+    { value: null, label: 'No Priority' },
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' },
+  ];
+
+  categoryOptions: SelectOption[] = [
+    { value: 'task', label: 'Task' },
+    { value: 'idea', label: 'Idea' },
+    { value: 'optional', label: 'Optional' },
+  ];
+
+  sortOptions: SelectOption[] = [
+    { value: 'none', label: 'Default Order' },
+    { value: 'priority-asc', label: 'Priority Low to High' },
+    { value: 'priority-desc', label: 'Priority High to Low' },
+  ];
 
   listId = computed(() => this.route.snapshot.paramMap.get('id'));
 
@@ -104,7 +133,42 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadTasks(listId: string) {
     const tasks = await this.todosService.getTasks(listId);
     this.tasks.set(tasks);
+    this.applySorting();
     this.cdr.detectChanges();
+  }
+
+  applySorting() {
+    const order = this.sortOrder();
+
+    const priorityValues = { high: 3, medium: 2, low: 1, undefined: 0 };
+
+    this.tasks.update((tasks) => {
+      // Always put incomplete tasks first, completed tasks at the end
+      const incomplete = tasks.filter((t) => !t.completed);
+      const completed = tasks.filter((t) => t.completed);
+
+      const sortByPriority = (arr: TodoTask[]) => {
+        return arr.sort((a, b) => {
+          const priorityA = priorityValues[a.priority || 'undefined'];
+          const priorityB = priorityValues[b.priority || 'undefined'];
+          if (order === 'priority-desc') return priorityB - priorityA;
+          if (order === 'priority-asc') return priorityA - priorityB;
+          return 0;
+        });
+      };
+
+      if (order === 'priority-asc' || order === 'priority-desc') {
+        sortByPriority(incomplete);
+        sortByPriority(completed);
+      }
+
+      return [...incomplete, ...completed];
+    });
+  }
+
+  setSortOrder(order: 'none' | 'priority-asc' | 'priority-desc') {
+    this.sortOrder.set(order);
+    this.applySorting();
   }
 
   async onAddTask() {
@@ -127,12 +191,16 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       title,
       completed: false,
       order_index: maxOrder + 1,
+      priority: this.newTaskPriority() as 'low' | 'medium' | 'high' | undefined,
+      category: this.newTaskCategory() as 'optional' | 'task' | 'idea',
     });
 
     this.addingTask.set(false);
 
     if (task) {
       this.newTaskTitle.set('');
+      this.newTaskPriority.set('medium');
+      this.newTaskCategory.set('task');
       await this.loadTasks(list.id);
       this.notificationService.success('Task added successfully');
     } else {
@@ -363,5 +431,112 @@ export class TodoDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     const total = this.getTotalCount();
     if (total === 0) return 0;
     return Math.round((this.getCompletedCount() / total) * 100);
+  }
+
+  // Task priority and category helpers
+  getTaskPriorityBadgeClass(priority?: string): string {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'medium':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'low':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      default:
+        return 'bg-zinc-800 text-zinc-500 border-zinc-700';
+    }
+  }
+
+  getTaskPriorityLabel(priority?: string): string {
+    if (!priority) return 'No Priority';
+    return priority.charAt(0).toUpperCase() + priority.slice(1);
+  }
+
+  getTaskCategoryBadgeClass(category?: string): string {
+    switch (category) {
+      case 'task':
+        return 'bg-brand/20 text-brand border-brand/30';
+      case 'idea':
+        return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+      case 'optional':
+        return 'bg-zinc-700/20 text-zinc-400 border-zinc-600/30';
+      default:
+        return 'bg-zinc-800 text-zinc-500 border-zinc-700';
+    }
+  }
+
+  getTaskCategoryLabel(category?: string): string {
+    if (!category) return 'Task';
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  }
+
+  onPriorityChange(value: string | number | null) {
+    this.newTaskPriority.set(value as string | null);
+  }
+
+  onCategoryChange(value: string | number | null) {
+    this.newTaskCategory.set(value as string);
+  }
+
+  onSortOrderChange(value: string | number | null) {
+    this.setSortOrder(value as 'none' | 'priority-asc' | 'priority-desc');
+  }
+
+  async updateTaskPriority(task: TodoTask, priority: string | number | null) {
+    const newPriority = priority === null ? undefined : (priority as 'low' | 'medium' | 'high');
+    const success = await this.todosService.updateTask(task.id, { priority: newPriority });
+
+    if (success) {
+      this.tasks.update((tasks) =>
+        tasks.map((t) => (t.id === task.id ? { ...t, priority: newPriority } : t))
+      );
+      this.notificationService.success('Task priority updated');
+      this.cdr.detectChanges();
+    } else {
+      this.notificationService.error('Failed to update task priority');
+    }
+  }
+
+  async updateTaskCategory(task: TodoTask, category: string | number | null) {
+    const newCategory = category as 'optional' | 'task' | 'idea';
+    const success = await this.todosService.updateTask(task.id, { category: newCategory });
+
+    if (success) {
+      this.tasks.update((tasks) =>
+        tasks.map((t) => (t.id === task.id ? { ...t, category: newCategory } : t))
+      );
+      this.notificationService.success('Task category updated');
+      this.cdr.detectChanges();
+    } else {
+      this.notificationService.error('Failed to update task category');
+    }
+  }
+
+  openEditTaskDialog(task: TodoTask, event?: Event) {
+    if (event) event.stopPropagation();
+    this.editingTaskForDialog.set(task);
+    this.showEditTaskDialog.set(true);
+    this.cdr.detectChanges();
+  }
+
+  closeEditTaskDialog() {
+    this.showEditTaskDialog.set(false);
+    this.editingTaskForDialog.set(null);
+  }
+
+  async onTaskDialogSaved(updates: Partial<TodoTask>) {
+    const task = this.editingTaskForDialog();
+    if (!task) return;
+
+    const success = await this.todosService.updateTask(task.id, updates);
+    if (success) {
+      this.tasks.update((tasks) => tasks.map((t) => (t.id === task.id ? { ...t, ...updates } : t)));
+      this.notificationService.success('Task updated');
+      this.cdr.detectChanges();
+    } else {
+      this.notificationService.error('Failed to update task');
+    }
+
+    this.closeEditTaskDialog();
   }
 }

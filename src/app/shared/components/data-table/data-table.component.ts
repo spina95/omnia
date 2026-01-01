@@ -126,7 +126,7 @@ export class DataTableComponent implements OnInit, OnChanges {
   // AG Grid Theme - Dynamic based on theme service
   theme = computed(() => {
     const isDark = this.themeService.isDarkMode();
-    
+
     if (isDark) {
       return themeQuartz.withPart(colorSchemeDark).withParams({
         backgroundColor: 'transparent',

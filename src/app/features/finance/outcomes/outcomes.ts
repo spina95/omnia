@@ -1,4 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, inject, ViewChild, TemplateRef, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  ViewChild,
+  TemplateRef,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ColDef } from 'ag-grid-community';
@@ -31,10 +40,10 @@ import { MultiselectOption } from '../../../shared/components/multiselect/multis
 })
 export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('headerActions', { static: false }) headerActionsTemplate!: TemplateRef<any>;
-  
+
   private pageHeaderService = inject(PageHeaderService);
   private pageHeaderActionsService = inject(PageHeaderActionsService);
-  
+
   // Data state
   rowData: any[] = [];
   isLoading = false;
@@ -175,7 +184,7 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
       cellRenderer: (params: any) => {
         const tags = params.value || [];
         if (tags.length === 0) return '';
-        
+
         if (tags.length === 1) {
           const tag = tags[0];
           return `<span style="background: ${tag.color}20; color: ${tag.color}; border: 1px solid ${tag.color}40;" 
@@ -183,7 +192,7 @@ export class OutcomesComponent implements OnInit, AfterViewInit, OnDestroy {
                     ${tag.name}
                   </span>`;
         }
-        
+
         // Show first tag name + count of others
         const firstTag = tags[0];
         const othersCount = tags.length - 1;

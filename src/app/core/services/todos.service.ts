@@ -21,6 +21,8 @@ export interface TodoTask {
   title: string;
   completed: boolean;
   order_index: number;
+  priority?: 'low' | 'medium' | 'high';
+  category?: 'optional' | 'task' | 'idea';
   created_at: string;
   updated_at: string;
 }

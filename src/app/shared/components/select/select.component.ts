@@ -109,5 +109,3 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
     }
   }
 }
-
-

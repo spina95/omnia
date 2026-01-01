@@ -1,0 +1,21 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div class="bg-white dark:bg-zinc-900 rounded-lg p-6 w-full max-w-md">
+    <h3 class="text-lg font-semibold mb-4">Edit Task</h3>
+
+    <div class="space-y-3">
+      <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Title</label>
+      <input [(ngModel)]="title" class="w-full bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded px-3 py-2" />
+
+      <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Priority</label>
+      <app-select [options]="priorityOptions" [value]="priority" (selectionChange)="onDialogPriorityChange($event)" placeholder="Priority"></app-select>
+
+      <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Category</label>
+      <app-select [options]="categoryOptions" [value]="category" (selectionChange)="onDialogCategoryChange($event)" placeholder="Category"></app-select>
+    </div>
+
+    <div class="mt-4 flex justify-end gap-2">
+      <button (click)="onCancel()" class="px-4 py-2 rounded bg-zinc-200 dark:bg-zinc-800">Cancel</button>
+      <button (click)="onSave()" class="px-4 py-2 rounded bg-brand text-black">Save</button>
+    </div>
+  </div>
+</div>
