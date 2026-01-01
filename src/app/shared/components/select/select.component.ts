@@ -35,7 +35,7 @@ export class SelectComponent implements ControlValueAccessor, OnInit {
   @Input() options: SelectOption[] = [];
   @Input() placeholder: string = 'Select...';
   @Input() label: string = '';
-  @Input() bgColor: string = 'bg-dark-blue'; // Default dark blue
+  @Input() bgColor: string = 'bg-dark-blue-light dark:bg-dark-blue'; // Default with light/dark variants
   @Input() set value(val: string | number | null) {
     this.selectedValue = val;
   }

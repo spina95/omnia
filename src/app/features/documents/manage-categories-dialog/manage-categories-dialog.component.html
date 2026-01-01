@@ -4,12 +4,12 @@
   (click)="close()"
 >
   <div
-    class="bg-background-card rounded-lg shadow-2xl border border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+    class="bg-white dark:bg-background-card rounded-lg shadow-2xl border border-zinc-300 dark:border-zinc-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transition-colors duration-200"
     (click)="$event.stopPropagation()"
   >
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-      <h3 class="text-xl font-semibold text-white">Manage Categories</h3>
+      <h3 class="text-xl font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Manage Categories</h3>
       <button
         (click)="close()"
         class="text-zinc-400 hover:text-white transition-colors"
@@ -29,8 +29,8 @@
     <!-- Content -->
     <div class="flex-1 overflow-y-auto px-6 py-4 space-y-6">
       <!-- Create New Category -->
-      <div class="bg-zinc-950 border border-zinc-800 rounded-lg p-4">
-        <h4 class="text-sm font-semibold text-white mb-3">Create New Category</h4>
+      <div class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-lg p-4 transition-colors duration-200">
+        <h4 class="text-sm font-semibold text-zinc-900 dark:text-white mb-3 transition-colors duration-200">Create New Category</h4>
         <div class="space-y-3">
           <div>
             <label class="block text-xs font-medium text-zinc-400 mb-1">
@@ -40,7 +40,7 @@
               type="text"
               [(ngModel)]="newCategoryName"
               placeholder="e.g., Contracts, Invoices"
-              class="w-full px-3 py-2 bg-background-card border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm"
+              class="w-full px-3 py-2 bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-700 rounded text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors duration-200"
               [disabled]="isCreating"
             />
           </div>
@@ -50,7 +50,7 @@
               [(ngModel)]="newCategoryDescription"
               placeholder="Brief description of this category"
               rows="2"
-              class="w-full px-3 py-2 bg-background-card border border-zinc-700 rounded text-white placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm resize-none"
+              class="w-full px-3 py-2 bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-700 rounded text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm resize-none transition-colors duration-200"
               [disabled]="isCreating"
             ></textarea>
           </div>
@@ -86,14 +86,14 @@
 
       <!-- Categories List -->
       <div>
-        <h4 class="text-sm font-semibold text-white mb-3">Existing Categories</h4>
+        <h4 class="text-sm font-semibold text-zinc-900 dark:text-white mb-3 transition-colors duration-200">Existing Categories</h4>
         <div *ngIf="categories.length === 0" class="text-center py-8 text-zinc-500 text-sm">
           No categories yet. Create your first category above.
         </div>
         <div *ngIf="categories.length > 0" class="space-y-2">
           <div
             *ngFor="let category of categories"
-            class="bg-zinc-950 border border-zinc-800 rounded-lg p-4 hover:border-zinc-700 transition-colors"
+            class="bg-zinc-50 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 rounded-lg p-4 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors duration-200"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1 min-w-0">

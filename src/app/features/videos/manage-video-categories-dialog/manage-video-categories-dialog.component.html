@@ -3,11 +3,11 @@
   (click)="onBackdropClick($event)"
 >
   <div
-    class="bg-background-card rounded-lg border border-zinc-800 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+    class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transition-colors duration-200"
   >
     <!-- Header -->
     <div class="flex items-center justify-between p-6 border-b border-zinc-800">
-      <h2 class="text-xl font-semibold text-white">Manage Video Categories</h2>
+      <h2 class="text-xl font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Manage Video Categories</h2>
       <button
         (click)="onClose()"
         class="text-zinc-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800"
@@ -26,8 +26,8 @@
     <!-- Content -->
     <div class="flex-1 overflow-y-auto p-6">
       <!-- Create New Category Form -->
-      <div class="bg-zinc-950 rounded-lg border border-zinc-800 p-4 mb-6">
-        <h3 class="text-sm font-medium text-zinc-300 mb-4">Create New Category</h3>
+      <div class="bg-zinc-50 dark:bg-zinc-950 rounded-lg border border-zinc-300 dark:border-zinc-800 p-4 mb-6 transition-colors duration-200">
+        <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-4 transition-colors duration-200">Create New Category</h3>
         <form class="space-y-4" (submit)="$event.preventDefault(); createCategory()">
           <div class="flex gap-3">
             <div class="flex-1">
@@ -36,7 +36,7 @@
                 [value]="newCategoryName()"
                 (input)="newCategoryName.set($any($event.target).value)"
                 placeholder="Category name"
-                class="w-full bg-background-card border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+                class="w-full bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-200"
                 [disabled]="isCreating()"
               />
             </div>
@@ -45,7 +45,7 @@
                 type="color"
                 [value]="newCategoryColor()"
                 (input)="newCategoryColor.set($any($event.target).value)"
-                class="h-full w-16 bg-background-card border border-zinc-700 rounded-lg cursor-pointer"
+                class="h-full w-16 bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-700 rounded-lg cursor-pointer transition-colors duration-200"
                 [disabled]="isCreating()"
                 title="Choose category color"
               />
@@ -75,7 +75,7 @@
 
       <!-- Categories List -->
       <div class="space-y-3">
-        <h3 class="text-sm font-medium text-zinc-300 mb-3">Existing Categories</h3>
+        <h3 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 transition-colors duration-200">Existing Categories</h3>
         
         <div *ngIf="categories().length === 0" class="text-center py-8 text-zinc-500">
           <svg class="h-12 w-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,14 +92,14 @@
 
         <div
           *ngFor="let category of categories()"
-          class="flex items-center justify-between bg-zinc-950 rounded-lg border border-zinc-800 p-4 hover:border-zinc-700 transition-colors"
+          class="flex items-center justify-between bg-zinc-50 dark:bg-zinc-950 rounded-lg border border-zinc-300 dark:border-zinc-800 p-4 hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors duration-200"
         >
           <div class="flex items-center gap-3 flex-1">
             <div
               class="w-4 h-4 rounded-full flex-shrink-0"
               [style.backgroundColor]="category.color"
             ></div>
-            <span class="text-white font-medium">{{ category.name }}</span>
+            <span class="text-zinc-900 dark:text-white font-medium transition-colors duration-200">{{ category.name }}</span>
           </div>
           
           <button
@@ -138,17 +138,17 @@
   class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
   (click)="onBackdropClick($event)"
 >
-  <div class="bg-background-card rounded-lg border border-zinc-800 shadow-2xl w-full max-w-md">
+  <div class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 shadow-2xl w-full max-w-md transition-colors duration-200">
     <!-- Header -->
     <div class="p-6 border-b border-zinc-800">
-      <h3 class="text-lg font-semibold text-white">Delete Category</h3>
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Delete Category</h3>
     </div>
 
     <!-- Content -->
     <div class="p-6">
       <p class="text-zinc-300">
         Are you sure you want to delete the category
-        <span class="font-semibold text-white">"{{ categoryToDelete()!.name }}"</span>?
+        <span class="font-semibold text-zinc-900 dark:text-white transition-colors duration-200">"{{ categoryToDelete()!.name }}"</span>?
       </p>
       <p class="text-zinc-500 text-sm mt-2">
         Videos in this category will not be deleted, but will become uncategorized.

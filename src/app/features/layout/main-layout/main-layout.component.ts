@@ -20,17 +20,17 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
     PageHeaderComponent,
   ],
   template: `
-    <div class="flex h-screen bg-background overflow-hidden">
+    <div class="flex h-screen bg-white dark:bg-background overflow-hidden transition-colors duration-200">
       <!-- Mobile Overlay -->
       <div
         *ngIf="isMobileMenuOpen()"
-        class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm md:hidden"
+        class="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm md:hidden transition-opacity duration-200"
         (click)="toggleMobileMenu()"
       ></div>
 
       <!-- Sidebar -->
       <aside
-        class="fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-shrink-0 bg-sidebar border-r border-sidebar-border"
+        class="fixed inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-shrink-0 bg-sidebar-light dark:bg-sidebar border-r border-sidebar-border-light dark:border-sidebar-border"
         [class.-translate-x-full]="!isMobileMenuOpen()"
         [class.translate-x-0]="isMobileMenuOpen()"
         [class.w-64]="!isDesktopSidebarCollapsed()"
@@ -46,9 +46,9 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
       <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
         <!-- Mobile Header -->
         <header
-          class="md:hidden flex items-center justify-between px-4 py-3 bg-sidebar border-b border-sidebar-border"
+          class="md:hidden flex items-center justify-between px-4 py-3 bg-sidebar-light dark:bg-sidebar border-b border-sidebar-border-light dark:border-sidebar-border transition-colors duration-200"
         >
-          <button (click)="toggleMobileMenu()" class="text-zinc-400 hover:text-white">
+          <button (click)="toggleMobileMenu()" class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-200">
             <span class="sr-only">Open menu</span>
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -59,7 +59,7 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
               />
             </svg>
           </button>
-          <span class="text-lg font-bold text-white">Omnia</span>
+          <span class="text-lg font-bold text-zinc-900 dark:text-white transition-colors duration-200">Omnia</span>
           <div class="w-6"></div>
           <!-- Spacer -->
         </header>
@@ -68,7 +68,7 @@ import { PageHeaderComponent } from '../../../core/components/page-header/page-h
         <app-page-header></app-page-header>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-auto bg-background relative">
+        <main class="flex-1 overflow-auto bg-white dark:bg-background relative transition-colors duration-200">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
             <router-outlet></router-outlet>
           </div>

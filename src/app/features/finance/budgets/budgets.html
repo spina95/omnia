@@ -16,7 +16,7 @@
   <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div
       *ngFor="let budget of budgets"
-      class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border"
+      class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200"
     >
       <div class="p-5">
         <div class="flex items-center">
@@ -47,7 +47,7 @@
                 </span>
               </dt>
               <dd>
-                <div class="text-lg font-semibold text-white capitalize">{{ budget.period }} Budget</div>
+                <div class="text-lg font-semibold text-zinc-900 dark:text-white capitalize transition-colors duration-200">{{ budget.period }} Budget</div>
               </dd>
             </dl>
           </div>
@@ -70,7 +70,7 @@
             </button>
           </div>
         </div>
-        <div class="mt-4 pt-4 border-t border-sidebar-border">
+        <div class="mt-4 pt-4 border-t border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
           <div class="flex items-center justify-between text-sm text-slate-400 mb-2">
             <span>Spent vs Limit</span>
             <span>€{{ budget.max_amount | number:'1.2-2' }} limit</span>

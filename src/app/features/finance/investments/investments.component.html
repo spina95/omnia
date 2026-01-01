@@ -45,7 +45,7 @@
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
       <!-- Total Value Card -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
@@ -59,9 +59,9 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-slate-400">Total Portfolio Value</dt>
+                <dt class="truncate text-sm font-medium text-zinc-500 dark:text-slate-400 transition-colors duration-200">Total Portfolio Value</dt>
                 <dd>
-                  <div class="text-lg font-semibold text-white">
+                  <div class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">
                     {{ formatCurrency(totalValue()) }}
                   </div>
                 </dd>
@@ -75,7 +75,7 @@
       </div>
 
       <!-- Gain/Loss Card -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
@@ -93,7 +93,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-slate-400">Total Gain/Loss</dt>
+                <dt class="truncate text-sm font-medium text-zinc-500 dark:text-slate-400 transition-colors duration-200">Total Gain/Loss</dt>
                 <dd>
                   <div class="text-lg font-semibold" [class]="getGainLossColor(totalGainLoss())">
                     {{ formatCurrency(totalGainLoss()) }}
@@ -106,7 +106,7 @@
       </div>
 
       <!-- Gain/Loss Percent Card -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
@@ -120,7 +120,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="truncate text-sm font-medium text-slate-400">Return on Investment</dt>
+                <dt class="truncate text-sm font-medium text-zinc-500 dark:text-slate-400 transition-colors duration-200">Return on Investment</dt>
                 <dd>
                   <div class="text-lg font-semibold" [class]="getGainLossColor(totalGainLossPercent())">
                     {{ formatPercent(totalGainLossPercent()) }}
@@ -136,9 +136,9 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
       <!-- Composition Chart -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
-          <h3 class="text-lg font-semibold text-white mb-4">Portfolio Composition</h3>
+          <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 transition-colors duration-200">Portfolio Composition</h3>
           <div *ngIf="(portfolioSummary()?.holdings?.length ?? 0) > 0; else noData">
             <apx-chart
               [series]="compositionChartOptions.series!"
@@ -153,9 +153,9 @@
       </div>
 
       <!-- Geographical Allocation Chart -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
-          <h3 class="text-lg font-semibold text-white mb-4">Geographical Allocation</h3>
+          <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 transition-colors duration-200">Geographical Allocation</h3>
           <div *ngIf="geographicalAllocation().length > 0; else noData">
             <apx-chart
               [series]="geographicalChartOptions.series!"
@@ -171,7 +171,7 @@
 
     <!-- Portfolio Holdings Table -->
     <div class="mb-12" style="height: 40rem;">
-      <h3 class="text-lg font-semibold text-white">Current Holdings</h3>
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Current Holdings</h3>
       <div style="height: 10px; display: block; position: relative;">
         <app-data-table 
           [columnDefs]="portfolioColumnDefs" 
@@ -187,7 +187,7 @@
 
     <!-- Transactions Table -->
     <div class="mb-16">
-      <h3 class="text-lg font-semibold text-white">Transaction History</h3>
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Transaction History</h3>
       <div style="height: 600px; display: block; position: relative;">
         <app-data-table 
           [columnDefs]="transactionsColumnDefs" 

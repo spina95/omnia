@@ -33,7 +33,7 @@
 <div class="h-full overflow-y-auto">
   <div class="p-6 space-y-6">
     <!-- Filters Card -->
-    <div class="flex flex-wrap items-center gap-3 bg-background-card/50 p-4 rounded-lg border border-zinc-800">
+    <div class="flex flex-wrap items-center gap-3 bg-white dark:bg-background-card/50 p-4 rounded-lg border border-zinc-300 dark:border-zinc-800 transition-colors duration-200">
       <!-- Search Input -->
       <div class="relative flex-1 sm:flex-initial sm:w-64">
         <input
@@ -41,7 +41,7 @@
           placeholder="Search videos..."
           [value]="searchQuery()"
           (input)="onSearchChange($event)"
-          class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+          class="w-full bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-colors duration-200"
         />
         <svg
           class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500"
@@ -136,11 +136,11 @@
     >
       <div
         *ngFor="let video of videos()"
-        class="bg-background-card rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all overflow-hidden group"
+        class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 transition-all duration-200 overflow-hidden group"
       >
         <!-- Thumbnail -->
         <div
-          class="relative aspect-video bg-zinc-950 cursor-pointer overflow-hidden"
+          class="relative aspect-video bg-zinc-200 dark:bg-zinc-950 cursor-pointer overflow-hidden"
           (click)="openVideoInNewTab(video.url)"
         >
           <img
@@ -190,7 +190,7 @@
         <div class="p-4">
           <!-- Title -->
           <h3
-            class="font-medium text-white mb-1 line-clamp-2 cursor-pointer hover:text-brand transition-colors"
+            class="font-medium text-zinc-900 dark:text-white mb-1 line-clamp-2 cursor-pointer hover:text-brand transition-colors duration-200"
             (click)="openVideoInNewTab(video.url)"
             [title]="video.title"
           >
@@ -198,7 +198,7 @@
           </h3>
 
           <!-- Channel -->
-          <p class="text-sm text-zinc-400 mb-2">{{ video.channel }}</p>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-2 transition-colors duration-200">{{ video.channel }}</p>
 
           <!-- Description -->
           <p
@@ -237,10 +237,10 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex items-center gap-2 pt-3 border-t border-zinc-800">
+          <div class="flex items-center gap-2 pt-3 border-t border-zinc-300 dark:border-zinc-800 transition-colors duration-200">
             <button
               (click)="openEditVideoDialog(video)"
-              class="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 bg-zinc-800 text-white rounded hover:bg-zinc-700 transition-colors text-sm"
+              class="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white rounded hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors duration-200 text-sm"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

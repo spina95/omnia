@@ -18,7 +18,7 @@
 <div class="h-full overflow-y-auto">
   <div class="p-6 space-y-6">
     <!-- Filters Card -->
-    <div class="flex flex-wrap items-center gap-3 bg-background-card/50 p-4 rounded-lg border border-zinc-800">
+    <div class="flex flex-wrap items-center gap-3 bg-white dark:bg-background-card/50 p-4 rounded-lg border border-zinc-300 dark:border-zinc-800 transition-colors duration-200">
       <!-- Search Input -->
       <div class="relative flex-1 sm:flex-initial sm:w-64">
         <input
@@ -26,7 +26,7 @@
           placeholder="Search todo lists..."
           [value]="searchQuery()"
           (input)="onSearchChange($event)"
-          class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+          class="w-full bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 h-10 pl-10 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-colors duration-200"
         />
         <svg
           class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500"
@@ -83,12 +83,12 @@
       <div
         *ngFor="let list of todoLists()"
         (click)="openListDetail(list)"
-        class="bg-background-card rounded-lg border border-zinc-800 hover:border-zinc-700 transition-all overflow-hidden group cursor-pointer"
+        class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 transition-all duration-200 overflow-hidden group cursor-pointer"
       >
         <div class="p-5">
           <!-- Header with Title and Actions -->
           <div class="flex items-start justify-between mb-3">
-            <h3 class="text-lg font-semibold text-white group-hover:text-brand transition-colors flex-1 pr-2">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white group-hover:text-brand transition-colors duration-200 flex-1 pr-2">
               {{ list.title }}
             </h3>
             <div class="flex items-center gap-2">
@@ -124,7 +124,7 @@
           </div>
 
           <!-- Description -->
-          <p *ngIf="list.description" class="text-sm text-zinc-400 mb-4 line-clamp-2">
+          <p *ngIf="list.description" class="text-sm text-zinc-600 dark:text-zinc-400 mb-4 line-clamp-2 transition-colors duration-200">
             {{ list.description }}
           </p>
 
@@ -165,7 +165,7 @@
                 {{ list.completedTasksCount || 0 }} / {{ list.totalTasksCount || 0 }}
               </span>
             </div>
-            <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+            <div class="h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden transition-colors duration-200">
               <div
                 class="h-full transition-all duration-300 rounded-full"
                 [ngClass]="getProgressBarColor(getProgressPercentage(list))"
@@ -178,7 +178,7 @@
           </div>
 
           <!-- Created Date -->
-          <div class="mt-4 pt-4 border-t border-zinc-800">
+          <div class="mt-4 pt-4 border-t border-zinc-300 dark:border-zinc-800 transition-colors duration-200">
             <div class="flex items-center justify-between text-xs text-zinc-500">
               <span>Created</span>
               <span>{{ formatDate(list.created_at) }}</span>
@@ -191,9 +191,9 @@
     <!-- Pagination -->
     <div
       *ngIf="!loading() && todoLists().length > 0 && totalPages() > 1"
-      class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 px-4 py-3 bg-background-card/50 rounded-lg border border-zinc-800"
+      class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 px-4 py-3 bg-white dark:bg-background-card/50 rounded-lg border border-zinc-300 dark:border-zinc-800 transition-colors duration-200"
     >
-      <div class="text-sm text-zinc-400">
+      <div class="text-sm text-zinc-500 dark:text-zinc-400 transition-colors duration-200">
         Showing {{ startItem() }} to {{ endItem() }} of {{ totalLists() }} todo lists
       </div>
 

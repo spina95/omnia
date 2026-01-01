@@ -16,7 +16,7 @@
         getSizeClasses(),
         checked 
           ? 'bg-brand border-brand' 
-          : 'bg-zinc-950 border-zinc-600 group-hover:border-zinc-500',
+          : 'bg-white dark:bg-zinc-950 border-zinc-300 dark:border-zinc-600 group-hover:border-zinc-400 dark:group-hover:border-zinc-500',
         disabled ? '' : 'cursor-pointer'
       ]"
     >
@@ -40,7 +40,7 @@
   </div>
   
   <!-- Label -->
-  <span *ngIf="label" class="ml-3 text-sm text-zinc-300 select-none">
+  <span *ngIf="label" class="ml-3 text-sm text-zinc-700 dark:text-zinc-300 select-none transition-colors duration-200">
     {{ label }}
   </span>
   

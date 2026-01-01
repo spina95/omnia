@@ -6,6 +6,8 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
+  inject,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,9 +18,11 @@ import {
   AllCommunityModule,
   themeQuartz,
   colorSchemeDark,
+  colorSchemeLight,
 } from 'ag-grid-community';
 import { SelectComponent, SelectOption } from '../select/select.component';
 import { MultiselectComponent, MultiselectOption } from '../multiselect/multiselect.component';
+import { ThemeService } from '../../../core/services/theme.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -117,18 +121,37 @@ export class DataTableComponent implements OnInit, OnChanges {
   // Internal state
   private gridApi!: GridApi;
   Math = Math;
+  themeService = inject(ThemeService);
 
-  // AG Grid Theme
-  theme = themeQuartz.withPart(colorSchemeDark).withParams({
-    backgroundColor: 'transparent',
-    headerBackgroundColor: '#121212',
-    borderColor: '#27272a',
-    oddRowBackgroundColor: 'rgba(255, 255, 255, 0.01)',
-    headerTextColor: '#71717a',
-    foregroundColor: '#e4e4e7',
-    rowHoverColor: 'rgba(62, 207, 142, 0.05)',
-    fontFamily: "'Roboto', sans-serif",
-    fontSize: '13px',
+  // AG Grid Theme - Dynamic based on theme service
+  theme = computed(() => {
+    const isDark = this.themeService.isDarkMode();
+    
+    if (isDark) {
+      return themeQuartz.withPart(colorSchemeDark).withParams({
+        backgroundColor: 'transparent',
+        headerBackgroundColor: '#121212',
+        borderColor: '#27272a',
+        oddRowBackgroundColor: 'rgba(255, 255, 255, 0.01)',
+        headerTextColor: '#71717a',
+        foregroundColor: '#e4e4e7',
+        rowHoverColor: 'rgba(62, 207, 142, 0.05)',
+        fontFamily: "'Roboto', sans-serif",
+        fontSize: '13px',
+      });
+    } else {
+      return themeQuartz.withPart(colorSchemeLight).withParams({
+        backgroundColor: '#ffffff',
+        headerBackgroundColor: '#f8f9fa',
+        borderColor: '#e5e7eb',
+        oddRowBackgroundColor: '#fafafa',
+        headerTextColor: '#71717a',
+        foregroundColor: '#18181b',
+        rowHoverColor: 'rgba(62, 207, 142, 0.1)',
+        fontFamily: "'Roboto', sans-serif",
+        fontSize: '13px',
+      });
+    }
   });
 
   ngOnInit() {

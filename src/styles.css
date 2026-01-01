@@ -16,13 +16,14 @@ app-root {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  @apply bg-background text-zinc-100;
+  @apply bg-white dark:bg-background text-zinc-900 dark:text-zinc-100 transition-colors duration-200;
 }
 
-/* Custom Dark Scrollbar */
+/* Custom Scrollbar - Light Mode */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3a3a3a #1a1a1a;
+  scrollbar-color: #d1d5db #f3f4f6;
+  transition: scrollbar-color 200ms;
 }
 
 *::-webkit-scrollbar {
@@ -31,19 +32,44 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #f3f4f6;
+  transition: background 200ms;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #3a3a3a;
+  background: #d1d5db;
   border-radius: 6px;
-  border: 2px solid #1a1a1a;
+  border: 2px solid #f3f4f6;
+  transition: background 200ms, border-color 200ms;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #4a4a4a;
+  background: #9ca3af;
 }
 
 *::-webkit-scrollbar-corner {
+  background: #f3f4f6;
+  transition: background 200ms;
+}
+
+/* Custom Scrollbar - Dark Mode */
+.dark * {
+  scrollbar-color: #3a3a3a #1a1a1a;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border: 2px solid #1a1a1a;
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+.dark *::-webkit-scrollbar-corner {
   background: #1a1a1a;
 }

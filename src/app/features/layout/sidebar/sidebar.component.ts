@@ -2,21 +2,22 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth';
+import { ThemeToggleComponent } from '../../../shared/components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ThemeToggleComponent],
   template: `
     <nav
-      class="flex flex-col h-full bg-sidebar border-r border-sidebar-border text-zinc-400 font-sans text-sm transition-all duration-300"
+      class="flex flex-col h-full bg-sidebar-light dark:bg-sidebar border-r border-sidebar-border-light dark:border-sidebar-border text-zinc-500 dark:text-zinc-400 font-sans text-sm transition-all duration-300"
       [class.items-center]="collapsed"
       [class.w-20]="collapsed"
       [class.w-64]="!collapsed"
     >
       <!-- App Header -->
       <div
-        class="h-16 flex items-center border-b border-sidebar-border mb-4 transition-all duration-300"
+        class="h-16 flex items-center border-b border-sidebar-border-light dark:border-sidebar-border mb-4 transition-all duration-300"
         [class.px-6]="!collapsed"
         [class.px-0]="collapsed"
         [class.justify-center]="collapsed"
@@ -28,13 +29,13 @@ import { AuthService } from '../../../core/auth/auth';
         </div>
         <h1
           *ngIf="!collapsed"
-          class="font-semibold text-zinc-100 tracking-tight ml-3 whitespace-nowrap overflow-hidden"
+          class="font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight ml-3 whitespace-nowrap overflow-hidden"
         >
           Omnia
         </h1>
         <button
           (click)="toggleCollapse()"
-          class="ml-auto p-1.5 rounded-md hover:bg-sidebar-hover text-zinc-400 hover:text-white transition-colors"
+          class="ml-auto p-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors duration-200"
           [title]="collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'"
         >
           <svg
@@ -65,7 +66,7 @@ import { AuthService } from '../../../core/auth/auth';
         <div class="mb-6 w-full" [class.px-2]="collapsed" [class.px-4]="!collapsed">
           <h2
             *ngIf="!collapsed"
-            class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
+            class="text-xs font-semibold text-zinc-600 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
           >
             Finance
           </h2>
@@ -73,7 +74,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/home"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Dashboard' : ''"
@@ -107,7 +108,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/incomes"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Incomes' : ''"
@@ -141,7 +142,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/outcomes"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Outcomes' : ''"
@@ -175,7 +176,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/budgets"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Budgets' : ''"
@@ -209,7 +210,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/investments"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Investments' : ''"
@@ -246,7 +247,7 @@ import { AuthService } from '../../../core/auth/auth';
         <div class="mb-6 w-full" [class.px-2]="collapsed" [class.px-4]="!collapsed">
           <h2
             *ngIf="!collapsed"
-            class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
+            class="text-xs font-semibold text-zinc-600 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
           >
             Utilities
           </h2>
@@ -255,7 +256,7 @@ import { AuthService } from '../../../core/auth/auth';
               routerLink="/planner"
               routerLinkActive="bg-brand/10 text-brand"
               [routerLinkActiveOptions]="{ exact: false }"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Planner & Journal' : ''"
@@ -289,7 +290,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/todos"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Todo Lists' : ''"
@@ -323,7 +324,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/documents"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Documents' : ''"
@@ -354,7 +355,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/videos"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Videos' : ''"
@@ -388,7 +389,7 @@ import { AuthService } from '../../../core/auth/auth';
             <a
               routerLink="/travel-map"
               routerLinkActive="bg-brand/10 text-brand"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Travel Map' : ''"
@@ -428,14 +429,14 @@ import { AuthService } from '../../../core/auth/auth';
         <div class="mb-6 w-full" [class.px-2]="collapsed" [class.px-4]="!collapsed">
           <h2
             *ngIf="!collapsed"
-            class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
+            class="text-xs font-semibold text-zinc-600 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2 whitespace-nowrap overflow-hidden"
           >
             Configuration
           </h2>
           <div class="space-y-0.5">
             <a
               href="#"
-              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover group transition-colors relative"
+              class="flex items-center py-1.5 rounded-md hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover group transition-colors duration-200 relative"
               [class.px-2]="!collapsed"
               [class.justify-center]="collapsed"
               [title]="collapsed ? 'Settings' : ''"
@@ -475,10 +476,15 @@ import { AuthService } from '../../../core/auth/auth';
       </div>
 
       <!-- User Profile / Logout -->
-      <div class="p-4 border-t border-sidebar-border" [class.px-2]="collapsed">
+      <div class="p-4 border-t border-sidebar-border-light dark:border-sidebar-border" [class.px-2]="collapsed">
+        <!-- Theme Toggle -->
+        <div *ngIf="!collapsed" class="mb-2">
+          <app-theme-toggle></app-theme-toggle>
+        </div>
+        
         <button
           (click)="signOut()"
-          class="flex w-full items-center py-2 text-sm font-medium rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-sidebar-hover transition-colors group"
+          class="flex w-full items-center py-2 text-sm font-medium rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-sidebar-hover-light dark:hover:bg-sidebar-hover transition-colors duration-200 group"
           [class.justify-center]="collapsed"
           [class.px-2]="!collapsed"
           [title]="collapsed ? 'Sign Out' : ''"

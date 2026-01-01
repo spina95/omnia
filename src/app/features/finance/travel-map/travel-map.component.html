@@ -1,8 +1,8 @@
 <div class="space-y-6 p-6">
   <!-- Map Section -->
-  <div class="bg-background-card border border-sidebar-border rounded-lg p-4">
+  <div class="bg-white dark:bg-background-card border border-zinc-300 dark:border-sidebar-border rounded-lg p-4 transition-colors duration-200">
     <div class="flex items-center justify-between mb-4">
-      <h4 class="text-base font-semibold text-white">World Map</h4>
+      <h4 class="text-base font-semibold text-zinc-900 dark:text-white transition-colors duration-200">World Map</h4>
       <div class="text-sm text-slate-400">
         Click on the map to add a new visited place
       </div>
@@ -12,7 +12,7 @@
       class="h-[600px] rounded-lg overflow-hidden border border-sidebar-border relative z-10"
       [class.border-brand]="selectedPosition()"
     >
-      <div *ngIf="isLoading()" class="absolute inset-0 bg-background-card bg-opacity-50 flex items-center justify-center z-10">
+      <div *ngIf="isLoading()" class="absolute inset-0 bg-white/50 dark:bg-background-card/50 flex items-center justify-center z-10 transition-colors duration-200">
         <div class="text-center">
           <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
           <p class="mt-2 text-sm text-slate-400">Loading...</p>
@@ -26,7 +26,7 @@
     <!-- Stats Cards -->
     <div class="lg:col-span-1 space-y-6">
       <!-- Countries Card -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Places Card -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
         <div class="p-5">
           <div class="flex items-center">
             <div class="flex-shrink-0">
@@ -73,18 +73,18 @@
       </div>
 
       <!-- Countries List -->
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
-        <div class="px-5 py-4 border-b border-sidebar-border">
-          <h4 class="text-base font-semibold text-white">Countries Visited</h4>
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
+        <div class="px-5 py-4 border-b border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
+          <h4 class="text-base font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Countries Visited</h4>
         </div>
         <div class="p-5">
-          <div *ngIf="countryStats().length === 0" class="text-sm text-slate-400">
+          <div *ngIf="countryStats().length === 0" class="text-sm text-zinc-500 dark:text-slate-400 transition-colors duration-200">
             No countries yet. Click on the map to add your first visited place!
           </div>
-          <div *ngFor="let country of countryStats()" class="flex items-center justify-between py-3 border-b border-sidebar-border last:border-b-0">
+          <div *ngFor="let country of countryStats()" class="flex items-center justify-between py-3 border-b border-zinc-300 dark:border-sidebar-border last:border-b-0 transition-colors duration-200">
             <div>
-              <div class="font-medium text-white">{{ country.country_name }}</div>
-              <div class="text-sm text-slate-400">{{ country.country_code }}</div>
+              <div class="font-medium text-zinc-900 dark:text-white transition-colors duration-200">{{ country.country_name }}</div>
+              <div class="text-sm text-zinc-500 dark:text-slate-400 transition-colors duration-200">{{ country.country_code }}</div>
             </div>
             <div class="bg-brand text-white px-3 py-1 rounded-full text-sm font-semibold">
               {{ country.places_count }}
@@ -96,12 +96,12 @@
 
     <!-- Chart Section -->
     <div class="lg:col-span-2">
-      <div class="overflow-hidden rounded-lg bg-background-card shadow border border-sidebar-border">
-        <div class="px-5 py-4 border-b border-sidebar-border">
-          <h4 class="text-base font-semibold text-white">Places per Country</h4>
+      <div class="overflow-hidden rounded-lg bg-white dark:bg-background-card shadow border border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
+        <div class="px-5 py-4 border-b border-zinc-300 dark:border-sidebar-border transition-colors duration-200">
+          <h4 class="text-base font-semibold text-zinc-900 dark:text-white transition-colors duration-200">Places per Country</h4>
         </div>
         <div class="p-5">
-          <div *ngIf="countryStats().length === 0" class="text-sm text-slate-400 text-center py-8">
+          <div *ngIf="countryStats().length === 0" class="text-sm text-zinc-500 dark:text-slate-400 text-center py-8 transition-colors duration-200">
             Add some places to see the chart!
           </div>
           <apx-chart 
@@ -126,9 +126,9 @@
 
   <!-- Add Place Dialog -->
   <div *ngIf="selectedPosition()" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
-    <div class="bg-background-card rounded-lg border border-sidebar-border max-w-2xl w-full max-h-[85vh] overflow-hidden animate-scale-in">
+    <div class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-sidebar-border max-w-2xl w-full max-h-[85vh] overflow-hidden animate-scale-in transition-colors duration-200">
       <div class="px-5 py-4 border-b border-sidebar-border flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-white">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">
           {{ isEditMode() ? 'Edit Visited Place' : 'Add Visited Place' }}
         </h3>
         <div class="flex items-center gap-2">

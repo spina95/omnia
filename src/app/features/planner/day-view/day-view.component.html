@@ -44,7 +44,7 @@
   <!-- Main Content -->
   <div *ngIf="!loading() && dayEntry()" class="space-y-6">
     <!-- Date Navigation -->
-    <div class="bg-background-card border border-zinc-800 rounded-lg p-4">
+    <div class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-4 transition-colors duration-200">
       <div class="flex items-center justify-between gap-4">
         <button
           *ngIf="hasPreviousEntry()"
@@ -59,7 +59,7 @@
         <div *ngIf="!hasPreviousEntry()" class="p-2 w-9 h-9"></div>
 
         <div class="flex-1 text-center">
-          <h2 class="text-xl font-semibold text-white capitalize">{{ formattedDate() }}</h2>
+          <h2 class="text-xl font-semibold text-zinc-900 dark:text-white capitalize transition-colors duration-200">{{ formattedDate() }}</h2>
         </div>
 
         <button
@@ -77,8 +77,8 @@
     </div>
 
     <!-- Planner Section -->
-    <div class="bg-background-card border border-zinc-800 rounded-lg p-6">
-      <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+    <div class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-6 transition-colors duration-200">
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4 flex items-center gap-2 transition-colors duration-200">
         <svg class="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
@@ -94,7 +94,7 @@
             (input)="newTaskText.set($any($event.target).value)"
             (keydown.enter)="addTask()"
             placeholder="Add a task..."
-            class="flex-1 bg-background border border-zinc-700 rounded-md px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand"
+            class="flex-1 bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-md px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand transition-colors duration-200"
           />
           <button
             (click)="addTask()"
@@ -111,7 +111,7 @@
         <div
           *ngFor="let task of tasks()"
           cdkDrag
-          class="flex items-center gap-3 p-3 bg-background border border-zinc-800 rounded-md hover:border-zinc-700 transition-colors group"
+          class="flex items-center gap-3 p-3 bg-white dark:bg-background border border-zinc-300 dark:border-zinc-800 rounded-md hover:border-zinc-400 dark:hover:border-zinc-700 transition-colors duration-200 group"
         >
           <!-- Drag Handle -->
           <div cdkDragHandle class="cursor-move text-zinc-600 hover:text-zinc-400">
@@ -145,8 +145,9 @@
             <span
               [class.line-through]="task.status === 'done'"
               [class.text-zinc-500]="task.status === 'done'"
-              [class.text-white]="task.status !== 'done'"
-              class="break-words"
+              [class.text-zinc-900]="task.status !== 'done'"
+              [class.dark:text-white]="task.status !== 'done'"
+              class="break-words transition-colors duration-200"
             >
               {{ task.text }}
             </span>
@@ -166,7 +167,7 @@
               (input)="editingTaskText.set($any($event.target).value)"
               (keydown.enter)="saveEditTask(task)"
               (keydown.escape)="cancelEditTask()"
-              class="flex-1 bg-background border border-zinc-700 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand"
+              class="flex-1 bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded px-2 py-1 text-sm text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand transition-colors duration-200"
               autofocus
             />
           </div>
@@ -236,10 +237,10 @@
       </div>
 
       <!-- Task Stats -->
-      <div *ngIf="tasks().length > 0" class="mt-4 pt-4 border-t border-zinc-800 flex items-center justify-between text-sm">
+      <div *ngIf="tasks().length > 0" class="mt-4 pt-4 border-t border-zinc-300 dark:border-zinc-800 flex items-center justify-between text-sm transition-colors duration-200">
         <div class="flex gap-4">
-          <span class="text-zinc-400">
-            To do: <span class="text-white font-medium">{{ todoTasks().length }}</span>
+          <span class="text-zinc-500 dark:text-zinc-400 transition-colors duration-200">
+            To do: <span class="text-zinc-900 dark:text-white font-medium transition-colors duration-200">{{ todoTasks().length }}</span>
           </span>
           <span class="text-zinc-400">
             Completed: <span class="text-green-500 font-medium">{{ doneTasks().length }}</span>
@@ -252,16 +253,16 @@
     </div>
 
     <!-- Journal Section -->
-    <div class="bg-background-card border border-zinc-800 rounded-lg p-6">
+    <div class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-6 transition-colors duration-200">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
           <svg class="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
           Journal
         </h3>
         <div class="flex items-center gap-3">
-            <span *ngIf="savingJournal()" class="text-xs text-zinc-500">Saving...</span>
+            <span *ngIf="savingJournal()" class="text-xs text-zinc-500 dark:text-zinc-500 transition-colors duration-200">Saving...</span>
           <button
             [routerLink]="['/planner/journal', currentDate()]"
             class="px-3 py-1.5 bg-brand text-black rounded-md hover:bg-brand/90 transition-colors text-sm font-medium flex items-center gap-1.5"
@@ -279,7 +280,7 @@
 
       <!-- Free Text Journal (Always visible) -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-zinc-300 mb-2">
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 transition-colors duration-200">
           Free thoughts and notes
         </label>
         <textarea
@@ -287,22 +288,24 @@
           (input)="freeText.set($any($event.target).value); onJournalChange()"
           rows="6"
           placeholder="Write your thoughts, ideas, reflections..."
-          class="w-full bg-background border border-zinc-700 rounded-lg px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none"
+          class="w-full bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-3 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none transition-colors duration-200"
         ></textarea>
       </div>
 
       <!-- Mood Selector -->
       <div class="mb-6">
-        <h4 class="text-sm font-medium text-zinc-300 mb-3">How are you feeling today?</h4>
+        <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 transition-colors duration-200">How are you feeling today?</h4>
         <div class="flex flex-wrap items-center gap-2">
           <button
             *ngFor="let mood of moods"
             (click)="selectMood(mood.value)"
             [class.bg-brand]="selectedMood() === mood.value"
             [class.text-black]="selectedMood() === mood.value"
-            [class.bg-zinc-800]="selectedMood() !== mood.value"
-            [class.text-zinc-300]="selectedMood() !== mood.value"
-            class="px-4 py-2 rounded-md hover:opacity-80 transition-all text-sm flex items-center gap-2"
+            [class.bg-zinc-200]="selectedMood() !== mood.value"
+            [class.dark:bg-zinc-800]="selectedMood() !== mood.value"
+            [class.text-zinc-900]="selectedMood() !== mood.value"
+            [class.dark:text-zinc-300]="selectedMood() !== mood.value"
+            class="px-4 py-2 rounded-md hover:opacity-80 transition-all duration-200 text-sm flex items-center gap-2"
             [title]="mood.label"
           >
             <span class="text-lg">{{ mood.emoji }}</span>
@@ -347,7 +350,7 @@
               (input)="wentWell.set($any($event.target).value); onJournalChange()"
               rows="3"
               placeholder="The positive things today..."
-              class="w-full bg-background border border-zinc-700 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm"
+              class="w-full bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm transition-colors duration-200"
             ></textarea>
           </div>
 
@@ -360,7 +363,7 @@
               (input)="challenges.set($any($event.target).value); onJournalChange()"
               rows="3"
               placeholder="The difficulties encountered..."
-              class="w-full bg-background border border-zinc-700 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm"
+              class="w-full bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm transition-colors duration-200"
             ></textarea>
           </div>
 
@@ -373,7 +376,7 @@
               (input)="takeaway.set($any($event.target).value); onJournalChange()"
               rows="3"
               placeholder="Things I appreciate today..."
-              class="w-full bg-background border border-zinc-700 rounded-lg px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm"
+              class="w-full bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand resize-none text-sm transition-colors duration-200"
             ></textarea>
           </div>
         </div>
@@ -407,7 +410,7 @@
             (input)="tagInput.set($any($event.target).value)"
             (keydown)="onTagKeyDown($event)"
             placeholder="Add tag..."
-            class="flex-1 bg-background border border-zinc-700 rounded-md px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand text-sm"
+            class="flex-1 bg-white dark:bg-background border border-zinc-300 dark:border-zinc-700 rounded-md px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand text-sm transition-colors duration-200"
           />
           <button
             (click)="addTag()"

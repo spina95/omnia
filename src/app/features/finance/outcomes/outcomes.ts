@@ -13,7 +13,7 @@ import {
 import { ExpenseDialogComponent } from '../../../shared/components/expense-dialog/expense-dialog.component';
 import { ScheduledExpenseDialogComponent } from '../../../shared/components/scheduled-expense-dialog/scheduled-expense-dialog.component';
 import { ManageTagsDialogComponent } from '../../../shared/components/manage-tags-dialog/manage-tags-dialog.component';
-import { MultiselectComponent, MultiselectOption } from '../../../shared/components/multiselect/multiselect.component';
+import { MultiselectOption } from '../../../shared/components/multiselect/multiselect.component';
 
 @Component({
   selector: 'app-outcomes',
@@ -25,7 +25,6 @@ import { MultiselectComponent, MultiselectOption } from '../../../shared/compone
     ExpenseDialogComponent,
     ScheduledExpenseDialogComponent,
     ManageTagsDialogComponent,
-    MultiselectComponent,
   ],
   templateUrl: './outcomes.html',
   styleUrls: ['./outcomes.css'],

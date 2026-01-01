@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    darkMode: 'class', // Enable class-based dark mode
     content: [
         "./src/**/*.{html,ts}",
     ],
@@ -19,16 +20,22 @@ module.exports = {
                     300: 'rgba(62, 207, 142, 0.3)',
                 },
                 sidebar: {
-                    DEFAULT: '#141414ff', // Very dark sidebar
-                    border: '#2a2a2a',
-                    hover: '#232323'
+                    DEFAULT: '#141414ff', // Very dark sidebar (dark mode)
+                    light: '#f8f9fa', // Light sidebar (light mode)
+                    border: '#2a2a2a', // Dark border
+                    'border-light': '#e5e7eb', // Light border
+                    hover: '#232323', // Dark hover
+                    'hover-light': '#e8e9eb' // Light hover
                 },
                 background: {
-                    DEFAULT: '#151515ff', // Slightly darker main bg
-                    card: '#191919'
+                    DEFAULT: '#151515ff', // Slightly darker main bg (dark mode)
+                    light: '#ffffff', // Light main bg (light mode)
+                    card: '#191919', // Dark card
+                    'card-light': '#f5f5f5' // Light card
                 },
                 'dark-blue': {
-                    DEFAULT: '#090909', // Dark blue for selects and headers
+                    DEFAULT: '#090909', // Dark blue for selects and headers (dark mode)
+                    light: '#f3f4f6', // Light gray for selects and headers (light mode)
                     50: '#1e3a5f',
                     100: '#1a3254',
                     200: '#162a49',

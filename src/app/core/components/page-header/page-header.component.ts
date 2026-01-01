@@ -10,10 +10,10 @@ import { PageHeaderActionsService } from '../../services/page-header-actions.ser
   template: `
     <div
       *ngIf="headerService.header().title"
-      class="bg-sidebar border-b border-sidebar-border px-4 sm:px-6 lg:px-8 h-16"
+      class="bg-sidebar-light dark:bg-sidebar border-b border-sidebar-border-light dark:border-sidebar-border px-4 sm:px-6 lg:px-8 h-16 transition-colors duration-200"
     >
       <div class="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
-        <h1 class="text-2xl sm:text-3xl font-bold text-white truncate">
+        <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-white truncate transition-colors duration-200">
           {{ headerService.header().title }}
         </h1>
         <div class="flex items-center gap-3 flex-shrink-0">

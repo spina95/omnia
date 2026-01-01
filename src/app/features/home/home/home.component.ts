@@ -1,8 +1,9 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, NgZone, ChangeDetectorRef, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { PlotlyModule } from 'angular-plotly.js';
 import { PageHeaderService } from '../../../core/services/page-header.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -148,6 +149,12 @@ export class HomeComponent implements OnInit {
   }
 
   private pageHeaderService = inject(PageHeaderService);
+  private themeService = inject(ThemeService);
+  
+  // Computed properties for chart theme
+  chartThemeMode = computed(() => this.themeService.isDarkMode() ? 'dark' : 'light');
+  chartLegendColor = computed(() => this.themeService.isDarkMode() ? '#e4e4e7' : '#3f3f46');
+  chartAxisColor = computed(() => this.themeService.isDarkMode() ? '#a1a1aa' : '#71717a');
 
   async ngOnInit() {
     this.pageHeaderService.setHeader('Dashboard');
@@ -476,7 +483,7 @@ export class HomeComponent implements OnInit {
         categories: categories,
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
         },
@@ -490,7 +497,7 @@ export class HomeComponent implements OnInit {
       yaxis: {
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
           formatter: (value: number) => {
@@ -516,7 +523,7 @@ export class HomeComponent implements OnInit {
         position: 'top',
         horizontalAlign: 'right',
         labels: {
-          colors: '#e4e4e7',
+          colors: this.chartLegendColor(),
         },
         markers: {
           size: 6,
@@ -558,7 +565,7 @@ export class HomeComponent implements OnInit {
         toolbar: {
           show: false,
         },
-        foreColor: '#a1a1aa',
+        foreColor: this.chartAxisColor(),
       },
       plotOptions: {
         bar: {
@@ -580,7 +587,7 @@ export class HomeComponent implements OnInit {
         categories: categories,
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
         },
@@ -594,7 +601,7 @@ export class HomeComponent implements OnInit {
       yaxis: {
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
           formatter: (value: number) => {
@@ -620,7 +627,7 @@ export class HomeComponent implements OnInit {
         position: 'top',
         horizontalAlign: 'left',
         labels: {
-          colors: '#e4e4e7',
+          colors: this.chartLegendColor(),
         },
         markers: {
           width: 10,
@@ -689,7 +696,7 @@ export class HomeComponent implements OnInit {
                 show: true,
                 label: 'Total',
                 fontSize: '14px',
-                color: '#a1a1aa',
+                color: this.chartAxisColor(),
                 formatter: (w: any) => {
                   const total = w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0);
                   return new Intl.NumberFormat('en-US', {
@@ -703,7 +710,7 @@ export class HomeComponent implements OnInit {
               value: {
                 show: true,
                 fontSize: '20px',
-                color: '#e4e4e7',
+                color: this.chartLegendColor(),
                 fontWeight: 600,
               },
             },
@@ -721,7 +728,7 @@ export class HomeComponent implements OnInit {
       legend: {
         position: 'bottom',
         labels: {
-          colors: '#e4e4e7',
+          colors: this.chartLegendColor(),
         },
         markers: {
           size: 6,
@@ -770,7 +777,7 @@ export class HomeComponent implements OnInit {
           toolbar: { show: false },
         },
         xaxis: { categories: [] },
-        yaxis: { labels: { style: { colors: '#a1a1aa' } } },
+        yaxis: { labels: { style: { colors: this.chartAxisColor() } } },
         theme: { mode: 'dark' },
       };
     }
@@ -848,7 +855,7 @@ export class HomeComponent implements OnInit {
         categories,
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
           rotate: -45,
@@ -864,7 +871,7 @@ export class HomeComponent implements OnInit {
       yaxis: {
         labels: {
           style: {
-            colors: '#a1a1aa',
+            colors: this.chartAxisColor(),
             fontSize: '12px',
           },
           formatter: (value: number) => {
@@ -891,7 +898,7 @@ export class HomeComponent implements OnInit {
         position: 'top',
         horizontalAlign: 'left',
         labels: {
-          colors: '#e4e4e7',
+          colors: this.chartLegendColor(),
         },
         markers: {
           size: 6,

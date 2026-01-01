@@ -10,9 +10,9 @@
   </ng-template>
 
   <!-- Tags Section -->
-  <div class="bg-background-card border border-zinc-800 rounded-lg p-6">
+  <div class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-6 transition-colors duration-200">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
         <svg class="h-5 w-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
         </svg>
@@ -43,7 +43,7 @@
         [value]="tagSearchQuery()"
         (input)="tagSearchQuery.set($any($event.target).value)"
         placeholder="Search tags..."
-        class="w-full bg-zinc-950 border border-zinc-700 rounded-md px-4 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand"
+        class="w-full bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-md px-4 py-2 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand transition-colors duration-200"
       />
     </div>
 
@@ -114,9 +114,9 @@
   </div>
 
   <!-- Search Results -->
-  <div *ngIf="hasSelectedTags()" class="bg-background-card border border-zinc-800 rounded-lg p-6">
+  <div *ngIf="hasSelectedTags()" class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-6 transition-colors duration-200">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-white">
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-white transition-colors duration-200">
         Results
         <span *ngIf="!loading()" class="text-sm text-zinc-400 font-normal ml-2">
           ({{ total() }} {{ total() === 1 ? 'day' : 'days' }})
@@ -142,7 +142,7 @@
               <svg class="h-4 w-4 text-brand flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <h4 class="text-white font-medium capitalize">{{ formatDate(result.dayEntry.entry_date) }}</h4>
+              <h4 class="text-zinc-900 dark:text-white font-medium capitalize transition-colors duration-200">{{ formatDate(result.dayEntry.entry_date) }}</h4>
             </div>
 
             <p *ngIf="result.excerpt" class="text-zinc-400 text-sm mb-3 line-clamp-3">
@@ -210,11 +210,11 @@
   </div>
 
   <!-- Empty state when no tags selected -->
-  <div *ngIf="!hasSelectedTags() && !loadingTags()" class="bg-background-card border border-zinc-800 rounded-lg p-12 text-center">
+  <div *ngIf="!hasSelectedTags() && !loadingTags()" class="bg-white dark:bg-background-card border border-zinc-300 dark:border-zinc-800 rounded-lg p-12 text-center transition-colors duration-200">
     <svg class="h-16 w-16 mx-auto mb-4 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
-    <h3 class="text-lg font-semibold text-white mb-2">Select one or more tags</h3>
+    <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-2 transition-colors duration-200">Select one or more tags</h3>
     <p class="text-zinc-400">
       Click on the tags above to search through your days
     </p>

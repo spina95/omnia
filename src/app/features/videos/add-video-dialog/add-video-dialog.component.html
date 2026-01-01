@@ -3,11 +3,11 @@
   (click)="onBackdropClick($event)"
 >
   <div
-    class="bg-background-card rounded-lg border border-zinc-800 shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col"
+    class="bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col transition-colors duration-200"
   >
     <!-- Header -->
     <div class="flex items-center justify-between p-6 border-b border-zinc-800">
-      <h2 class="text-xl font-semibold text-white">
+      <h2 class="text-xl font-semibold text-zinc-900 dark:text-white transition-colors duration-200">
         {{ isEditMode() ? 'Edit Video' : 'Add Video' }}
       </h2>
       <button
@@ -40,7 +40,7 @@
               (input)="url.set($any($event.target).value)"
               (blur)="onUrlBlur()"
               placeholder="https://www.youtube.com/watch?v=..."
-              class="w-full bg-zinc-950 border rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+              class="w-full bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-200"
               [class.border-red-500]="urlError()"
               [class.border-zinc-700]="!urlError()"
               [disabled]="fetchingMetadata()"
@@ -100,7 +100,7 @@
             (input)="description.set($any($event.target).value)"
             placeholder="Add a description or notes about this video..."
             rows="3"
-            class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all resize-none"
+            class="w-full bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2.5 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all duration-200 resize-none"
           ></textarea>
         </div>
 

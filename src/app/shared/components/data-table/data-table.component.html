@@ -2,12 +2,12 @@
   <!-- Filters Toolbar -->
   <div
     *ngIf="showFilters"
-    class="flex flex-wrap items-center gap-3 mb-6 bg-background-card/50 p-4 rounded-lg border border-zinc-800"
+    class="flex flex-wrap items-center gap-3 mb-6 bg-zinc-100 dark:bg-background-card/50 p-4 rounded-lg border border-zinc-300 dark:border-zinc-800 transition-colors duration-200"
   >
     <!-- Search -->
     <div class="relative w-full md:w-64">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg class="h-4 w-4 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg class="h-4 w-4 text-zinc-500 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -21,11 +21,11 @@
         [(ngModel)]="searchValue"
         (ngModelChange)="onSearchChange()"
         placeholder="Search..."
-        class="block w-full pl-10 pr-3 py-2.5 h-10 border border-zinc-700 rounded-md leading-5 bg-zinc-950 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors"
+        class="block w-full pl-10 pr-3 py-2.5 h-10 border border-zinc-300 dark:border-zinc-700 rounded-md leading-5 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-300 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand text-sm transition-colors duration-200"
       />
     </div>
 
-    <div class="h-6 w-px bg-zinc-700 mx-2 hidden md:block"></div>
+    <div class="h-6 w-px bg-zinc-300 dark:bg-zinc-700 mx-2 hidden md:block"></div>
 
     <!-- Month Filter -->
     <app-select
@@ -34,7 +34,7 @@
       [placeholder]="'All Months'"
       [(ngModel)]="selectedMonth"
       (selectionChange)="onMonthChange($event)"
-      bgColor="bg-dark-blue"
+      bgColor="bg-white dark:bg-dark-blue"
       class="w-auto"
     ></app-select>
 
@@ -45,7 +45,7 @@
       [placeholder]="'All Years'"
       [(ngModel)]="selectedYear"
       (selectionChange)="onYearChange($event)"
-      bgColor="bg-dark-blue"
+      bgColor="bg-white dark:bg-dark-blue"
       class="w-auto"
     ></app-select>
 
@@ -56,7 +56,7 @@
       [placeholder]="'All Categories'"
       [(ngModel)]="selectedCategory"
       (selectionChange)="onCategoryChange($event)"
-      bgColor="bg-dark-blue"
+      bgColor="bg-white dark:bg-dark-blue"
       class="w-32 md:w-40"
     ></app-select>
 
@@ -67,7 +67,7 @@
       [placeholder]="'All Accounts'"
       [(ngModel)]="selectedPaymentType"
       (selectionChange)="onPaymentTypeChange($event)"
-      bgColor="bg-dark-blue"
+      bgColor="bg-white dark:bg-dark-blue"
       class="w-32 md:w-40"
     ></app-select>
 
@@ -87,7 +87,7 @@
     <button
       *ngIf="hasActiveFilters"
       (click)="clearFilters()"
-      class="text-xs text-zinc-400 hover:text-white underline decoration-zinc-600 hover:decoration-white underline-offset-4 transition-colors"
+      class="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white underline decoration-zinc-400 dark:decoration-zinc-600 hover:decoration-zinc-900 dark:hover:decoration-white underline-offset-4 transition-colors duration-200"
     >
       Clear Filters
     </button>
@@ -95,19 +95,19 @@
 
   <!-- Error Message -->
   <div *ngIf="error" class="mb-4">
-    <div class="text-xs text-red-400 font-mono p-2 bg-red-900/20 border border-red-900 rounded">
+    <div class="text-xs text-red-400 dark:text-red-400 font-mono p-2 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-900 rounded transition-colors duration-200">
       ERROR: {{ error }}
     </div>
   </div>
 
   <!-- Table Container -->
   <div
-    class="flex-1 bg-background-card rounded-lg border border-zinc-800 overflow-hidden relative min-h-[600px] flex flex-col shadow-xl"
+    class="flex-1 bg-white dark:bg-background-card rounded-lg border border-zinc-300 dark:border-zinc-800 overflow-hidden relative min-h-[600px] flex flex-col transition-colors duration-200"
   >
     <!-- Empty State -->
     <div
       *ngIf="rowData.length === 0 && !loading && !error"
-      class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 z-0 h-full w-full bg-background-card/50"
+      class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-500 z-0 h-full w-full bg-zinc-50 dark:bg-background-card/50 transition-colors duration-200"
     >
       <svg class="h-10 w-10 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -124,7 +124,7 @@
     <ag-grid-angular
       style="width: 100%; height: 100%;"
       class="flex-1"
-      [theme]="theme"
+      [theme]="theme()"
       [headerHeight]="headerHeight"
       [rowHeight]="rowHeight"
       [columnDefs]="columnDefs"
@@ -139,29 +139,29 @@
     <!-- Custom Pagination Controls -->
     <div
       *ngIf="showPagination"
-      class="px-4 py-3 border-t border-zinc-800 bg-background-card flex items-center justify-between"
+      class="px-4 py-3 border-t border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-background-card flex items-center justify-between transition-colors duration-200"
     >
       <div class="flex items-center gap-6">
         <!-- Total Amount -->
         <div *ngIf="totalAmount !== 0" class="text-sm">
-          <span class="text-zinc-500">Total:</span>
-          <span class="text-white font-semibold ml-2">{{ totalAmount | currency: 'EUR':'symbol':'1.2-2' }}</span>
+          <span class="text-zinc-500 dark:text-zinc-500">Total:</span>
+          <span class="text-zinc-900 dark:text-white font-semibold ml-2 transition-colors duration-200">{{ totalAmount | currency: 'EUR':'symbol':'1.2-2' }}</span>
         </div>
         <!-- Records Info -->
-        <div class="text-xs text-zinc-500">
+        <div class="text-xs text-zinc-500 dark:text-zinc-500">
           Showing
-          <span class="text-zinc-300 font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span> to
-          <span class="text-zinc-300 font-medium">{{
+          <span class="text-zinc-900 dark:text-zinc-300 font-medium transition-colors duration-200">{{ (currentPage - 1) * pageSize + 1 }}</span> to
+          <span class="text-zinc-900 dark:text-zinc-300 font-medium transition-colors duration-200">{{
             Math.min(currentPage * pageSize, totalRecords)
           }}</span>
-          of <span class="text-zinc-300 font-medium">{{ totalRecords }}</span> results
+          of <span class="text-zinc-900 dark:text-zinc-300 font-medium transition-colors duration-200">{{ totalRecords }}</span> results
         </div>
       </div>
       <div class="flex items-center space-x-1">
         <button
           (click)="changePage(currentPage - 1)"
           [disabled]="currentPage === 1 || loading"
-          class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="p-1.5 rounded-md border border-zinc-300 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200"
           title="Previous Page"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,10 +182,12 @@
             [class.border-brand]="currentPage === page"
             [class.font-semibold]="currentPage === page"
             [class.bg-transparent]="currentPage !== page"
-            [class.text-zinc-400]="currentPage !== page"
+            [class.text-zinc-500]="currentPage !== page"
+            [class.dark:text-zinc-400]="currentPage !== page"
             [class.border-transparent]="currentPage !== page"
-            [class.hover:bg-zinc-800]="currentPage !== page"
-            class="px-3 py-1 text-xs rounded-md border transition-all"
+            [class.hover:bg-zinc-200]="currentPage !== page"
+            [class.dark:hover:bg-zinc-800]="currentPage !== page"
+            class="px-3 py-1 text-xs rounded-md border transition-all duration-200"
             [disabled]="loading"
           >
             {{ page }}
@@ -195,7 +197,7 @@
         <button
           (click)="changePage(currentPage + 1)"
           [disabled]="currentPage >= totalPages || loading"
-          class="p-1.5 rounded-md border border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          class="p-1.5 rounded-md border border-zinc-300 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200"
           title="Next Page"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
