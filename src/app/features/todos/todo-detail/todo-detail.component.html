@@ -46,8 +46,8 @@
   </button>
 </ng-template>
 
-<div class="h-full overflow-y-auto">
-  <div class="p-6 space-y-6">
+<div class="h-full">
+  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6">
     <!-- Loading State -->
     <div *ngIf="loading()" class="flex justify-center items-center h-64">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
@@ -225,116 +225,142 @@
           <div
             *ngFor="let task of tasks()"
             cdkDrag
-            class="group flex items-center gap-3 px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800/50 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all cursor-move duration-200"
+            class="group flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3 bg-zinc-100 dark:bg-zinc-800/50 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all cursor-move duration-200"
           >
-            <!-- Drag Handle -->
-            <div class="flex items-center text-zinc-500 group-hover:text-zinc-400" cdkDragHandle>
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 8h16M4 16h16"
-                />
-              </svg>
-            </div>
-
-            <!-- Checkbox with Task Title -->
-            <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-2 min-h-0">
-              <div class="flex items-center flex-1">
-                <!-- Checkbox -->
-                <div (click)="onToggleCompleted(task)" class="flex items-center">
-                  <app-checkbox
-                    [checked]="task.completed"
-                    class="pointer-events-none flex items-center"
-                  />
-                </div>
-
-                <!-- Task Title - Editable -->
-                <div class="flex-1 ml-3 flex items-center justify-between" *ngIf="editingTaskId() !== task.id">
-                  <div class="flex items-center">
-                    <span
-                      (click)="startEditingTask(task, $event)"
-                      class="text-zinc-900 dark:text-white transition-all cursor-text duration-200"
-                      [class.line-through]="task.completed"
-                      [class.text-zinc-400]="task.completed"
-                      [class.dark:text-zinc-500]="task.completed"
-                    >
-                      {{ task.title }}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Edit Input -->
-                <input
-                  *ngIf="editingTaskId() === task.id"
-                  type="text"
-                  [(ngModel)]="editingTaskTitle"
-                  (blur)="saveTaskEdit(task)"
-                  (keydown.enter)="saveTaskEdit(task)"
-                  (keydown.escape)="cancelTaskEdit()"
-                  class="flex-1 ml-3 bg-white dark:bg-zinc-900 border border-brand rounded px-2 py-1 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand transition-colors duration-200"
-                  [attr.autofocus]="true"
-                />
-              </div>
-
-              <!-- Badges (visual only) -->
-              <!-- (moved below action buttons to show buttons first, then chips) -->
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <!-- Edit button (opens dialog) -->
-              <button
-                (click)="openEditTaskDialog(task, $event)"
-                class="p-2 text-zinc-400 hover:text-brand transition-all rounded hover:bg-zinc-700"
-                title="Edit task"
-              >
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 00.707-.293l9.414-9.414a1 1 0 000-1.414L14.121 4.121a1 1 0 00-1.414 0L3.293 13.535A1 1 0 003 14.242V19a1 1 0 001 1z"/>
-                </svg>
-              </button>
-
-              <!-- Delete Button -->
-              <button
-                (click)="confirmDeleteTask(task, $event)"
-                class="p-2 text-zinc-400 hover:text-red-400 transition-all rounded hover:bg-zinc-700"
-                title="Delete task"
-              >
+            <!-- Top Row: Drag Handle + Checkbox + Task Title + Action Buttons (Desktop Only) -->
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <!-- Drag Handle -->
+              <div class="flex items-center text-zinc-500 group-hover:text-zinc-400 flex-shrink-0" cdkDragHandle>
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    d="M4 8h16M4 16h16"
                   />
                 </svg>
-              </button>
+              </div>
+
+              <!-- Checkbox -->
+              <div (click)="onToggleCompleted(task)" class="flex items-center flex-shrink-0">
+                <app-checkbox
+                  [checked]="task.completed"
+                  class="pointer-events-none flex items-center"
+                />
+              </div>
+
+              <!-- Task Title - Editable -->
+              <div class="flex-1 min-w-0" *ngIf="editingTaskId() !== task.id">
+                <span
+                  (click)="startEditingTask(task, $event)"
+                  class="text-zinc-900 dark:text-white transition-all cursor-text duration-200 block break-words"
+                  [class.line-through]="task.completed"
+                  [class.text-zinc-400]="task.completed"
+                  [class.dark:text-zinc-500]="task.completed"
+                >
+                  {{ task.title }}
+                </span>
+              </div>
+
+              <!-- Edit Input -->
+              <input
+                *ngIf="editingTaskId() === task.id"
+                type="text"
+                [(ngModel)]="editingTaskTitle"
+                (blur)="saveTaskEdit(task)"
+                (keydown.enter)="saveTaskEdit(task)"
+                (keydown.escape)="cancelTaskEdit()"
+                class="flex-1 min-w-0 bg-white dark:bg-zinc-900 border border-brand rounded px-2 py-1 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand transition-colors duration-200"
+                [attr.autofocus]="true"
+              />
+
+              <!-- Action Buttons - Hidden on mobile, shown on desktop -->
+              <div class="hidden sm:flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                <!-- Edit button (opens dialog) -->
+                <button
+                  (click)="openEditTaskDialog(task, $event)"
+                  class="p-2 text-zinc-400 hover:text-brand transition-all rounded hover:bg-zinc-700"
+                  title="Edit task"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 00.707-.293l9.414-9.414a1 1 0 000-1.414L14.121 4.121a1 1 0 00-1.414 0L3.293 13.535A1 1 0 003 14.242V19a1 1 0 001 1z"/>
+                  </svg>
+                </button>
+
+                <!-- Delete Button -->
+                <button
+                  (click)="confirmDeleteTask(task, $event)"
+                  class="p-2 text-zinc-400 hover:text-red-400 transition-all rounded hover:bg-zinc-700"
+                  title="Delete task"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <!-- Badges (visual only) - moved here so buttons appear before chips -->
-            <div class="flex items-center gap-2 ml-3 sm:ml-3">
-              <!-- Category Chip -->
-              <span
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
-                [ngClass]="getTaskCategoryBadgeClass(task.category)"
-                title="{{ getTaskCategoryLabel(task.category) }}"
-              >
-                {{ getTaskCategoryLabel(task.category) }}
-              </span>
+            <!-- Bottom Row: Badges + Action Buttons (Mobile) -->
+            <div class="flex items-center justify-between gap-2 pl-11 sm:pl-0">
+              <!-- Badges -->
+              <div class="flex items-center gap-2 flex-wrap">
+                <!-- Category Chip -->
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border whitespace-nowrap"
+                  [ngClass]="getTaskCategoryBadgeClass(task.category)"
+                  title="{{ getTaskCategoryLabel(task.category) }}"
+                >
+                  {{ getTaskCategoryLabel(task.category) }}
+                </span>
 
-              <!-- Priority Chip -->
-              <span
-                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border"
-                [ngClass]="getTaskPriorityBadgeClass(task.priority)"
-                title="{{ getTaskPriorityLabel(task.priority) }}"
-              >
-                {{ getTaskPriorityLabel(task.priority) }}
-              </span>
+                <!-- Priority Chip -->
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border whitespace-nowrap"
+                  [ngClass]="getTaskPriorityBadgeClass(task.priority)"
+                  title="{{ getTaskPriorityLabel(task.priority) }}"
+                >
+                  {{ getTaskPriorityLabel(task.priority) }}
+                </span>
+              </div>
+
+              <!-- Action Buttons - Visible on mobile -->
+              <div class="flex sm:hidden items-center gap-2 flex-shrink-0">
+                <!-- Edit button (opens dialog) -->
+                <button
+                  (click)="openEditTaskDialog(task, $event)"
+                  class="p-2 text-zinc-400 hover:text-brand transition-all rounded hover:bg-zinc-700"
+                  title="Edit task"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M4 20h4.586a1 1 0 00.707-.293l9.414-9.414a1 1 0 000-1.414L14.121 4.121a1 1 0 00-1.414 0L3.293 13.535A1 1 0 003 14.242V19a1 1 0 001 1z"/>
+                  </svg>
+                </button>
+
+                <!-- Delete Button -->
+                <button
+                  (click)="confirmDeleteTask(task, $event)"
+                  class="p-2 text-zinc-400 hover:text-red-400 transition-all rounded hover:bg-zinc-700"
+                  title="Delete task"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <!-- Drag Preview (Custom Placeholder) -->
-            <div *cdkDragPlaceholder class="h-14 bg-zinc-700/50 border-2 border-dashed border-brand rounded-lg"></div>
+            <div *cdkDragPlaceholder class="h-20 sm:h-14 bg-zinc-700/50 border-2 border-dashed border-brand rounded-lg"></div>
           </div>
         </div>
       </div>
