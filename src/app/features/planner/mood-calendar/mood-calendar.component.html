@@ -1,0 +1,67 @@
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+  <!-- Header Actions Template -->
+  <ng-template #headerActions>
+    <button
+      (click)="goBack()"
+      class="px-3 py-1.5 bg-zinc-800 text-zinc-300 rounded-md hover:bg-zinc-700 transition-colors text-sm"
+    >
+      ← Back to planner
+    </button>
+  </ng-template>
+
+  @if (loading()) {
+  <div class="flex items-center justify-center py-12">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"
+    ></div>
+  </div>
+  } @else {
+  <div class="space-y-8">
+    <!-- Mood Calendar - Single Grid -->
+    <div class="bg-zinc-800/50 dark:bg-zinc-900/50 rounded-lg p-6 border border-zinc-700/50">
+      <div class="space-y-2">
+        @for (monthData of monthsData(); track monthData.month) {
+        <div class="flex items-center gap-3">
+          <!-- Month Label -->
+          <div class="w-12 flex-shrink-0">
+            <span class="text-xs font-semibold text-zinc-400">
+              {{ monthData.name }}
+            </span>
+          </div>
+
+          <!-- Days Grid -->
+          <div class="mood-grid flex-1">
+            @for (day of monthData.days; track day.date) {
+            <div
+              class="mood-cell group"
+              [style.background-color]="day.color"
+              [class.has-mood]="day.mood"
+              (click)="navigateToDay(day.date)"
+              [attr.data-date]="day.date"
+              [attr.data-day]="day.day"
+              [attr.data-mood]="getMoodLabel(day.mood)"
+              [attr.data-emoji]="day.emoji"
+            >
+              <!-- Tooltip -->
+              <div class="mood-tooltip">
+                <div class="text-xs font-medium">
+                  {{ day.date }}
+                </div>
+                <div class="text-sm mt-1">
+                  @if (day.mood) {
+                  <span>{{ day.emoji }} {{ getMoodLabel(day.mood) }}</span>
+                  } @else {
+                  <span class="text-zinc-500">No mood</span>
+                  }
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>

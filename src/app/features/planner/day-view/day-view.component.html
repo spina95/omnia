@@ -294,7 +294,19 @@
 
       <!-- Mood Selector -->
       <div class="mb-6">
-        <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 transition-colors duration-200">How are you feeling today?</h4>
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 transition-colors duration-200">How are you feeling today?</h4>
+          <a
+            [routerLink]="['/planner/mood-calendar']"
+            class="px-3 py-1.5 bg-brand hover:bg-brand/80 text-black rounded-md transition-colors text-xs font-medium flex items-center gap-1.5"
+            title="View Mood Calendar"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="hidden sm:inline">Calendar</span>
+          </a>
+        </div>
         <div class="flex flex-wrap items-center gap-2">
           <button
             *ngFor="let mood of moods"

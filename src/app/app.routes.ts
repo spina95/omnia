@@ -104,6 +104,13 @@ export const routes: Routes = [
             (m) => m.JournalFullViewComponent
           ),
       },
+      {
+        path: 'planner/mood-calendar',
+        loadComponent: () =>
+          import('./features/planner/mood-calendar/mood-calendar.component').then(
+            (m) => m.MoodCalendarComponent
+          ),
+      },
     ],
   },
   {

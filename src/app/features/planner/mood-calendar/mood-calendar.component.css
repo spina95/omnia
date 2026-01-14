@@ -1,0 +1,87 @@
+/* Mood Grid Layout */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14px, 14px));
+  gap: 3px;
+  justify-content: start;
+}
+
+/* Mood Cell */
+.mood-cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.mood-cell:hover {
+  transform: scale(1.3);
+  z-index: 10;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.mood-cell.has-mood {
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Tooltip */
+.mood-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #18181b;
+  color: #e4e4e7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+  border: 1px solid #3f3f46;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.mood-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #18181b;
+}
+
+.mood-cell:hover .mood-tooltip {
+  opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .mood-grid {
+    grid-template-columns: repeat(auto-fill, minmax(16px, 16px));
+    gap: 4px;
+  }
+
+  .mood-cell {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mood-grid {
+    grid-template-columns: repeat(auto-fill, minmax(18px, 18px));
+    gap: 4px;
+  }
+
+  .mood-cell {
+    width: 18px;
+    height: 18px;
+  }
+}

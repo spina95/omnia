@@ -488,6 +488,39 @@ export class PlannerService {
   }
 
   /**
+   * Get mood history for a date range
+   * @param startDate - Start date in YYYY-MM-DD format
+   * @param endDate - End date in YYYY-MM-DD format
+   * @returns Array of objects with date and mood
+   */
+  async getMoodHistory(
+    startDate: string,
+    endDate: string
+  ): Promise<Array<{ date: string; mood: string }>> {
+    const userId = await this.getCurrentUserId();
+    if (!userId) return [];
+
+    const { data, error } = await this.supabaseService.client
+      .from('day_entries')
+      .select('entry_date, mood')
+      .eq('user_id', userId)
+      .gte('entry_date', startDate)
+      .lte('entry_date', endDate)
+      .not('mood', 'is', null)
+      .order('entry_date', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching mood history:', error);
+      return [];
+    }
+
+    return (data || []).map((entry) => ({
+      date: entry.entry_date,
+      mood: entry.mood,
+    }));
+  }
+
+  /**
    * Get the nearest day with entries in a given direction (before or after a date)
    * @param fromDate - Starting date in YYYY-MM-DD format
    * @param direction - 'previous' or 'next'
